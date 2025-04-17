@@ -1,0 +1,35 @@
+
+@page "/dashboard"
+
+<PageTitle>Dashboard - Elevate CV</PageTitle>
+
+<div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+            <p class="mt-1 text-lg text-gray-500">
+                Track your resume performance and job applications
+            </p>
+        </div>
+        <div class="mt-4 md:mt-0 flex space-x-4">
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Href="/analyze">
+                Analyze Resume
+            </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/builder">
+                Create New Resume
+            </MudButton>
+        </div>
+    </div>
+    
+    <MudPaper Class="pa-6 mb-6">
+        <MudText Typo="Typo.h5" Class="mb-4">Coming Soon</MudText>
+        <MudText>
+            We're working on implementing a complete dashboard with .NET and Blazor.
+            Please check back later or try the Resume Analysis feature in the meantime.
+        </MudText>
+    </MudPaper>
+    
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/analyze">
+        Try Resume Analysis
+    </MudButton>
+</div>

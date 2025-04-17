@@ -1,0 +1,33 @@
+
+<header class="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 justify-between">
+            <div class="flex">
+                <div class="flex flex-shrink-0 items-center">
+                    <NavLink href="/" class="flex items-center space-x-2">
+                        <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary" Size="Size.Large" />
+                        <span class="font-bold text-xl text-primary-600">Elevate CV</span>
+                    </NavLink>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    <NavLink href="/" class="inline-flex items-center px-1 pt-1 text-sm font-medium" ActiveClass="border-b-2 border-primary-500 text-gray-900" Match="NavLinkMatch.All">
+                        Home
+                    </NavLink>
+                    <NavLink href="/analyze" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700" ActiveClass="border-b-2 border-primary-500 text-gray-900">
+                        Analyze Resume
+                    </NavLink>
+                    <NavLink href="/builder" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700" ActiveClass="border-b-2 border-primary-500 text-gray-900">
+                        Resume Builder
+                    </NavLink>
+                    <NavLink href="/dashboard" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700" ActiveClass="border-b-2 border-primary-500 text-gray-900">
+                        Dashboard
+                    </NavLink>
+                </div>
+            </div>
+            <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary">Sign In</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Sign Up</MudButton>
+            </div>
+        </div>
+    </div>
+</header>

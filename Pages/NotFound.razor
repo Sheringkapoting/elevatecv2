@@ -1,0 +1,25 @@
+
+@page "/404"
+@inject NavigationManager NavigationManager
+
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold mb-4">404</h1>
+        <p class="text-xl text-gray-600 mb-4">Oops! Page not found</p>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@NavigateToHome">
+            Return to Home
+        </MudButton>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Console.WriteLine($"404 Error: User attempted to access non-existent route: {NavigationManager.Uri}");
+    }
+
+    private void NavigateToHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
