@@ -1,0 +1,132 @@
+
+@using Elevate_CV.Models
+@using Elevate_CV.Authentication
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<MudDialog>
+    <DialogContent>
+        <MudContainer Style="max-width: 400px;">
+            <MudText Typo="Typo.h5" Class="mb-4 text-center">Sign In</MudText>
+            
+            <MudForm @ref="form" @bind-IsValid="@success">
+                <MudTextField T="string" Label="Email" @bind-Value="loginModel.Email" Required="true" RequiredError="Email is required" 
+                              Validation="@(new EmailAddressAttribute() {ErrorMessage = "Invalid email address"})" />
+                
+                <MudTextField T="string" Label="Password" @bind-Value="loginModel.Password" Required="true" 
+                              RequiredError="Password is required" InputType="@PasswordInput" Adornment="Adornment.End" 
+                              AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
+                
+                <MudCheckBox T="bool" Label="Remember me" @bind-Checked="loginModel.RememberMe" />
+                
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mt-2">@errorMessage</MudAlert>
+                }
+                
+                <div class="d-flex flex-column gap-2 mt-4">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="HandleLogin" Disabled="@(!success || isLoading)">
+                        @if (isLoading)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Processing</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Sign In</MudText>
+                        }
+                    </MudButton>
+                    
+                    <MudText Align="Align.Center" Class="my-2">OR</MudText>
+                    
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Custom.Brands.Google" FullWidth="true" OnClick="HandleGoogleLogin">
+                        Sign in with Google
+                    </MudButton>
+                    
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Custom.Brands.Microsoft" FullWidth="true" OnClick="HandleMicrosoftLogin">
+                        Sign in with Microsoft
+                    </MudButton>
+                    
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Custom.Brands.GitHub" FullWidth="true" OnClick="HandleGitHubLogin">
+                        Sign in with GitHub
+                    </MudButton>
+                </div>
+            </MudForm>
+            
+            <MudText Align="Align.Center" Class="mt-4">
+                Don't have an account? <MudLink OnClick="SwitchToRegister">Create account</MudLink>
+            </MudText>
+        </MudContainer>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    
+    private MudForm form = default!;
+    private bool success;
+    private bool isLoading;
+    private string errorMessage = string.Empty;
+    private LoginModel loginModel = new LoginModel();
+    private bool passwordVisible;
+    private InputType PasswordInput => passwordVisible ? InputType.Text : InputType.Password;
+    private string PasswordInputIcon => passwordVisible ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+
+    private void TogglePasswordVisibility()
+    {
+        passwordVisible = !passwordVisible;
+    }
+
+    private async Task HandleLogin()
+    {
+        isLoading = true;
+        errorMessage = string.Empty;
+        
+        try
+        {
+            var result = await AuthService.Login(loginModel);
+            
+            if (result.Successful)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                NavigationManager.NavigateTo("/dashboard");
+            }
+            else
+            {
+                errorMessage = result.Error ?? "Login failed";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An unexpected error occurred. Please try again.";
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+    
+    private void SwitchToRegister()
+    {
+        MudDialog.Close(DialogResult.Ok("register"));
+    }
+    
+    private void HandleGoogleLogin()
+    {
+        // Will implement in future
+        errorMessage = "Social login is not implemented in this demo";
+    }
+    
+    private void HandleMicrosoftLogin()
+    {
+        // Will implement in future
+        errorMessage = "Social login is not implemented in this demo";
+    }
+    
+    private void HandleGitHubLogin()
+    {
+        // Will implement in future
+        errorMessage = "Social login is not implemented in this demo";
+    }
+}

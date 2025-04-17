@@ -1,4 +1,10 @@
 
+@using Elevate_CV.Components.Authentication
+@inject IDialogService DialogService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+
 <header class="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 justify-between">
@@ -25,9 +31,64 @@
                 </div>
             </div>
             <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary">Sign In</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary">Sign Up</MudButton>
+                <AuthorizeView>
+                    <Authorized>
+                        <MudMenu Icon="@Icons.Material.Filled.Person" Color="Color.Primary" Direction="Direction.Bottom" OffsetY="true">
+                            <MudMenuItem>My Profile</MudMenuItem>
+                            <MudMenuItem>Settings</MudMenuItem>
+                            <MudMenuItem OnClick="HandleLogout">Sign Out</MudMenuItem>
+                        </MudMenu>
+                    </Authorized>
+                    <NotAuthorized>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="OpenLoginDialog">Sign In</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenRegisterDialog">Sign Up</MudButton>
+                    </NotAuthorized>
+                </AuthorizeView>
             </div>
         </div>
     </div>
 </header>
+
+@code {
+    private async Task OpenLoginDialog()
+    {
+        var dialog = await DialogService.ShowAsync<LoginDialog>("", new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true,
+            NoHeader = true
+        });
+
+        var result = await dialog.Result;
+        
+        if (!result.Canceled && result.Data is string action && action == "register")
+        {
+            await OpenRegisterDialog();
+        }
+    }
+
+    private async Task OpenRegisterDialog()
+    {
+        var dialog = await DialogService.ShowAsync<RegisterDialog>("", new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true,
+            NoHeader = true
+        });
+
+        var result = await dialog.Result;
+        
+        if (!result.Canceled && result.Data is string action && action == "login")
+        {
+            await OpenLoginDialog();
+        }
+    }
+
+    private async Task HandleLogout()
+    {
+        await AuthService.Logout();
+        NavigationManager.NavigateTo("/");
+    }
+}

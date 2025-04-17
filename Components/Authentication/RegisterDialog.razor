@@ -1,0 +1,149 @@
+
+@using Elevate_CV.Models
+@using Elevate_CV.Authentication
+@inject IAuthService AuthService
+
+<MudDialog>
+    <DialogContent>
+        <MudContainer Style="max-width: 400px;">
+            <MudText Typo="Typo.h5" Class="mb-4 text-center">Create Account</MudText>
+            
+            <MudForm @ref="form" @bind-IsValid="@success">
+                <MudTextField T="string" Label="Email" @bind-Value="registerModel.Email" Required="true" RequiredError="Email is required" 
+                              Validation="@(new EmailAddressAttribute() {ErrorMessage = "Invalid email address"})" />
+                
+                <MudTextField T="string" Label="Password" @bind-Value="registerModel.Password" Required="true" 
+                              RequiredError="Password is required" InputType="@PasswordInput" Adornment="Adornment.End" 
+                              AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="TogglePasswordVisibility" 
+                              Validation="@(new Func<string, IEnumerable<string>>(ValidatePassword))" />
+                
+                <MudTextField T="string" Label="Confirm Password" @bind-Value="registerModel.ConfirmPassword" Required="true" 
+                              RequiredError="Password confirmation is required" InputType="@PasswordInput" Adornment="Adornment.End" 
+                              AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="TogglePasswordVisibility" 
+                              Validation="@(new Func<string, string>(ValidatePasswordMatch))" />
+                
+                <div class="d-flex align-center justify-center mt-4">
+                    <MudCheckBox T="bool" Required="true" RequiredError="You must agree to the terms" @bind-Checked="agreeToTerms" Label="I agree to the terms and conditions" />
+                </div>
+                
+                @if (errors != null && errors.Any())
+                {
+                    <MudAlert Severity="Severity.Error" Class="mt-2">
+                        <ul class="m-0 ps-4">
+                            @foreach (var error in errors)
+                            {
+                                <li>@error</li>
+                            }
+                        </ul>
+                    </MudAlert>
+                }
+                
+                <div class="d-flex flex-column gap-2 mt-4">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="HandleRegister" Disabled="@(!CanRegister() || isLoading)">
+                        @if (isLoading)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Processing</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Register</MudText>
+                        }
+                    </MudButton>
+                    
+                    <MudText Align="Align.Center" Class="my-2">OR</MudText>
+                    
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Custom.Brands.Google" FullWidth="true">
+                        Sign up with Google
+                    </MudButton>
+                    
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Custom.Brands.Microsoft" FullWidth="true">
+                        Sign up with Microsoft
+                    </MudButton>
+                    
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Custom.Brands.GitHub" FullWidth="true">
+                        Sign up with GitHub
+                    </MudButton>
+                </div>
+            </MudForm>
+            
+            <MudText Align="Align.Center" Class="mt-4">
+                Already have an account? <MudLink OnClick="SwitchToLogin">Sign in</MudLink>
+            </MudText>
+        </MudContainer>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    
+    private MudForm form = default!;
+    private bool success;
+    private bool isLoading;
+    private bool agreeToTerms;
+    private IEnumerable<string>? errors;
+    private RegisterModel registerModel = new RegisterModel();
+    private bool passwordVisible;
+    private InputType PasswordInput => passwordVisible ? InputType.Text : InputType.Password;
+    private string PasswordInputIcon => passwordVisible ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+
+    private bool CanRegister() => success && agreeToTerms;
+
+    private void TogglePasswordVisibility()
+    {
+        passwordVisible = !passwordVisible;
+    }
+
+    private IEnumerable<string> ValidatePassword(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password))
+            yield return "Password is required";
+        if (password?.Length < 6)
+            yield return "Password must be at least 6 characters";
+        if (!password?.Any(char.IsUpper) ?? true)
+            yield return "Password must contain at least one uppercase letter";
+        if (!password?.Any(char.IsDigit) ?? true)
+            yield return "Password must contain at least one number";
+    }
+
+    private string ValidatePasswordMatch(string confirmPassword)
+    {
+        if (confirmPassword != registerModel.Password)
+            return "Passwords do not match";
+        return string.Empty;
+    }
+
+    private async Task HandleRegister()
+    {
+        isLoading = true;
+        errors = null;
+        
+        try
+        {
+            var result = await AuthService.Register(registerModel);
+            
+            if (result.Successful)
+            {
+                MudDialog.Close(DialogResult.Ok("login"));
+            }
+            else
+            {
+                errors = result.Errors;
+            }
+        }
+        catch (Exception ex)
+        {
+            errors = new[] { "An unexpected error occurred. Please try again." };
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+    
+    private void SwitchToLogin()
+    {
+        MudDialog.Close(DialogResult.Ok("login"));
+    }
+}
