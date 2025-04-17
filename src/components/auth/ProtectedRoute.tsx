@@ -1,15 +1,15 @@
 
 import { Navigate } from "react-router-dom";
-import { authService } from "@/services/authService";
+import { useAuth } from "@/lib/auth";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const isAuthenticated = authService.isAuthenticated();
+  const { user } = useAuth();
 
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/" replace />;
   }
 
