@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -9,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
-import { Facebook, Github, Linkedin, Mail } from "lucide-react";
+import { Facebook, Github, Linkedin, Microsoft } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -26,7 +25,7 @@ interface LoginFormProps {
 const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { signIn, signInWithLinkedIn, error } = useAuth();
+  const { signIn, signInWithLinkedIn, signInWithMicrosoft, error } = useAuth();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -68,9 +67,23 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
     }
   };
 
+  const handleMicrosoftLogin = async () => {
+    try {
+      await signInWithMicrosoft();
+    } catch (error) {
+      toast({
+        title: "Error signing in with Microsoft",
+        description: "There was a problem with Microsoft authentication.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSocialLogin = (provider: string) => {
     if (provider === "LinkedIn") {
       handleLinkedInLogin();
+    } else if (provider === "Microsoft") {
+      handleMicrosoftLogin();
     } else {
       toast({
         title: "Social login not implemented",
@@ -165,18 +178,18 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
         <Button 
           variant="outline" 
           type="button" 
-          onClick={() => handleSocialLogin("GitHub")}
-        >
-          <Github className="mr-2 h-4 w-4" />
-          GitHub
-        </Button>
-        <Button 
-          variant="outline" 
-          type="button" 
           onClick={() => handleSocialLogin("LinkedIn")}
         >
           <Linkedin className="mr-2 h-4 w-4" />
           LinkedIn
+        </Button>
+        <Button 
+          variant="outline" 
+          type="button" 
+          onClick={() => handleSocialLogin("Microsoft")}
+        >
+          <Microsoft className="mr-2 h-4 w-4" />
+          Microsoft
         </Button>
       </div>
       

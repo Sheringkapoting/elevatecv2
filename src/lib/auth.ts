@@ -1,4 +1,3 @@
-
 import { type Session, type User, type AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { create } from 'zustand';
@@ -11,6 +10,7 @@ interface AuthState {
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithLinkedIn: () => Promise<void>;
+  signInWithMicrosoft: () => Promise<void>;
   signOut: () => Promise<void>;
   setSession: (session: Session | null) => void;
 }
@@ -46,6 +46,16 @@ export const useAuth = create<AuthState>((set) => ({
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'linkedin_oidc',
+      });
+      if (error) throw error;
+    } catch (error) {
+      set({ error: error as AuthError });
+    }
+  },
+  signInWithMicrosoft: async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'azure',
       });
       if (error) throw error;
     } catch (error) {
