@@ -10,8 +10,8 @@ interface AuthState {
   error: AuthError | null;
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
-  signInWithLinkedIn: () => Promise<void>;
-  signInWithMicrosoft: () => Promise<void>;
+  signInWithLinkedIn: (redirectTo?: string) => Promise<void>;
+  signInWithMicrosoft: (redirectTo?: string) => Promise<void>;
   signOut: () => Promise<void>;
   setSession: (session: Session | null) => void;
 }
@@ -43,20 +43,26 @@ export const useAuth = create<AuthState>((set) => ({
       set({ error: error as AuthError });
     }
   },
-  signInWithLinkedIn: async () => {
+  signInWithLinkedIn: async (redirectTo?: string) => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'linkedin_oidc', // Changed from 'linkedin' to 'linkedin_oidc'
+        provider: 'linkedin_oidc',
+        options: redirectTo ? {
+          redirectTo: redirectTo,
+        } : undefined,
       });
       if (error) throw error;
     } catch (error) {
       set({ error: error as AuthError });
     }
   },
-  signInWithMicrosoft: async () => {
+  signInWithMicrosoft: async (redirectTo?: string) => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'azure',
+        options: redirectTo ? {
+          redirectTo: redirectTo,
+        } : undefined,
       });
       if (error) throw error;
     } catch (error) {

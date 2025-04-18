@@ -10,7 +10,9 @@ export const SocialLoginButtons = () => {
 
   const handleLinkedInLogin = async () => {
     try {
-      await signInWithLinkedIn();
+      // Get the current origin to use as redirect URL
+      const redirectTo = `${window.location.origin}`;
+      await signInWithLinkedIn(redirectTo);
     } catch (error) {
       toast({
         title: "Error signing in with LinkedIn",
@@ -22,7 +24,9 @@ export const SocialLoginButtons = () => {
 
   const handleMicrosoftLogin = async () => {
     try {
-      await signInWithMicrosoft();
+      // Get the current origin to use as redirect URL
+      const redirectTo = `${window.location.origin}`;
+      await signInWithMicrosoft(redirectTo);
     } catch (error) {
       toast({
         title: "Error signing in with Microsoft",
