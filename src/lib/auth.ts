@@ -45,27 +45,39 @@ export const useAuth = create<AuthState>((set) => ({
   },
   signInWithLinkedIn: async (redirectTo?: string) => {
     try {
+      console.log("LinkedIn login with redirect to:", redirectTo);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'linkedin_oidc',
-        options: redirectTo ? {
-          redirectTo: redirectTo,
-        } : undefined,
+        options: {
+          redirectTo: redirectTo || window.location.origin,
+          // Ensure we get an access token back in the URL
+          queryParams: {
+            prompt: 'consent',
+          },
+        },
       });
       if (error) throw error;
     } catch (error) {
+      console.error("LinkedIn login error:", error);
       set({ error: error as AuthError });
     }
   },
   signInWithMicrosoft: async (redirectTo?: string) => {
     try {
+      console.log("Microsoft login with redirect to:", redirectTo);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'azure',
-        options: redirectTo ? {
-          redirectTo: redirectTo,
-        } : undefined,
+        options: {
+          redirectTo: redirectTo || window.location.origin,
+          // Ensure we get an access token back in the URL
+          queryParams: {
+            prompt: 'consent',
+          },
+        },
       });
       if (error) throw error;
     } catch (error) {
+      console.error("Microsoft login error:", error);
       set({ error: error as AuthError });
     }
   },

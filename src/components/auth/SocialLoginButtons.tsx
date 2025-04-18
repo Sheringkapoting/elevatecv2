@@ -10,9 +10,13 @@ export const SocialLoginButtons = () => {
 
   const handleLinkedInLogin = async () => {
     try {
-      // Get the current origin to use as redirect URL
-      const redirectTo = `${window.location.origin}`;
-      await signInWithLinkedIn(redirectTo);
+      // Get the current URL but replace 'localhost:3000' with the correct domain if needed
+      const currentUrl = window.location.href;
+      // Extract just the origin part (e.g., https://example.com)
+      const redirectUrl = new URL(currentUrl).origin;
+      
+      // Use the extracted origin as the redirect URL
+      await signInWithLinkedIn(redirectUrl);
     } catch (error) {
       toast({
         title: "Error signing in with LinkedIn",
@@ -24,9 +28,13 @@ export const SocialLoginButtons = () => {
 
   const handleMicrosoftLogin = async () => {
     try {
-      // Get the current origin to use as redirect URL
-      const redirectTo = `${window.location.origin}`;
-      await signInWithMicrosoft(redirectTo);
+      // Get the current URL but replace 'localhost:3000' with the correct domain if needed
+      const currentUrl = window.location.href;
+      // Extract just the origin part (e.g., https://example.com)
+      const redirectUrl = new URL(currentUrl).origin;
+      
+      // Use the extracted origin as the redirect URL
+      await signInWithMicrosoft(redirectUrl);
     } catch (error) {
       toast({
         title: "Error signing in with Microsoft",
