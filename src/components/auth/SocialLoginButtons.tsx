@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Linkedin } from "lucide-react";
+import { Linkedin, Github } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
 export const SocialLoginButtons = () => {

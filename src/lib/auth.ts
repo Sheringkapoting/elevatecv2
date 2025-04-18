@@ -1,3 +1,4 @@
+
 import { type Session, type User, type AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { create } from 'zustand';
@@ -45,7 +46,7 @@ export const useAuth = create<AuthState>((set) => ({
   signInWithLinkedIn: async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'linkedin_oidc',
+        provider: 'linkedin_oidc', // Changed from 'linkedin' to 'linkedin_oidc'
       });
       if (error) throw error;
     } catch (error) {
