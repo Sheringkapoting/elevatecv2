@@ -3,47 +3,32 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Linkedin, Github } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { useState } from "react";
 
 export const SocialLoginButtons = () => {
   const { toast } = useToast();
   const { signInWithLinkedIn, signInWithMicrosoft } = useAuth();
-  const [isLoading, setIsLoading] = useState<{[key: string]: boolean}>({
-    LinkedIn: false,
-    Microsoft: false
-  });
 
   const handleLinkedInLogin = async () => {
     try {
-      setIsLoading(prev => ({ ...prev, LinkedIn: true }));
       await signInWithLinkedIn();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       toast({
         title: "Error signing in with LinkedIn",
-        description: "There was a problem with LinkedIn authentication. The provider might be disabled or not properly configured.",
+        description: "There was a problem with LinkedIn authentication.",
         variant: "destructive",
       });
-      console.error("LinkedIn auth error:", errorMessage);
-    } finally {
-      setIsLoading(prev => ({ ...prev, LinkedIn: false }));
     }
   };
 
   const handleMicrosoftLogin = async () => {
     try {
-      setIsLoading(prev => ({ ...prev, Microsoft: true }));
       await signInWithMicrosoft();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       toast({
         title: "Error signing in with Microsoft",
-        description: "There was a problem with Microsoft authentication. The provider might be disabled or not properly configured.",
+        description: "There was a problem with Microsoft authentication.",
         variant: "destructive",
       });
-      console.error("Microsoft auth error:", errorMessage);
-    } finally {
-      setIsLoading(prev => ({ ...prev, Microsoft: false }));
     }
   };
 
@@ -103,31 +88,21 @@ export const SocialLoginButtons = () => {
           variant="outline" 
           type="button" 
           onClick={() => handleSocialLogin("LinkedIn")}
-          disabled={isLoading.LinkedIn}
         >
-          {isLoading.LinkedIn ? (
-            <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
-          ) : (
-            <Linkedin className="mr-2 h-4 w-4" />
-          )}
+          <Linkedin className="mr-2 h-4 w-4" />
           LinkedIn
         </Button>
         <Button 
           variant="outline" 
           type="button" 
           onClick={() => handleSocialLogin("Microsoft")}
-          disabled={isLoading.Microsoft}
         >
-          {isLoading.Microsoft ? (
-            <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
-          ) : (
-            <svg className="mr-2 h-4 w-4" aria-hidden="true" viewBox="0 0 24 24">
-              <path d="M11.4008 2H2V11.4008H11.4008V2Z" fill="#F25022" />
-              <path d="M11.4008 12.5992H2V22H11.4008V12.5992Z" fill="#00A4EF" />
-              <path d="M22 2H12.5992V11.4008H22V2Z" fill="#7FBA00" />
-              <path d="M22 12.5992H12.5992V22H22V12.5992Z" fill="#FFB900" />
-            </svg>
-          )}
+          <svg className="mr-2 h-4 w-4" aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M11.4008 2H2V11.4008H11.4008V2Z" fill="#F25022" />
+            <path d="M11.4008 12.5992H2V22H11.4008V12.5992Z" fill="#00A4EF" />
+            <path d="M22 2H12.5992V11.4008H22V2Z" fill="#7FBA00" />
+            <path d="M22 12.5992H12.5992V22H22V12.5992Z" fill="#FFB900" />
+          </svg>
           Microsoft
         </Button>
       </div>
