@@ -10,6 +10,7 @@ interface AuthState {
   error: AuthError | null;
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithLinkedIn: () => Promise<void>;
   signOut: () => Promise<void>;
   setSession: (session: Session | null) => void;
 }
@@ -35,6 +36,16 @@ export const useAuth = create<AuthState>((set) => ({
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
+      });
+      if (error) throw error;
+    } catch (error) {
+      set({ error: error as AuthError });
+    }
+  },
+  signInWithLinkedIn: async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'linkedin_oidc',
       });
       if (error) throw error;
     } catch (error) {
