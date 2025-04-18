@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
-import { Facebook, Github, Linkedin, Microsoft } from "lucide-react";
+import { Facebook, Github, Linkedin } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -188,7 +188,24 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
           type="button" 
           onClick={() => handleSocialLogin("Microsoft")}
         >
-          <Microsoft className="mr-2 h-4 w-4" />
+          <svg className="mr-2 h-4 w-4" aria-hidden="true" viewBox="0 0 24 24">
+            <path
+              d="M11.4008 2H2V11.4008H11.4008V2Z"
+              fill="#F25022"
+            />
+            <path
+              d="M11.4008 12.5992H2V22H11.4008V12.5992Z"
+              fill="#00A4EF"
+            />
+            <path
+              d="M22 2H12.5992V11.4008H22V2Z"
+              fill="#7FBA00"
+            />
+            <path
+              d="M22 12.5992H12.5992V22H22V12.5992Z"
+              fill="#FFB900"
+            />
+          </svg>
           Microsoft
         </Button>
       </div>
