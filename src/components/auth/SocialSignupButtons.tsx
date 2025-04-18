@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth";
 
 export const SocialSignupButtons = () => {
   const { toast } = useToast();
-  const { signInWithLinkedIn, signInWithMicrosoft, error, clearError } = useAuth();
+  const { signInWithLinkedIn, signInWithMicrosoft } = useAuth();
   const [isLoading, setIsLoading] = useState<{[key: string]: boolean}>({
     Google: false,
     GitHub: false,
@@ -16,7 +16,6 @@ export const SocialSignupButtons = () => {
   });
 
   const handleSocialSignup = async (provider: string) => {
-    if (error) clearError();
     setIsLoading(prev => ({ ...prev, [provider]: true }));
     
     try {
