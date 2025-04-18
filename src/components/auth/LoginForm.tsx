@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Facebook, Github, Mail } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { Facebook, Github, Linkedin, Mail } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -25,6 +26,7 @@ interface LoginFormProps {
 const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { signIn, signInWithLinkedIn, error } = useAuth();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -38,20 +40,11 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Login form submitted:", data);
-      
-      // In a real app, this would call an authentication API
-      // For this demo, we'll simulate a successful login
+      await signIn(data.email, data.password);
       toast({
         title: "Successfully signed in",
         description: "Welcome back to Elevate CV!",
       });
-      
-      // Redirect to dashboard in a real application
-      // window.location.href = "/dashboard";
-      
     } catch (error) {
       toast({
         title: "Error signing in",
@@ -63,11 +56,27 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
     }
   };
 
+  const handleLinkedInLogin = async () => {
+    try {
+      await signInWithLinkedIn();
+    } catch (error) {
+      toast({
+        title: "Error signing in with LinkedIn",
+        description: "There was a problem with LinkedIn authentication.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSocialLogin = (provider: string) => {
-    toast({
-      title: "Social login not implemented",
-      description: `${provider} login will be available in the full version.`,
-    });
+    if (provider === "LinkedIn") {
+      handleLinkedInLogin();
+    } else {
+      toast({
+        title: "Social login not implemented",
+        description: `${provider} login will be available in the full version.`,
+      });
+    }
   };
 
   return (
@@ -164,27 +173,10 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
         <Button 
           variant="outline" 
           type="button" 
-          onClick={() => handleSocialLogin("Microsoft")}
+          onClick={() => handleSocialLogin("LinkedIn")}
         >
-          <svg className="mr-2 h-4 w-4" aria-hidden="true" viewBox="0 0 24 24">
-            <path
-              d="M11.4008 2H2V11.4008H11.4008V2Z"
-              fill="#F25022"
-            />
-            <path
-              d="M11.4008 12.5992H2V22H11.4008V12.5992Z"
-              fill="#00A4EF"
-            />
-            <path
-              d="M22 2H12.5992V11.4008H22V2Z"
-              fill="#7FBA00"
-            />
-            <path
-              d="M22 12.5992H12.5992V22H22V12.5992Z"
-              fill="#FFB900"
-            />
-          </svg>
-          MS
+          <Linkedin className="mr-2 h-4 w-4" />
+          LinkedIn
         </Button>
       </div>
       
