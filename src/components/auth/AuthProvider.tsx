@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/lib/auth';
@@ -11,6 +12,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Store the current origin to be used for redirects
+    const currentOrigin = window.location.origin;
+    console.log("Current origin:", currentOrigin);
+
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -40,9 +45,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Handle hash fragment from OAuth redirect
     const handleRedirectResult = async () => {
       if (location.hash) {
+        console.log("Found hash in URL:", location.hash);
         try {
           // This is crucial - properly handle the OAuth callback with Supabase
-          const { data, error } = await supabase.auth.getSessionFromUrl();
+          const { data, error } = await supabase.auth.getSessionFromUrl({
+            storeSession: true // Ensure session is stored properly
+          });
           
           if (error) {
             console.error("Auth error during callback:", error);
@@ -55,6 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (data?.session) {
             // Successfully got session from URL
+            console.log("Successfully set session from URL");
             setSession(data.session);
             toast({
               title: "Login successful",

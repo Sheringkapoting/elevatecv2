@@ -45,11 +45,17 @@ export const useAuth = create<AuthState>((set) => ({
   },
   signInWithLinkedIn: async (redirectTo?: string) => {
     try {
-      console.log("LinkedIn login with redirect to:", redirectTo);
+      // Ensure we use the correct origin for redirect
+      const effectiveRedirectTo = redirectTo || window.location.origin;
+      console.log("LinkedIn login with redirect to:", effectiveRedirectTo);
+      
+      // Set site URL in Supabase site settings (just for debugging)
+      console.log("Current site URL:", window.location.origin);
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'linkedin_oidc',
         options: {
-          redirectTo: redirectTo || window.location.origin,
+          redirectTo: effectiveRedirectTo,
           // Ensure we get an access token back in the URL
           queryParams: {
             prompt: 'consent',
@@ -64,11 +70,14 @@ export const useAuth = create<AuthState>((set) => ({
   },
   signInWithMicrosoft: async (redirectTo?: string) => {
     try {
-      console.log("Microsoft login with redirect to:", redirectTo);
+      // Ensure we use the correct origin for redirect
+      const effectiveRedirectTo = redirectTo || window.location.origin;
+      console.log("Microsoft login with redirect to:", effectiveRedirectTo);
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'azure',
         options: {
-          redirectTo: redirectTo || window.location.origin,
+          redirectTo: effectiveRedirectTo,
           // Ensure we get an access token back in the URL
           queryParams: {
             prompt: 'consent',

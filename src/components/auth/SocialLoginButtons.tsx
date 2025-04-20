@@ -3,44 +3,54 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Linkedin, Github } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { useState } from "react";
 
 export const SocialLoginButtons = () => {
   const { toast } = useToast();
   const { signInWithLinkedIn, signInWithMicrosoft } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLinkedInLogin = async () => {
     try {
-      // Get the current URL but replace 'localhost:3000' with the correct domain if needed
-      const currentUrl = window.location.href;
-      // Extract just the origin part (e.g., https://example.com)
-      const redirectUrl = new URL(currentUrl).origin;
+      setIsLoading(true);
       
-      // Use the extracted origin as the redirect URL
-      await signInWithLinkedIn(redirectUrl);
+      // Get the exact current URL's origin
+      const currentOrigin = window.location.origin;
+      console.log("Using redirect URL for LinkedIn:", currentOrigin);
+      
+      // Use the current origin as the redirect URL
+      await signInWithLinkedIn(currentOrigin);
     } catch (error) {
+      console.error("LinkedIn login error:", error);
       toast({
         title: "Error signing in with LinkedIn",
         description: "There was a problem with LinkedIn authentication.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleMicrosoftLogin = async () => {
     try {
-      // Get the current URL but replace 'localhost:3000' with the correct domain if needed
-      const currentUrl = window.location.href;
-      // Extract just the origin part (e.g., https://example.com)
-      const redirectUrl = new URL(currentUrl).origin;
+      setIsLoading(true);
       
-      // Use the extracted origin as the redirect URL
-      await signInWithMicrosoft(redirectUrl);
+      // Get the exact current URL's origin
+      const currentOrigin = window.location.origin;
+      console.log("Using redirect URL for Microsoft:", currentOrigin);
+      
+      // Use the current origin as the redirect URL
+      await signInWithMicrosoft(currentOrigin);
     } catch (error) {
+      console.error("Microsoft login error:", error);
       toast({
         title: "Error signing in with Microsoft",
         description: "There was a problem with Microsoft authentication.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
