@@ -48,9 +48,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log("Found hash in URL:", location.hash);
         try {
           // This is crucial - properly handle the OAuth callback with Supabase
-          const { data, error } = await supabase.auth.getSessionFromUrl({
-            storeSession: true // Ensure session is stored properly
-          });
+          // Using the correct method for the current Supabase version
+          const { data, error } = await supabase.auth.getSession();
           
           if (error) {
             console.error("Auth error during callback:", error);
