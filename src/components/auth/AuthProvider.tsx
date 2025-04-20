@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/lib/auth';
@@ -40,19 +39,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Handle hash fragment from OAuth redirect
     const handleRedirectResult = async () => {
-      if (location.hash && location.hash.includes('access_token')) {
-        // If we detect an access token in the URL hash, it's likely an OAuth redirect
-        const hashParams = new URLSearchParams(location.hash.substring(1));
-        const accessToken = hashParams.get('access_token');
-        
-        if (accessToken) {
-          // The user has been authenticated via OAuth
-          // We can now navigate them to the dashboard
+      if (location.hash) {
+        try {
+          // This is crucial - properly handle the OAuth callback with Supabase
+          const { data, error } = await supabase.auth.getSessionFromUrl();
+          
+          if (error) {
+            console.error("Auth error during callback:", error);
+            toast({
+              title: "Login failed",
+              description: error.message || "Failed to authenticate with LinkedIn."
+            });
+            return;
+          }
+          
+          if (data?.session) {
+            // Successfully got session from URL
+            setSession(data.session);
+            toast({
+              title: "Login successful",
+              description: "You have been successfully logged in via LinkedIn."
+            });
+            navigate('/dashboard', { replace: true });
+          }
+        } catch (err) {
+          console.error("Error handling OAuth redirect:", err);
           toast({
-            title: "Login successful",
-            description: "You have been successfully logged in via LinkedIn."
+            title: "Login error",
+            description: "An unexpected error occurred during login."
           });
-          navigate('/dashboard', { replace: true });
         }
       }
     };
