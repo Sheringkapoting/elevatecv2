@@ -167,6 +167,51 @@ export type Database = {
         }
         Relationships: []
       }
+      resume_analysis: {
+        Row: {
+          ats_score: number
+          content_score: number
+          created_at: string
+          formatting_score: number
+          id: string
+          improvement_suggestions: string[] | null
+          job_description: string
+          keyword_score: number
+          missing_keywords: string[] | null
+          resume_file_path: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ats_score: number
+          content_score: number
+          created_at?: string
+          formatting_score: number
+          id?: string
+          improvement_suggestions?: string[] | null
+          job_description: string
+          keyword_score: number
+          missing_keywords?: string[] | null
+          resume_file_path: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ats_score?: number
+          content_score?: number
+          created_at?: string
+          formatting_score?: number
+          id?: string
+          improvement_suggestions?: string[] | null
+          job_description?: string
+          keyword_score?: number
+          missing_keywords?: string[] | null
+          resume_file_path?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       resume_analytics: {
         Row: {
           analysis_count: number

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
@@ -17,8 +18,34 @@ const Analyze = () => {
   const [jobDescription, setJobDescription] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisComplete, setAnalysisComplete] = useState(false);
+  const [activeTab, setActiveTab] = useState("upload");
   const { toast } = useToast();
   const { user } = useAuth();
+
+  // Check if the user has any analysis results
+  useEffect(() => {
+    const checkForExistingAnalysis = async () => {
+      if (!user?.id) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from("resume_analysis")
+          .select("id")
+          .eq("user_id", user.id)
+          .limit(1);
+          
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setAnalysisComplete(true);
+        }
+      } catch (error) {
+        console.error("Error checking for existing analysis:", error);
+      }
+    };
+
+    checkForExistingAnalysis();
+  }, [user]);
 
   const handleAnalyze = async () => {
     if (!resumeFile) {
@@ -60,6 +87,7 @@ const Analyze = () => {
         .upload(path, resumeFile, { upsert: true });
       if (uploadError) throw uploadError;
       uploadedFilePath = path;
+      console.log("Resume uploaded to:", uploadedFilePath);
     } catch (e: any) {
       setIsAnalyzing(false);
       toast({
@@ -72,6 +100,7 @@ const Analyze = () => {
 
     // 2. Call edge function to analyze
     try {
+      console.log("Calling analyze-resume edge function...");
       const resp = await fetch(`https://tkkoossbckaojnhhmtsc.supabase.co/functions/v1/analyze-resume`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -81,25 +110,31 @@ const Analyze = () => {
           user_id: user.id,
         }),
       });
-      const data = await resp.json();
-
+      
       if (!resp.ok) {
-        throw new Error(data.error || "Error during resume analysis.");
+        const errorText = await resp.text();
+        console.error("Edge function error response:", errorText);
+        throw new Error(`Error during resume analysis: ${errorText}`);
       }
+      
+      const data = await resp.json();
+      console.log("Analysis result:", data);
 
-      // Save analysis in result state for child components to display
+      // Set analysis complete flag
       setAnalysisComplete(true);
       setIsAnalyzing(false);
-
-      // You could add more state/props to pass dynamic output here
+      
+      // Show success message
       toast({
         title: "Analysis complete",
-        description: `ATS Score: ${data.ats_score || "N/A"}`,
+        description: `Your resume scored ${data.ats_score || 0}% for ATS compatibility.`,
       });
-
-      // Optionally store raw analysis in a state variable for the results tab/component
+      
+      // Switch to results tab
+      setActiveTab("results");
 
     } catch (e: any) {
+      console.error("Analysis error:", e);
       setIsAnalyzing(false);
       toast({
         title: "Analysis failed",
@@ -107,6 +142,10 @@ const Analyze = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
   };
 
   return (
@@ -121,7 +160,7 @@ const Analyze = () => {
             </p>
           </div>
           
-          <Tabs defaultValue="upload" className="max-w-4xl mx-auto">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="max-w-4xl mx-auto">
             <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="upload">Upload & Analyze</TabsTrigger>
               <TabsTrigger value="results" disabled={!analysisComplete}>
