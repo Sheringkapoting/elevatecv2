@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
@@ -9,6 +8,9 @@ import { useToast } from "@/hooks/use-toast";
 import ResumeUpload from "@/components/analyze/ResumeUpload";
 import JobDescription from "@/components/analyze/JobDescription";
 import AnalysisResults from "@/components/analyze/AnalysisResults";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
+import { useEffect } from "react";
 
 const Analyze = () => {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -16,8 +18,9 @@ const Analyze = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     if (!resumeFile) {
       toast({
         title: "Missing resume",
@@ -26,7 +29,7 @@ const Analyze = () => {
       });
       return;
     }
-    
+
     if (!jobDescription) {
       toast({
         title: "Missing job description",
@@ -35,18 +38,75 @@ const Analyze = () => {
       });
       return;
     }
-    
+
+    if (!user?.id) {
+      toast({
+        title: "Not signed in",
+        description: "You must be signed in to analyze your resume.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsAnalyzing(true);
-    
-    // Simulate analysis process
-    setTimeout(() => {
+
+    // 1. Upload resume to storage
+    let uploadedFilePath = "";
+    try {
+      // Use user id as folder: user.id/filename
+      const path = `${user.id}/${resumeFile.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from("resumes")
+        .upload(path, resumeFile, { upsert: true });
+      if (uploadError) throw uploadError;
+      uploadedFilePath = path;
+    } catch (e: any) {
       setIsAnalyzing(false);
+      toast({
+        title: "Upload failed",
+        description: e.message || "Failed to upload the resume file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // 2. Call edge function to analyze
+    try {
+      const resp = await fetch(`https://tkkoossbckaojnhhmtsc.supabase.co/functions/v1/analyze-resume`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          resumeFilePath: uploadedFilePath,
+          jobDescription: jobDescription,
+          user_id: user.id,
+        }),
+      });
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        throw new Error(data.error || "Error during resume analysis.");
+      }
+
+      // Save analysis in result state for child components to display
       setAnalysisComplete(true);
+      setIsAnalyzing(false);
+
+      // You could add more state/props to pass dynamic output here
       toast({
         title: "Analysis complete",
-        description: "Your resume has been analyzed against the job description.",
+        description: `ATS Score: ${data.ats_score || "N/A"}`,
       });
-    }, 2500);
+
+      // Optionally store raw analysis in a state variable for the results tab/component
+
+    } catch (e: any) {
+      setIsAnalyzing(false);
+      toast({
+        title: "Analysis failed",
+        description: e.message || "Failed to analyze resume.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
