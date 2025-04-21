@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, FileText, BarChart2, Home, User } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -7,6 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { authService } from "@/services/authService";
 import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
+import { useAuth } from "@/lib/auth";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,7 +17,24 @@ const Navbar = () => {
   const [registerDialogOpen, setRegisterDialogOpen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const isAuthenticated = authService.isAuthenticated();
+  const location = useLocation();
+
+  // Supabase auth
+  const { user, session } = useAuth();
+
+  // Extract user's avatar_url from metadata
+  const profileImage =
+    user?.user_metadata?.avatar_url ||
+    user?.user_metadata?.picture || // fallback for some OAuth providers
+    "";
+
+  const userName =
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.email ||
+    "";
+
+  const isAuthenticated = !!user; // Supabase session authentication
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -54,59 +74,100 @@ const Navbar = () => {
     setLoginDialogOpen(true);
   };
 
+  const handleLogout = async () => {
+    // Use Supabase signOut if authenticated via Supabase
+    if (isAuthenticated && session) {
+      // signOut from Supabase
+      const { signOut } = useAuth.getState();
+      await signOut();
+      toast({
+        title: "Signed out",
+        description: "You have been signed out."
+      });
+      navigate("/");
+    } else {
+      // Fallback: local auth service
+      authService.logout();
+      navigate("/");
+    }
+  };
+
   return (
     <>
       <nav className="bg-white border-b border-gray-200 py-4 px-4 md:px-8 fixed w-full top-0 left-0 z-50">
         <div className="mx-auto max-w-7xl">
           <div className="flex items-center justify-between">
+            {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
               <FileText className="h-8 w-8 text-primary-600" />
               <span className="font-bold text-xl text-primary-600">Elevate CV (.NET)</span>
             </Link>
 
-            <div className="hidden md:flex items-center space-x-1">
-              <Link to="/" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
+            {/* Centered navigation links in requested order */}
+            <div className="hidden md:flex items-center space-x-8 mx-auto">
+              <Link to="/" className="px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
                 Home
               </Link>
-              <a
-                href="/analyze"
-                onClick={(e) => handleProtectedLink(e, "/analyze")}
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50"
+              <Link to="/dashboard" className="px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
+                Dashboard
+              </Link>
+              <Link
+                to="/analyze"
+                className="px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50"
+                onClick={e => handleProtectedLink(e, "/analyze")}
               >
                 Resume Analysis
-              </a>
-              <a
-                href="/builder"
-                onClick={(e) => handleProtectedLink(e, "/builder")}
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50"
+              </Link>
+              <Link
+                to="/builder"
+                className="px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50"
+                onClick={e => handleProtectedLink(e, "/builder")}
               >
                 Resume Builder
-              </a>
-              <a
-                href="/dashboard"
-                onClick={(e) => handleProtectedLink(e, "/dashboard")}
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50"
-              >
-                Dashboard
-              </a>
+              </Link>
             </div>
 
+            {/* Auth buttons or profile avatar */}
             <div className="hidden md:flex items-center space-x-4">
-              <Button 
-                variant="outline" 
-                className="text-primary-600 border-primary-600 hover:bg-primary-50"
-                onClick={openLoginDialog}
-              >
-                Sign In
-              </Button>
-              <Button 
-                className="bg-primary-600 hover:bg-primary-700 text-white"
-                onClick={openRegisterDialog}
-              >
-                Get Started
-              </Button>
+              {isAuthenticated ? (
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-10 w-10 border border-primary-600" title={userName}>
+                    {profileImage ? (
+                      <AvatarImage src={profileImage} alt={userName} />
+                    ) : (
+                      <AvatarFallback>
+                        <User className="h-6 w-6 text-primary-600" />
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  <Button
+                    variant="outline"
+                    className="text-primary-600 border-primary-600 hover:bg-primary-50"
+                    onClick={handleLogout}
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    className="text-primary-600 border-primary-600 hover:bg-primary-50"
+                    onClick={openLoginDialog}
+                  >
+                    Sign In
+                  </Button>
+                  <Button
+                    className="bg-primary-600 hover:bg-primary-700 text-white"
+                    onClick={openRegisterDialog}
+                  >
+                    Get Started
+                  </Button>
+                </>
+              )}
             </div>
 
+            {/* Mobile menu button */}
             <div className="md:hidden">
               <button
                 onClick={toggleMenu}
@@ -118,6 +179,7 @@ const Navbar = () => {
           </div>
         </div>
 
+        {/* Mobile menu drawer */}
         {isMenuOpen && (
           <div className="md:hidden mt-4">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
@@ -125,9 +187,16 @@ const Navbar = () => {
                 <Home className="mr-2 h-5 w-5" />
                 Home
               </Link>
+              <Link
+                to="/dashboard"
+                className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
+              >
+                <BarChart2 className="mr-2 h-5 w-5" />
+                Dashboard
+              </Link>
               <a
                 href="/analyze"
-                onClick={(e) => handleProtectedLink(e, "/analyze")}
+                onClick={e => handleProtectedLink(e, "/analyze")}
                 className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
               >
                 <FileText className="mr-2 h-5 w-5" />
@@ -135,36 +204,51 @@ const Navbar = () => {
               </a>
               <a
                 href="/builder"
-                onClick={(e) => handleProtectedLink(e, "/builder")}
+                onClick={e => handleProtectedLink(e, "/builder")}
                 className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
               >
                 <User className="mr-2 h-5 w-5" />
                 Resume Builder
               </a>
-              <a
-                href="/dashboard"
-                onClick={(e) => handleProtectedLink(e, "/dashboard")}
-                className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
-              >
-                <BarChart2 className="mr-2 h-5 w-5" />
-                Dashboard
-              </a>
             </div>
             <div className="pt-4 pb-3 border-t border-gray-200">
               <div className="flex items-center px-5">
-                <Button 
-                  variant="outline" 
-                  className="w-full mr-2 text-primary-600 border-primary-600 hover:bg-primary-50"
-                  onClick={openLoginDialog}
-                >
-                  Sign In
-                </Button>
-                <Button 
-                  className="w-full bg-primary-600 hover:bg-primary-700 text-white"
-                  onClick={openRegisterDialog}
-                >
-                  Get Started
-                </Button>
+                {isAuthenticated ? (
+                  <>
+                    <Avatar className="h-10 w-10 border border-primary-600" title={userName}>
+                      {profileImage ? (
+                        <AvatarImage src={profileImage} alt={userName} />
+                      ) : (
+                        <AvatarFallback>
+                          <User className="h-6 w-6 text-primary-600" />
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    <Button
+                      variant="outline"
+                      className="w-full ml-2 text-primary-600 border-primary-600 hover:bg-primary-50"
+                      onClick={handleLogout}
+                    >
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      className="w-full mr-2 text-primary-600 border-primary-600 hover:bg-primary-50"
+                      onClick={openLoginDialog}
+                    >
+                      Sign In
+                    </Button>
+                    <Button
+                      className="w-full bg-primary-600 hover:bg-primary-700 text-white"
+                      onClick={openRegisterDialog}
+                    >
+                      Get Started
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -1,4 +1,3 @@
-
 import { type Session, type User, type AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { create } from 'zustand';
