@@ -26,6 +26,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
+    // Check for error parameters in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    const errorDescription = urlParams.get('error_description');
+    
+    if (error) {
+      console.error("Auth error from URL parameters:", error, errorDescription);
+      toast({
+        title: "Authentication error",
+        description: errorDescription || "There was a problem with authentication.",
+        variant: "destructive"
+      });
+    }
+
     // Listen for auth changes
     const {
       data: { subscription },

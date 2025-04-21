@@ -104,6 +104,7 @@ export const useAuth = create<AuthState>((set) => ({
           queryParams: {
             prompt: "consent",
             access_type: "offline",
+            hd: "domain.com", // Optional: limit to specific domains
           },
         },
       });
