@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Github } from "lucide-react";
@@ -10,11 +11,11 @@ export const SocialSignupButtons = () => {
   const handleSocialSignup = async (provider: string) => {
     try {
       if (provider === "Google") {
-        await signInWithGoogle(window.location.origin);
+        await signInWithGoogle();
         return;
       }
       if (provider === "LinkedIn") {
-        await signInWithLinkedIn(window.location.origin);
+        await signInWithLinkedIn();
         return;
       }
       // For other providers (not yet implemented)

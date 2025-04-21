@@ -12,9 +12,7 @@ export const SocialLoginButtons = () => {
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
-      const currentOrigin = window.location.origin;
-      console.log("Using redirect URL for Google:", currentOrigin);
-      await signInWithGoogle(currentOrigin);
+      await signInWithGoogle();
     } catch (error) {
       console.error("Google login error:", error);
       toast({
@@ -30,9 +28,7 @@ export const SocialLoginButtons = () => {
   const handleLinkedInLogin = async () => {
     try {
       setIsLoading(true);
-      const currentOrigin = window.location.origin;
-      console.log("Using redirect URL for LinkedIn:", currentOrigin);
-      await signInWithLinkedIn(currentOrigin);
+      await signInWithLinkedIn();
     } catch (error) {
       console.error("LinkedIn login error:", error);
       toast({
@@ -48,9 +44,7 @@ export const SocialLoginButtons = () => {
   const handleMicrosoftLogin = async () => {
     try {
       setIsLoading(true);
-      const currentOrigin = window.location.origin;
-      console.log("Using redirect URL for Microsoft:", currentOrigin);
-      await signInWithMicrosoft(currentOrigin);
+      await signInWithMicrosoft();
     } catch (error) {
       console.error("Microsoft login error:", error);
       toast({

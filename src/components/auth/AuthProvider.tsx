@@ -12,9 +12,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Store the current origin to be used for redirects
-    const currentOrigin = window.location.origin;
-    console.log("Current origin:", currentOrigin);
+    // Get the current URL - this is crucial for social auth redirects
+    const currentUrl = window.location.origin;
+    console.log("Current origin for auth redirects:", currentUrl);
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -44,29 +44,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Handle hash fragment from OAuth redirect
     const handleRedirectResult = async () => {
-      if (location.hash) {
-        console.log("Found hash in URL:", location.hash);
+      if (window.location.hash) {
+        console.log("Found hash in URL, handling OAuth callback");
         try {
-          // This is crucial - properly handle the OAuth callback with Supabase
-          // Using the correct method for the current Supabase version
           const { data, error } = await supabase.auth.getSession();
           
           if (error) {
             console.error("Auth error during callback:", error);
             toast({
               title: "Login failed",
-              description: error.message || "Failed to authenticate with LinkedIn."
+              description: error.message || "Failed to authenticate."
             });
             return;
           }
           
           if (data?.session) {
-            // Successfully got session from URL
-            console.log("Successfully set session from URL");
+            console.log("Successfully established session from OAuth redirect");
             setSession(data.session);
             toast({
               title: "Login successful",
-              description: "You have been successfully logged in via LinkedIn."
+              description: "You have been successfully logged in."
             });
             navigate('/dashboard', { replace: true });
           }

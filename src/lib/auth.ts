@@ -1,3 +1,4 @@
+
 import { type Session, type User, type AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { create } from 'zustand';
@@ -15,6 +16,17 @@ interface AuthState {
   signOut: () => Promise<void>;
   setSession: (session: Session | null) => void;
 }
+
+// Helper to ensure we have a valid redirect URL
+const getRedirectUrl = (customUrl?: string): string => {
+  // Use the provided URL or default to window.location.origin
+  const baseUrl = customUrl || window.location.origin;
+  
+  // Log the redirect URL for debugging
+  console.log("Using redirect URL:", baseUrl);
+  
+  return baseUrl;
+};
 
 export const useAuth = create<AuthState>((set) => ({
   user: null,
@@ -45,8 +57,7 @@ export const useAuth = create<AuthState>((set) => ({
   },
   signInWithLinkedIn: async (redirectTo?: string) => {
     try {
-      const effectiveRedirectTo = redirectTo || window.location.origin;
-      console.log("LinkedIn login with redirect to:", effectiveRedirectTo);
+      const effectiveRedirectTo = getRedirectUrl(redirectTo);
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'linkedin_oidc',
@@ -65,8 +76,7 @@ export const useAuth = create<AuthState>((set) => ({
   },
   signInWithMicrosoft: async (redirectTo?: string) => {
     try {
-      const effectiveRedirectTo = redirectTo || window.location.origin;
-      console.log("Microsoft login with redirect to:", effectiveRedirectTo);
+      const effectiveRedirectTo = getRedirectUrl(redirectTo);
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'azure',
@@ -85,14 +95,15 @@ export const useAuth = create<AuthState>((set) => ({
   },
   signInWithGoogle: async (redirectTo?: string) => {
     try {
-      const effectiveRedirectTo = redirectTo || window.location.origin;
-      console.log("Google login with redirect to:", effectiveRedirectTo);
+      const effectiveRedirectTo = getRedirectUrl(redirectTo);
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: effectiveRedirectTo,
           queryParams: {
             prompt: "consent",
+            access_type: "offline",
           },
         },
       });
