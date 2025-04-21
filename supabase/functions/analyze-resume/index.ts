@@ -124,12 +124,29 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Create authenticated Supabase client
+    // IMPORTANT: Get authorization header
     const authHeader = req.headers.get('Authorization');
+    console.log("Authorization header present:", !!authHeader);
     
-    // Initialize the Supabase client using service role key for admin access
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+    if (!authHeader) {
+      console.error("Missing authorization header");
+      return new Response(JSON.stringify({ 
+        error: "Missing authorization header"
+      }), { 
+        status: 401, 
+        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+      });
+    }
+    
+    // Initialize the Supabase client with service role key for admin access
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      }
+    });
 
+    // Parse the request body
     const { resumeFilePath, jobDescription, user_id } = await req.json();
 
     if (!resumeFilePath || !jobDescription || !user_id) {

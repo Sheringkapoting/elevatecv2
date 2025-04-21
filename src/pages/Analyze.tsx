@@ -98,14 +98,20 @@ const Analyze = () => {
       return;
     }
 
-    // 2. Call edge function to analyze
+    // 2. Call edge function to analyze - FIX: properly passing authorization
     try {
       console.log("Calling analyze-resume edge function...");
       
-      // Get the current session for authentication
-      const { data: sessionData } = await supabase.auth.getSession();
+      // IMPORTANT: Get current session first
+      const { data: { session } } = await supabase.auth.getSession();
       
-      // Call the function with authentication
+      if (!session) {
+        throw new Error("No active session found. Please sign in again.");
+      }
+      
+      console.log("Got authenticated session, calling function...");
+      
+      // Call the function with proper authentication
       const { data, error } = await supabase.functions.invoke("analyze-resume", {
         body: {
           resumeFilePath: uploadedFilePath,
