@@ -8,10 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/auth";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
   confirmPassword: z.string(),
   acceptTerms: z.boolean().refine(val => val === true, {
     message: "You must accept the terms and conditions",
@@ -25,7 +28,9 @@ type FormValues = z.infer<typeof formSchema>;
 
 export const RegisterFormFields = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const { toast } = useToast();
+  const { signUp } = useAuth();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -39,19 +44,32 @@ export const RegisterFormFields = () => {
 
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
+    setFormError(null);
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Register form submitted:", data);
-      
+      // Call Supabase Auth signup
+      await signUp(data.email, data.password);
+
       toast({
         title: "Account created successfully",
-        description: "Welcome to Elevate CV!",
+        description: "You can now sign in with your new account.",
       });
-    } catch (error) {
+      form.reset();
+    } catch (error: any) {
+      let errorMsg =
+        error?.message ||
+        "There was a problem creating your account. Please try again.";
+      // Check for existing user error from Supabase
+      if (
+        typeof errorMsg === "string" &&
+        errorMsg.toLowerCase().includes("user already registered")
+      ) {
+        errorMsg = "That email is already registered.";
+      }
+      setFormError(errorMsg);
       toast({
         title: "Error creating account",
-        description: "There was a problem creating your account. Please try again.",
+        description: errorMsg,
         variant: "destructive",
       });
     } finally {
@@ -61,7 +79,11 @@ export const RegisterFormFields = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4"
+        autoComplete="off"
+      >
         <FormField
           control={form.control}
           name="email"
@@ -69,13 +91,13 @@ export const RegisterFormFields = () => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="email@example.com" {...field} />
+                <Input placeholder="email@example.com" type="email" autoComplete="username" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="password"
@@ -83,13 +105,18 @@ export const RegisterFormFields = () => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="confirmPassword"
@@ -97,39 +124,46 @@ export const RegisterFormFields = () => {
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="acceptTerms"
           render={({ field }) => (
             <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4">
               <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel>
-                  I accept the <a href="#" className="text-primary hover:underline">terms and conditions</a>
+                  I accept the{" "}
+                  <a href="#" className="text-primary hover:underline">
+                    terms and conditions
+                  </a>
                 </FormLabel>
                 <FormMessage />
               </div>
             </FormItem>
           )}
         />
-        
-        <Button 
-          type="submit" 
-          className="w-full" 
-          disabled={isLoading}
-        >
+
+        {formError && (
+          <div className="text-sm text-red-600 py-1 px-2 rounded bg-red-50 border border-red-200">
+            {formError}
+          </div>
+        )}
+
+        <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Creating account..." : "Create Account"}
         </Button>
       </form>
