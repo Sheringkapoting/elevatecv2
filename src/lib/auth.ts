@@ -1,4 +1,3 @@
-
 import { type Session, type User, type AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { create } from 'zustand';
@@ -12,6 +11,7 @@ interface AuthState {
   signIn: (email: string, password: string) => Promise<void>;
   signInWithLinkedIn: (redirectTo?: string) => Promise<void>;
   signInWithMicrosoft: (redirectTo?: string) => Promise<void>;
+  signInWithGoogle: (redirectTo?: string) => Promise<void>;
   signOut: () => Promise<void>;
   setSession: (session: Session | null) => void;
 }
@@ -45,18 +45,13 @@ export const useAuth = create<AuthState>((set) => ({
   },
   signInWithLinkedIn: async (redirectTo?: string) => {
     try {
-      // Ensure we use the correct origin for redirect
       const effectiveRedirectTo = redirectTo || window.location.origin;
       console.log("LinkedIn login with redirect to:", effectiveRedirectTo);
       
-      // Set site URL in Supabase site settings (just for debugging)
-      console.log("Current site URL:", window.location.origin);
-
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'linkedin_oidc',
         options: {
           redirectTo: effectiveRedirectTo,
-          // Ensure we get an access token back in the URL
           queryParams: {
             prompt: 'consent',
           },
@@ -70,7 +65,6 @@ export const useAuth = create<AuthState>((set) => ({
   },
   signInWithMicrosoft: async (redirectTo?: string) => {
     try {
-      // Ensure we use the correct origin for redirect
       const effectiveRedirectTo = redirectTo || window.location.origin;
       console.log("Microsoft login with redirect to:", effectiveRedirectTo);
       
@@ -78,7 +72,6 @@ export const useAuth = create<AuthState>((set) => ({
         provider: 'azure',
         options: {
           redirectTo: effectiveRedirectTo,
-          // Ensure we get an access token back in the URL
           queryParams: {
             prompt: 'consent',
           },
@@ -87,6 +80,25 @@ export const useAuth = create<AuthState>((set) => ({
       if (error) throw error;
     } catch (error) {
       console.error("Microsoft login error:", error);
+      set({ error: error as AuthError });
+    }
+  },
+  signInWithGoogle: async (redirectTo?: string) => {
+    try {
+      const effectiveRedirectTo = redirectTo || window.location.origin;
+      console.log("Google login with redirect to:", effectiveRedirectTo);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: effectiveRedirectTo,
+          queryParams: {
+            prompt: "consent",
+          },
+        },
+      });
+      if (error) throw error;
+    } catch (error) {
+      console.error("Google login error:", error);
       set({ error: error as AuthError });
     }
   },

@@ -5,15 +5,18 @@ import { useAuth } from "@/lib/auth";
 
 export const SocialSignupButtons = () => {
   const { toast } = useToast();
-  const { signInWithLinkedIn } = useAuth();
+  const { signInWithLinkedIn, signInWithGoogle } = useAuth();
 
   const handleSocialSignup = async (provider: string) => {
     try {
+      if (provider === "Google") {
+        await signInWithGoogle(window.location.origin);
+        return;
+      }
       if (provider === "LinkedIn") {
         await signInWithLinkedIn(window.location.origin);
         return;
       }
-      
       // For other providers (not yet implemented)
       toast({
         title: "Social signup not implemented",

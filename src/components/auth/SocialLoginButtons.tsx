@@ -1,24 +1,37 @@
-
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Linkedin, Github } from "lucide-react";
+import { Linkedin } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useState } from "react";
 
 export const SocialLoginButtons = () => {
   const { toast } = useToast();
-  const { signInWithLinkedIn, signInWithMicrosoft } = useAuth();
+  const { signInWithLinkedIn, signInWithMicrosoft, signInWithGoogle } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleGoogleLogin = async () => {
+    try {
+      setIsLoading(true);
+      const currentOrigin = window.location.origin;
+      console.log("Using redirect URL for Google:", currentOrigin);
+      await signInWithGoogle(currentOrigin);
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast({
+        title: "Error signing in with Google",
+        description: "There was a problem with Google authentication.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleLinkedInLogin = async () => {
     try {
       setIsLoading(true);
-      
-      // Get the exact current URL's origin
       const currentOrigin = window.location.origin;
       console.log("Using redirect URL for LinkedIn:", currentOrigin);
-      
-      // Use the current origin as the redirect URL
       await signInWithLinkedIn(currentOrigin);
     } catch (error) {
       console.error("LinkedIn login error:", error);
@@ -35,12 +48,8 @@ export const SocialLoginButtons = () => {
   const handleMicrosoftLogin = async () => {
     try {
       setIsLoading(true);
-      
-      // Get the exact current URL's origin
       const currentOrigin = window.location.origin;
       console.log("Using redirect URL for Microsoft:", currentOrigin);
-      
-      // Use the current origin as the redirect URL
       await signInWithMicrosoft(currentOrigin);
     } catch (error) {
       console.error("Microsoft login error:", error);
@@ -55,7 +64,9 @@ export const SocialLoginButtons = () => {
   };
 
   const handleSocialLogin = (provider: string) => {
-    if (provider === "LinkedIn") {
+    if (provider === "Google") {
+      handleGoogleLogin();
+    } else if (provider === "LinkedIn") {
       handleLinkedInLogin();
     } else if (provider === "Microsoft") {
       handleMicrosoftLogin();
@@ -85,6 +96,7 @@ export const SocialLoginButtons = () => {
           variant="outline" 
           type="button" 
           onClick={() => handleSocialLogin("Google")}
+          disabled={isLoading}
         >
           <svg className="mr-2 h-4 w-4" aria-hidden="true" viewBox="0 0 24 24">
             <path
@@ -110,6 +122,7 @@ export const SocialLoginButtons = () => {
           variant="outline" 
           type="button" 
           onClick={() => handleSocialLogin("LinkedIn")}
+          disabled={isLoading}
         >
           <Linkedin className="mr-2 h-4 w-4" />
           LinkedIn
@@ -118,6 +131,7 @@ export const SocialLoginButtons = () => {
           variant="outline" 
           type="button" 
           onClick={() => handleSocialLogin("Microsoft")}
+          disabled={isLoading}
         >
           <svg className="mr-2 h-4 w-4" aria-hidden="true" viewBox="0 0 24 24">
             <path d="M11.4008 2H2V11.4008H11.4008V2Z" fill="#F25022" />
