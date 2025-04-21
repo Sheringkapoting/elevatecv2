@@ -124,6 +124,10 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Create authenticated Supabase client
+    const authHeader = req.headers.get('Authorization');
+    
+    // Initialize the Supabase client using service role key for admin access
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
     const { resumeFilePath, jobDescription, user_id } = await req.json();

@@ -101,23 +101,24 @@ const Analyze = () => {
     // 2. Call edge function to analyze
     try {
       console.log("Calling analyze-resume edge function...");
-      const resp = await fetch(`https://tkkoossbckaojnhhmtsc.supabase.co/functions/v1/analyze-resume`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      
+      // Get the current session for authentication
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      // Call the function with authentication
+      const { data, error } = await supabase.functions.invoke("analyze-resume", {
+        body: {
           resumeFilePath: uploadedFilePath,
           jobDescription: jobDescription,
           user_id: user.id,
-        }),
+        },
       });
       
-      if (!resp.ok) {
-        const errorText = await resp.text();
-        console.error("Edge function error response:", errorText);
-        throw new Error(`Error during resume analysis: ${errorText}`);
+      if (error) {
+        console.error("Edge function error:", error);
+        throw new Error(`Error during resume analysis: ${error.message}`);
       }
       
-      const data = await resp.json();
       console.log("Analysis result:", data);
 
       // Set analysis complete flag
