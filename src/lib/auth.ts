@@ -1,3 +1,4 @@
+
 import { type Session, type User, type AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { create } from 'zustand';
@@ -7,6 +8,8 @@ interface AuthState {
   session: Session | null;
   loading: boolean;
   error: AuthError | null;
+  profileImage: string | null;
+  userName: string | null;
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithLinkedIn: (redirectTo?: string) => Promise<void>;
@@ -27,11 +30,33 @@ const getRedirectUrl = (customUrl?: string): string => {
   return baseUrl;
 };
 
+// Helper to extract profile image URL from user metadata
+const getProfileImageFromMetadata = (user: User | null): string | null => {
+  if (!user) return null;
+  
+  return user.user_metadata?.avatar_url || 
+         user.user_metadata?.picture || 
+         user.user_metadata?.user_image || 
+         null;
+};
+
+// Helper to extract user name from metadata
+const getUserNameFromMetadata = (user: User | null): string | null => {
+  if (!user) return null;
+  
+  return user.user_metadata?.full_name || 
+         user.user_metadata?.name || 
+         user.email || 
+         null;
+};
+
 export const useAuth = create<AuthState>((set) => ({
   user: null,
   session: null,
   loading: true,
   error: null,
+  profileImage: null,
+  userName: null,
   signUp: async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signUp({
@@ -118,13 +143,28 @@ export const useAuth = create<AuthState>((set) => ({
     if (error) {
       set({ error });
     } else {
-      set({ user: null, session: null });
+      set({ 
+        user: null, 
+        session: null, 
+        profileImage: null,
+        userName: null 
+      });
     }
   },
   setSession: (session) => {
+    const user = session?.user ?? null;
+    const profileImage = getProfileImageFromMetadata(user);
+    const userName = getUserNameFromMetadata(user);
+    
+    console.log("Setting session with user:", user?.id);
+    console.log("Profile image:", profileImage);
+    console.log("User name:", userName);
+    
     set({
       session,
-      user: session?.user ?? null,
+      user,
+      profileImage,
+      userName,
       loading: false,
     });
   },

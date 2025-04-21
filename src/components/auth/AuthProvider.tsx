@@ -18,7 +18,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+      console.log("Initial session check:", session ? "Authenticated" : "Unauthenticated");
+      
+      if (session) {
+        console.log("User profile data:", session.user.user_metadata);
+        setSession(session);
+      }
       
       // If user is authenticated and we're on the home page, redirect to dashboard
       if (session && location.pathname === '/') {
@@ -43,16 +48,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event, session ? "Authenticated" : "Unauthenticated");
       
-      // If auth state changes to logged in and we're on the home page, redirect to dashboard
-      if (session && location.pathname === '/') {
-        toast({
-          title: "Login successful",
-          description: "You have been successfully logged in."
-        });
-        navigate('/dashboard', { replace: true });
+      if (session) {
+        console.log("User metadata:", session.user.user_metadata);
+        setSession(session);
+        
+        // If auth state changes to logged in and we're on the home page, redirect to dashboard
+        if (location.pathname === '/') {
+          toast({
+            title: "Login successful",
+            description: "You have been successfully logged in."
+          });
+          navigate('/dashboard', { replace: true });
+        }
+      } else if (event === 'SIGNED_OUT') {
+        setSession(null);
       }
     });
 
@@ -74,6 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (data?.session) {
             console.log("Successfully established session from OAuth redirect");
+            console.log("User profile data from redirect:", data.session.user.user_metadata);
             setSession(data.session);
             toast({
               title: "Login successful",
