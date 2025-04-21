@@ -63,4 +63,3 @@ const AuthProfileArea = ({
 };
 
 export default AuthProfileArea;
-

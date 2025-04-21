@@ -1,15 +1,13 @@
 
-import { Link, useNavigate } from "react-router-dom";
-import { FileText, BarChart2, Home, User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface NavLinksProps {
   isAuthenticated: boolean;
   handleProtectedLink: (e: React.MouseEvent<HTMLAnchorElement>, path: string) => void;
 }
 
+// Always renders in this order: Home | Dashboard | Resume Analysis | Resume Builder
 const NavLinks = ({ isAuthenticated, handleProtectedLink }: NavLinksProps) => {
-  const navigate = useNavigate();
-  // Order: Home | Dashboard | Resume Analysis | Resume Builder
   return (
     <div className="hidden md:flex items-center space-x-8 mx-auto">
       <Link to="/" className="px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
@@ -37,4 +35,3 @@ const NavLinks = ({ isAuthenticated, handleProtectedLink }: NavLinksProps) => {
 };
 
 export default NavLinks;
-
