@@ -10,7 +10,7 @@ interface AuthState {
   error: AuthError | null;
   profileImage: string | null;
   userName: string | null;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, metadata?: Record<string, any>) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithLinkedIn: (redirectTo?: string) => Promise<void>;
   signInWithMicrosoft: (redirectTo?: string) => Promise<void>;
@@ -57,11 +57,14 @@ export const useAuth = create<AuthState>((set) => ({
   error: null,
   profileImage: null,
   userName: null,
-  signUp: async (email: string, password: string) => {
+  signUp: async (email: string, password: string, metadata?: Record<string, any>) => {
     try {
       const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: metadata
+        }
       });
       if (error) throw error;
     } catch (error) {

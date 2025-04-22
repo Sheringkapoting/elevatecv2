@@ -1,35 +1,46 @@
 
 import { Link } from "react-router-dom";
+import { BarChart2, FileText, Home, User } from "lucide-react";
 
 interface NavLinksProps {
   isAuthenticated: boolean;
   handleProtectedLink: (e: React.MouseEvent<HTMLAnchorElement>, path: string) => void;
 }
 
-// Always renders in this order: Home | Dashboard | Resume Analysis | Resume Builder
 const NavLinks = ({ isAuthenticated, handleProtectedLink }: NavLinksProps) => {
   return (
-    <div className="hidden md:flex items-center space-x-8 mx-auto">
-      <Link to="/" className="px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
+    <div className="hidden md:flex md:ml-10 md:items-center md:space-x-8">
+      <Link
+        to="/"
+        className="text-gray-700 hover:text-primary inline-flex items-center"
+      >
+        <Home className="mr-1 h-4 w-4" />
         Home
       </Link>
-      <Link to="/dashboard" className="px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
+      <Link
+        to="/dashboard"
+        className="text-gray-700 hover:text-primary inline-flex items-center"
+      >
+        <BarChart2 className="mr-1 h-4 w-4" />
         Dashboard
       </Link>
-      <Link
-        to="/analyze"
-        className="px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50"
-        onClick={e => handleProtectedLink(e, "/analyze")}
+      <a
+        href="/analyze"
+        onClick={(e) => handleProtectedLink(e, "/analyze")}
+        className="text-gray-700 hover:text-primary inline-flex items-center"
       >
+        <FileText className="mr-1 h-4 w-4" />
         Resume Analysis
-      </Link>
-      <Link
-        to="/builder"
-        className="px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50"
-        onClick={e => handleProtectedLink(e, "/builder")}
-      >
-        Resume Builder
-      </Link>
+      </a>
+      {isAuthenticated && (
+        <Link
+          to="/profile"
+          className="text-gray-700 hover:text-primary inline-flex items-center"
+        >
+          <User className="mr-1 h-4 w-4" />
+          My Profile
+        </Link>
+      )}
     </div>
   );
 };

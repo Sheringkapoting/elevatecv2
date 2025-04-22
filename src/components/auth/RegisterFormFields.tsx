@@ -9,8 +9,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
+  fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z
     .string()
@@ -31,10 +33,12 @@ export const RegisterFormFields = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const { toast } = useToast();
   const { signUp } = useAuth();
+  const navigate = useNavigate();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      fullName: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -47,14 +51,18 @@ export const RegisterFormFields = () => {
     setFormError(null);
 
     try {
-      // Call Supabase Auth signup
-      await signUp(data.email, data.password);
+      // Call Supabase Auth signup with additional metadata
+      await signUp(data.email, data.password, {
+        full_name: data.fullName
+      });
 
       toast({
         title: "Account created successfully",
         description: "You can now sign in with your new account.",
       });
+      
       form.reset();
+      navigate("/profile");
     } catch (error: any) {
       let errorMsg =
         error?.message ||
@@ -84,6 +92,20 @@ export const RegisterFormFields = () => {
         className="space-y-4"
         autoComplete="off"
       >
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Full Name</FormLabel>
+              <FormControl>
+                <Input placeholder="John Doe" type="text" autoComplete="name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="email"
