@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import { useAuth } from "@/lib/auth";
@@ -14,6 +14,28 @@ const NavbarContainer = () => {
   const [registerDialogOpen, setRegisterDialogOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Close dialogs when login is successful
+  useEffect(() => {
+    const handleLoginSuccess = () => {
+      setLoginDialogOpen(false);
+      setRegisterDialogOpen(false);
+    };
+    
+    window.addEventListener('login:success', handleLoginSuccess);
+    
+    return () => {
+      window.removeEventListener('login:success', handleLoginSuccess);
+    };
+  }, []);
+
+  // Also close dialogs when user object changes
+  useEffect(() => {
+    if (user) {
+      setLoginDialogOpen(false);
+      setRegisterDialogOpen(false);
+    }
+  }, [user]);
 
   const openLoginDialog = () => {
     setLoginDialogOpen(true);

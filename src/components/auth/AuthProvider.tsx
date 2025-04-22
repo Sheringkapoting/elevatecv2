@@ -55,13 +55,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log("User metadata:", session.user.user_metadata);
         setSession(session);
         
-        // If auth state changes to logged in and we're on the home page, redirect to dashboard
-        if (location.pathname === '/') {
+        // When auth state changes to logged in, redirect to profile page
+        if (event === 'SIGNED_IN') {
           toast({
             title: "Login successful",
             description: "You have been successfully logged in."
           });
-          navigate('/dashboard', { replace: true });
+          
+          // The key fix: Redirect to profile regardless of current page
+          navigate('/profile', { replace: true });
         }
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
@@ -92,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               title: "Login successful",
               description: "You have been successfully logged in."
             });
-            navigate('/dashboard', { replace: true });
+            navigate('/profile', { replace: true });
           }
         } catch (err) {
           console.error("Error handling OAuth redirect:", err);
