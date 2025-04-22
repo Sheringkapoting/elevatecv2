@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { useProfile } from "@/hooks/useProfile";
@@ -14,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Separator } from "@/components/ui/separator";
-import { eye, eyeOff, user } from "lucide-react";
+import { Eye, EyeOff, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 // Profile form schema
@@ -190,7 +191,7 @@ export default function ProfilePage() {
             <AvatarImage src={profileImage} alt={userName || 'User'} />
           ) : (
             <AvatarFallback className="bg-primary-100 text-primary-800">
-              <user className="h-12 w-12" />
+              <User className="h-12 w-12" />
             </AvatarFallback>
           )}
         </Avatar>
@@ -399,7 +400,7 @@ export default function ProfilePage() {
                               className="absolute right-0 top-0 h-full px-3"
                               onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                             >
-                              {showCurrentPassword ? <eyeOff className="h-4 w-4" /> : <eye className="h-4 w-4" />}
+                              {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                             </Button>
                           </div>
                         </FormControl>
@@ -428,7 +429,7 @@ export default function ProfilePage() {
                               className="absolute right-0 top-0 h-full px-3"
                               onClick={() => setShowNewPassword(!showNewPassword)}
                             >
-                              {showNewPassword ? <eyeOff className="h-4 w-4" /> : <eye className="h-4 w-4" />}
+                              {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                             </Button>
                           </div>
                         </FormControl>
@@ -460,7 +461,7 @@ export default function ProfilePage() {
                               className="absolute right-0 top-0 h-full px-3"
                               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                             >
-                              {showConfirmPassword ? <eyeOff className="h-4 w-4" /> : <eye className="h-4 w-4" />}
+                              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                             </Button>
                           </div>
                         </FormControl>
