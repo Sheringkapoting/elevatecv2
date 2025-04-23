@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { User } from "lucide-react";
+import { User, LogIn } from "lucide-react";
 
 interface AuthProfileAreaProps {
   isAuthenticated: boolean;
@@ -45,9 +45,10 @@ const AuthProfileArea = ({
         <>
           <Button
             variant="outline"
-            className="text-primary-600 border-primary-600 hover:bg-primary-50"
+            className="text-primary-600 border-primary-600 hover:bg-primary-50 inline-flex items-center"
             onClick={openLoginDialog}
           >
+            <LogIn className="mr-1 h-4 w-4" />
             Sign In
           </Button>
           <Button

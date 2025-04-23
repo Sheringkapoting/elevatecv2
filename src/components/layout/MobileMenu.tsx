@@ -1,5 +1,6 @@
+
 import { Link } from "react-router-dom";
-import { FileText, BarChart2, Home } from "lucide-react";
+import { FileText, BarChart2, Home, FilePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { User } from "lucide-react";
@@ -34,7 +35,7 @@ const MobileMenu = ({
       <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
         <Link
           to="/"
-          className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
+          className="flex items-center px-3 py-2 rounded-md text-base font-medium text-primary-600 hover:bg-primary-50"
           onClick={() => setIsMenuOpen(false)}
         >
           <Home className="mr-2 h-5 w-5" />
@@ -47,22 +48,10 @@ const MobileMenu = ({
             handleProtectedLink(e, "/dashboard");
             setIsMenuOpen(false);
           }}
-          className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
+          className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-600"
         >
           <BarChart2 className="mr-2 h-5 w-5" />
           Dashboard
-        </a>
-        
-        <a
-          href="/builder"
-          onClick={(e) => {
-            handleProtectedLink(e, "/builder");
-            setIsMenuOpen(false);
-          }}
-          className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
-        >
-          <FileText className="mr-2 h-5 w-5" />
-          Resume Builder
         </a>
         
         <a
@@ -71,10 +60,22 @@ const MobileMenu = ({
             handleProtectedLink(e, "/analyze");
             setIsMenuOpen(false);
           }}
-          className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
+          className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-600"
         >
           <FileText className="mr-2 h-5 w-5" />
           Resume Analysis
+        </a>
+        
+        <a
+          href="/builder"
+          onClick={(e) => {
+            handleProtectedLink(e, "/builder");
+            setIsMenuOpen(false);
+          }}
+          className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-600"
+        >
+          <FilePen className="mr-2 h-5 w-5" />
+          Resume Builder
         </a>
       </div>
       
