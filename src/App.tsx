@@ -11,7 +11,6 @@ import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
 import Profile from "@/pages/Profile";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 import "./App.css";
 
@@ -28,31 +27,10 @@ function App() {
             <main className="flex-grow">
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route 
-                  path="/dashboard" 
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } 
-                />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/analyze" element={<Analyze />} />
-                <Route 
-                  path="/builder" 
-                  element={
-                    <ProtectedRoute>
-                      <Builder />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/profile" 
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  } 
-                />
+                <Route path="/builder" element={<Builder />} />
+                <Route path="/profile" element={<Profile />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
