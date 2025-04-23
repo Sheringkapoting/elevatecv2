@@ -57,12 +57,25 @@ const NavbarContainer = () => {
   };
 
   const handleLogout = async () => {
-    await signOut();
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    });
-    navigate("/");
+    try {
+      // First navigate to home page
+      navigate("/");
+      
+      // Then handle the signout process
+      await signOut();
+      
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({
+        title: "Logout failed",
+        description: "There was a problem logging out. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleProtectedLink = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
