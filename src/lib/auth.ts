@@ -10,8 +10,8 @@ interface AuthState {
   error: AuthError | null;
   profileImage: string | null;
   userName: string | null;
-  signUp: (email: string, password: string, metadata?: Record<string, any>) => Promise<void>;
-  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, metadata?: Record<string, any>) => Promise<{ error: AuthError | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signInWithLinkedIn: (redirectTo?: string) => Promise<void>;
   signInWithMicrosoft: (redirectTo?: string) => Promise<void>;
   signInWithGoogle: (redirectTo?: string) => Promise<void>;
@@ -50,7 +50,7 @@ const getUserNameFromMetadata = (user: User | null): string | null => {
          null;
 };
 
-export const useAuth = create<AuthState>((set) => ({
+export const useAuth = create<AuthState>((set, get) => ({
   user: null,
   session: null,
   loading: true,
@@ -66,20 +66,33 @@ export const useAuth = create<AuthState>((set) => ({
           data: metadata
         }
       });
-      if (error) throw error;
+      set({ error: error });
+      return { error };
     } catch (error) {
       set({ error: error as AuthError });
+      return { error: error as AuthError };
     }
   },
   signIn: async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      if (error) throw error;
+      
+      // Set error state regardless if error is null or not
+      set({ error: error });
+      
+      // For debugging purposes
+      if (error) {
+        console.error("Login error:", error.message);
+      }
+      
+      return { error };
     } catch (error) {
+      console.error("Unexpected login error:", error);
       set({ error: error as AuthError });
+      return { error: error as AuthError };
     }
   },
   signInWithLinkedIn: async (redirectTo?: string) => {

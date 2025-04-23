@@ -31,7 +31,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export const LoginFormFields = () => {
   const { toast } = useToast();
-  const { signIn } = useAuth();
+  const { signIn, error: authError } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -57,8 +57,14 @@ export const LoginFormFields = () => {
 
     setIsLoading(true);
     try {
-      await signIn(data.email, data.password);
+      const { error } = await signIn(data.email, data.password);
+      
+      // If there's an error from Supabase auth, handle it
+      if (error) {
+        throw error;
+      }
 
+      // Only show success message if no error was thrown
       toast({
         title: "Successfully signed in",
         description: "Welcome back to Elevate CV!",
