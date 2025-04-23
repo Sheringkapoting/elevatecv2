@@ -69,7 +69,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Clear the signup flag
           sessionStorage.removeItem('is_signup_event');
-        } else if (event === 'SIGNED_UP') {
+        }
+        
+        // Check for new user flag in user metadata to identify signup events
+        const isNewUser = session.user.app_metadata?.provider === 'email' && 
+                          session.user.app_metadata?.providers?.length === 1 && 
+                          session.user.created_at === session.user.updated_at;
+                          
+        if (isNewUser) {
           // Set flag to indicate this was a signup event
           sessionStorage.setItem('is_signup_event', 'true');
           
