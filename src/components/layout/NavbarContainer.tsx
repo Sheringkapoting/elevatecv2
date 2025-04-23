@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
@@ -9,11 +9,10 @@ import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
 
 const NavbarContainer = () => {
-  const { user, session, profileImage, userName, signOut } = useAuth();
+  const { user, session, profileImage, userName, signIn, signUp, signOut, signInWithGoogle, signInWithLinkedIn, signInWithMicrosoft } = useAuth();
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [registerDialogOpen, setRegisterDialogOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
 
   // Close dialogs when login is successful
@@ -73,12 +72,7 @@ const NavbarContainer = () => {
         description: "Please log in to access this feature.",
         variant: "destructive",
       });
-      // Store the path the user was trying to access
       openLoginDialog();
-    } else {
-      // If user is authenticated, let the default link behavior work
-      navigate(path);
-      e.preventDefault(); // Prevent default link behavior since we've handled navigation
     }
   };
 
