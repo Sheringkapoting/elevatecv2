@@ -38,14 +38,29 @@ const MobileMenu = ({
           <Home className="mr-2 h-5 w-5" />
           Home
         </Link>
-        <Link
-          to="/dashboard"
-          className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
-          onClick={() => setIsMenuOpen(false)}
-        >
-          <BarChart2 className="mr-2 h-5 w-5" />
-          Dashboard
-        </Link>
+        
+        {isAuthenticated && (
+          <>
+            <Link
+              to="/dashboard"
+              className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <BarChart2 className="mr-2 h-5 w-5" />
+              Dashboard
+            </Link>
+            
+            <Link
+              to="/builder"
+              className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <FileText className="mr-2 h-5 w-5" />
+              Resume Builder
+            </Link>
+          </>
+        )}
+        
         <a
           href="/analyze"
           onClick={(e) => {
@@ -57,17 +72,17 @@ const MobileMenu = ({
           <FileText className="mr-2 h-5 w-5" />
           Resume Analysis
         </a>
-        <a
-          href="/builder"
-          onClick={(e) => {
-            handleProtectedLink(e, "/builder");
-            setIsMenuOpen(false);
-          }}
-          className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
-        >
-          <User className="mr-2 h-5 w-5" />
-          Resume Builder
-        </a>
+        
+        {isAuthenticated && (
+          <Link
+            to="/profile"
+            className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-primary-50"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <User className="mr-2 h-5 w-5" />
+            My Profile
+          </Link>
+        )}
       </div>
       <div className="pt-4 pb-3 border-t border-gray-200">
         <div className="flex items-center px-5">
@@ -123,4 +138,3 @@ const MobileMenu = ({
 };
 
 export default MobileMenu;
-

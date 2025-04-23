@@ -17,13 +17,27 @@ const NavLinks = ({ isAuthenticated, handleProtectedLink }: NavLinksProps) => {
         <Home className="mr-1 h-4 w-4" />
         Home
       </Link>
-      <Link
-        to="/dashboard"
-        className="text-gray-700 hover:text-primary inline-flex items-center"
-      >
-        <BarChart2 className="mr-1 h-4 w-4" />
-        Dashboard
-      </Link>
+      
+      {isAuthenticated && (
+        <>
+          <Link
+            to="/dashboard"
+            className="text-gray-700 hover:text-primary inline-flex items-center"
+          >
+            <BarChart2 className="mr-1 h-4 w-4" />
+            Dashboard
+          </Link>
+
+          <Link
+            to="/builder"
+            className="text-gray-700 hover:text-primary inline-flex items-center"
+          >
+            <FileText className="mr-1 h-4 w-4" />
+            Resume Builder
+          </Link>
+        </>
+      )}
+      
       <a
         href="/analyze"
         onClick={(e) => handleProtectedLink(e, "/analyze")}
@@ -32,6 +46,7 @@ const NavLinks = ({ isAuthenticated, handleProtectedLink }: NavLinksProps) => {
         <FileText className="mr-1 h-4 w-4" />
         Resume Analysis
       </a>
+      
       {isAuthenticated && (
         <Link
           to="/profile"
