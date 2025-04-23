@@ -1,13 +1,12 @@
 
 import { Link } from "react-router-dom";
-import { BarChart2, FileText, Home, User } from "lucide-react";
+import { BarChart2, FileText, Home } from "lucide-react";
 
 interface NavLinksProps {
-  isAuthenticated: boolean;
   handleProtectedLink: (e: React.MouseEvent<HTMLAnchorElement>, path: string) => void;
 }
 
-const NavLinks = ({ isAuthenticated, handleProtectedLink }: NavLinksProps) => {
+const NavLinks = ({ handleProtectedLink }: NavLinksProps) => {
   return (
     <div className="hidden md:flex md:ml-10 md:items-center md:space-x-8">
       <Link
@@ -18,25 +17,23 @@ const NavLinks = ({ isAuthenticated, handleProtectedLink }: NavLinksProps) => {
         Home
       </Link>
       
-      {isAuthenticated && (
-        <>
-          <Link
-            to="/dashboard"
-            className="text-gray-700 hover:text-primary inline-flex items-center"
-          >
-            <BarChart2 className="mr-1 h-4 w-4" />
-            Dashboard
-          </Link>
+      <a
+        href="/dashboard"
+        onClick={(e) => handleProtectedLink(e, "/dashboard")}
+        className="text-gray-700 hover:text-primary inline-flex items-center"
+      >
+        <BarChart2 className="mr-1 h-4 w-4" />
+        Dashboard
+      </a>
 
-          <Link
-            to="/builder"
-            className="text-gray-700 hover:text-primary inline-flex items-center"
-          >
-            <FileText className="mr-1 h-4 w-4" />
-            Resume Builder
-          </Link>
-        </>
-      )}
+      <a
+        href="/builder"
+        onClick={(e) => handleProtectedLink(e, "/builder")}
+        className="text-gray-700 hover:text-primary inline-flex items-center"
+      >
+        <FileText className="mr-1 h-4 w-4" />
+        Resume Builder
+      </a>
       
       <a
         href="/analyze"
@@ -46,16 +43,6 @@ const NavLinks = ({ isAuthenticated, handleProtectedLink }: NavLinksProps) => {
         <FileText className="mr-1 h-4 w-4" />
         Resume Analysis
       </a>
-      
-      {isAuthenticated && (
-        <Link
-          to="/profile"
-          className="text-gray-700 hover:text-primary inline-flex items-center"
-        >
-          <User className="mr-1 h-4 w-4" />
-          My Profile
-        </Link>
-      )}
     </div>
   );
 };

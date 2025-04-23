@@ -26,7 +26,7 @@ const Navbar = ({
     <nav className="bg-white border-b border-gray-200 shadow-sm fixed w-full z-20 top-0 left-0">
       <div className="max-w-7xl mx-auto flex justify-between items-center h-16 px-6">
         <Logo />
-        <NavLinks isAuthenticated={isAuthenticated} handleProtectedLink={handleProtectedLink} />
+        <NavLinks handleProtectedLink={handleProtectedLink} />
         <AuthProfileArea
           isAuthenticated={isAuthenticated}
           profileImage={profileImage}

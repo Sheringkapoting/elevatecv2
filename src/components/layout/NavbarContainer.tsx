@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -7,16 +6,17 @@ import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
+import MobileMenu from "./MobileMenu";
 
 const NavbarContainer = () => {
   const { user, session, profileImage, userName, signOut } = useAuth();
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [registerDialogOpen, setRegisterDialogOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
 
-  // Close dialogs when login is successful
   useEffect(() => {
     const handleLoginSuccess = () => {
       setLoginDialogOpen(false);
@@ -30,7 +30,6 @@ const NavbarContainer = () => {
     };
   }, []);
 
-  // Also close dialogs when user object changes
   useEffect(() => {
     if (user) {
       setLoginDialogOpen(false);
@@ -66,19 +65,16 @@ const NavbarContainer = () => {
   };
 
   const handleProtectedLink = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+    e.preventDefault();
     if (!user) {
-      e.preventDefault();
       toast({
         title: "Authentication required",
         description: "Please log in to access this feature.",
         variant: "destructive",
       });
-      // Store the path the user was trying to access
       openLoginDialog();
     } else {
-      // If user is authenticated, let the default link behavior work
       navigate(path);
-      e.preventDefault(); // Prevent default link behavior since we've handled navigation
     }
   };
 
@@ -94,14 +90,24 @@ const NavbarContainer = () => {
         handleProtectedLink={handleProtectedLink}
       />
       
-      {/* Login Dialog */}
+      <MobileMenu
+        isMenuOpen={isMenuOpen}
+        setIsMenuOpen={setIsMenuOpen}
+        isAuthenticated={!!user}
+        profileImage={profileImage}
+        userName={userName}
+        handleProtectedLink={handleProtectedLink}
+        handleLogout={handleLogout}
+        openLoginDialog={openLoginDialog}
+        openRegisterDialog={openRegisterDialog}
+      />
+      
       <Dialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <LoginForm onSwitchToRegister={switchToRegister} />
         </DialogContent>
       </Dialog>
       
-      {/* Register Dialog */}
       <Dialog open={registerDialogOpen} onOpenChange={setRegisterDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <RegisterForm onSwitchToLogin={switchToLogin} />
