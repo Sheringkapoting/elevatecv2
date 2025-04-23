@@ -11,6 +11,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const { toast } = useToast();
 
+  // Get returnTo from location state if available
+  const from = location.state?.from || '/dashboard';
+
   useEffect(() => {
     // Get the current URL - this is crucial for social auth redirects
     const currentUrl = window.location.origin;
@@ -23,11 +26,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session) {
         console.log("User profile data:", session.user.user_metadata);
         setSession(session);
-      }
-      
-      // If user is authenticated and we're on the home page, redirect to dashboard
-      if (session && location.pathname === '/') {
-        navigate('/dashboard', { replace: true });
       }
     });
 
@@ -55,15 +53,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log("User metadata:", session.user.user_metadata);
         setSession(session);
         
-        // When auth state changes to logged in, redirect to profile page
+        // When auth state changes to logged in, redirect to the intended page or default to profile
         if (event === 'SIGNED_IN') {
           toast({
             title: "Login successful",
             description: "You have been successfully logged in."
           });
           
-          // The key fix: Redirect to profile regardless of current page
-          navigate('/profile', { replace: true });
+          // Navigate to the page the user was trying to access before login
+          navigate(from, { replace: true });
         }
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
@@ -94,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               title: "Login successful",
               description: "You have been successfully logged in."
             });
-            navigate('/profile', { replace: true });
+            navigate(from, { replace: true });
           }
         } catch (err) {
           console.error("Error handling OAuth redirect:", err);
@@ -110,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     handleRedirectResult();
 
     return () => subscription.unsubscribe();
-  }, [setSession, navigate, location, toast]);
+  }, [setSession, navigate, location, toast, from]);
 
   return <>{children}</>;
 }
