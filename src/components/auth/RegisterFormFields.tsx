@@ -51,20 +51,29 @@ export const RegisterFormFields = () => {
     setFormError(null);
 
     try {
+      // Sign up the user
       const { error } = await signUp(data.email, data.password, {
         full_name: data.fullName
       });
 
       if (error) throw error;
 
+      // Dispatch a custom event to close any open dialogs
+      const loginSuccessEvent = new CustomEvent('login:success');
+      window.dispatchEvent(loginSuccessEvent);
+
       toast({
         title: "Account created successfully",
         description: "Welcome! You can now complete your profile.",
       });
       
-      // Reset form and navigate to profile page
+      // Reset form
       form.reset();
-      navigate("/profile");
+      
+      // Add a slight delay before redirecting to ensure auth state is updated
+      setTimeout(() => {
+        navigate("/profile");
+      }, 500);
     } catch (error: any) {
       let errorMsg =
         error?.message ||

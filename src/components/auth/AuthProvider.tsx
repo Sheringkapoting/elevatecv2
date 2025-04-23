@@ -60,8 +60,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             description: "You have been successfully logged in."
           });
           
-          // Navigate to the page the user was trying to access before login
-          navigate(from, { replace: true });
+          // Only navigate if not on profile page and not from a signup event
+          const isSignUp = sessionStorage.getItem('is_signup_event');
+          if (!location.pathname.includes('/profile') && !isSignUp) {
+            // Navigate to the page the user was trying to access before login
+            navigate(from, { replace: true });
+          }
+          
+          // Clear the signup flag
+          sessionStorage.removeItem('is_signup_event');
+        } else if (event === 'SIGNED_UP') {
+          // Set flag to indicate this was a signup event
+          sessionStorage.setItem('is_signup_event', 'true');
+          
+          toast({
+            title: "Account created",
+            description: "Your account has been created successfully."
+          });
+          
+          // For signup events, always redirect to profile
+          navigate('/profile', { replace: true });
         }
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
