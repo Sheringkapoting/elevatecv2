@@ -51,23 +51,24 @@ export const RegisterFormFields = () => {
     setFormError(null);
 
     try {
-      // Call Supabase Auth signup with additional metadata
-      await signUp(data.email, data.password, {
+      const { error } = await signUp(data.email, data.password, {
         full_name: data.fullName
       });
 
+      if (error) throw error;
+
       toast({
         title: "Account created successfully",
-        description: "You can now sign in with your new account.",
+        description: "Welcome! You can now complete your profile.",
       });
       
+      // Reset form and navigate to profile page
       form.reset();
       navigate("/profile");
     } catch (error: any) {
       let errorMsg =
         error?.message ||
         "There was a problem creating your account. Please try again.";
-      // Check for existing user error from Supabase
       if (
         typeof errorMsg === "string" &&
         errorMsg.toLowerCase().includes("user already registered")
