@@ -6,6 +6,11 @@ export const SocialSignupButtons = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <SocialAuthButtons isLoading={isLoading} setIsLoading={setIsLoading} context="signup" />
+    <SocialAuthButtons 
+      isLoading={isLoading} 
+      setIsLoading={setIsLoading} 
+      context="signup" 
+      hideOrText={true} 
+    />
   );
 };
