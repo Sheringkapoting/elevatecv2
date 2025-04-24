@@ -46,11 +46,12 @@ export const LoginFormFields = () => {
   });
 
   const onSubmit = async (data: FormValues) => {
-    console.log("Login attempt with email:", data.email);
+    console.log("[LoginFormFields] Login attempt started with email:", data.email);
     setFormError(null);
 
     // Basic empty value check (should not be possible because of zod, but defensive)
     if (!data.email || !data.password) {
+      console.log("[LoginFormFields] Empty email or password detected");
       setFormError("Both email and password are required.");
       form.resetField("password");
       return;
@@ -58,16 +59,20 @@ export const LoginFormFields = () => {
 
     setIsLoading(true);
     try {
-      console.log("Calling signIn function");
+      console.log("[LoginFormFields] Calling signIn function");
       const { error } = await signIn(data.email, data.password);
       
       // If there's an error from Supabase auth, handle it
       if (error) {
-        console.error("Login error from Supabase:", error);
+        console.error("[LoginFormFields] Login error from Supabase:", {
+          message: error.message,
+          status: error.status,
+          name: error.name
+        });
         throw error;
       }
 
-      console.log("Login successful, dispatching event");
+      console.log("[LoginFormFields] Login successful, dispatching event");
       // Only show success message if no error was thrown
       toast({
         title: "Successfully signed in",
@@ -75,27 +80,23 @@ export const LoginFormFields = () => {
       });
 
       window.dispatchEvent(new Event("login:success"));
-      // Don't navigate: AuthProvider handles redirection after session change
     } catch (error: any) {
-      console.error("Login error caught:", error);
-      // The error type in useAuth just sets error in store, so the actual thrown error isn't very informative
+      console.error("[LoginFormFields] Login error caught:", {
+        error: error,
+        message: error.message,
+        stack: error.stack
+      });
+      
       let errorMsg = "Please check your credentials and try again.";
-      if (
-        error &&
-        typeof error.message === "string" &&
-        error.message.includes("Invalid login credentials")
-      ) {
+      if (error?.message?.includes("Invalid login credentials")) {
+        console.log("[LoginFormFields] Invalid credentials detected");
         errorMsg = "Incorrect email or password. Please try again.";
-      } else if (
-        error &&
-        typeof error.message === "string" &&
-        error.message.includes("network")
-      ) {
+      } else if (error?.message?.includes("network")) {
+        console.log("[LoginFormFields] Network error detected");
         errorMsg = "Unable to connect to server. Please try again later.";
       }
 
       setFormError(errorMsg);
-      // Optionally, clear password field after error for security.
       form.resetField("password");
       toast({
         title: "Error signing in",
@@ -103,6 +104,7 @@ export const LoginFormFields = () => {
         variant: "destructive",
       });
     } finally {
+      console.log("[LoginFormFields] Login attempt completed");
       setIsLoading(false);
     }
   };

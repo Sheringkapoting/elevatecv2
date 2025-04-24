@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/lib/auth';
@@ -17,15 +16,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Get the current URL - this is crucial for social auth redirects
     const currentUrl = window.location.origin;
-    console.log("Current origin for auth redirects:", currentUrl);
-    console.log("Current location path:", location.pathname);
+    console.log("[AuthProvider] Initializing with origin:", currentUrl);
+    console.log("[AuthProvider] Current location path:", location.pathname);
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("Initial session check:", session ? "Authenticated" : "Unauthenticated");
+      console.log("[AuthProvider] Initial session check:", 
+        session ? `Authenticated as ${session.user.email}` : "Unauthenticated"
+      );
       
       if (session) {
-        console.log("User profile data:", session.user.user_metadata);
+        console.log("[AuthProvider] User profile data:", session.user.user_metadata);
         setSession(session);
 
         // Check if we need to redirect to profile after signup
@@ -55,17 +56,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state changed:", event, session ? "Authenticated" : "Unauthenticated");
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("[AuthProvider] Auth state changed:", {
+        event,
+        authenticated: !!session,
+        userId: session?.user?.id,
+        email: session?.user?.email
+      });
       
       if (session) {
-        console.log("User metadata:", session.user.user_metadata);
         setSession(session);
         
-        // When auth state changes to logged in, redirect to the intended page or default to profile
         if (event === 'SIGNED_IN') {
+          console.log("[AuthProvider] Processing successful sign in");
           toast({
             title: "Login successful",
             description: "You have been successfully logged in."
@@ -75,16 +78,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const isSignUp = sessionStorage.getItem('is_signup_event');
           
           if (isSignUp === 'true') {
-            console.log("This is a signup event, redirecting to profile");
-            // For signup events, always redirect to profile
+            console.log("[AuthProvider] Processing signup event");
             setTimeout(() => {
               navigate('/profile', { replace: true });
-              // Clear the signup flag after successful redirect
               sessionStorage.removeItem('is_signup_event');
-            }, 800); // Slightly longer delay for better reliability
-          } else if (!location.pathname.includes('/profile')) {
-            // For regular login, navigate to the requested page
-            console.log("This is a regular login, redirecting to:", from);
+            }, 800);
+          } else {
+            console.log("[AuthProvider] Processing regular login, redirecting to:", from);
             setTimeout(() => {
               navigate(from, { replace: true });
             }, 500);
@@ -113,8 +113,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }, 800);
         }
       } else if (event === 'SIGNED_OUT') {
+        console.log("[AuthProvider] User signed out");
         setSession(null);
-        // Clear any session flags when signing out
         sessionStorage.removeItem('is_signup_event');
         sessionStorage.removeItem('should_redirect_profile');
       }

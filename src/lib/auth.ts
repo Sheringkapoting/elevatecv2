@@ -1,4 +1,3 @@
-
 import { type Session, type User, type AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { create } from 'zustand';
@@ -87,7 +86,8 @@ export const useAuth = create<AuthState>((set, get) => ({
   },
   signIn: async (email: string, password: string) => {
     try {
-      console.log("Login attempt for email:", email);
+      console.log("[auth.ts] Starting sign in process for email:", email);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -96,11 +96,18 @@ export const useAuth = create<AuthState>((set, get) => ({
       // Set error state regardless if error is null or not
       set({ error: error });
       
-      // For debugging purposes
       if (error) {
-        console.error("Login error:", error.message);
+        console.error("[auth.ts] Sign in error:", {
+          message: error.message,
+          status: error.status,
+          name: error.name
+        });
       } else {
-        console.log("Login successful, session:", data.session?.user.id);
+        console.log("[auth.ts] Sign in successful", {
+          userId: data.session?.user.id,
+          email: data.session?.user.email,
+          lastSignIn: data.session?.user.last_sign_in_at
+        });
         // Remove any signup flags during login
         sessionStorage.removeItem('is_signup_event');
         sessionStorage.removeItem('should_redirect_profile');
@@ -108,7 +115,7 @@ export const useAuth = create<AuthState>((set, get) => ({
       
       return { error };
     } catch (error) {
-      console.error("Unexpected login error:", error);
+      console.error("[auth.ts] Unexpected sign in error:", error);
       set({ error: error as AuthError });
       return { error: error as AuthError };
     }
