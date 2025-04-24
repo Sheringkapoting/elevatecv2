@@ -15,8 +15,11 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
   useEffect(() => {
+    console.log("ProtectedRoute check - Loading:", loading, "User:", !!user);
+    
     // Only show toast and redirect if not loading and no user
     if (!loading && !user) {
+      console.log("Not logged in, showing auth required message");
       toast({
         title: "Authentication Required",
         description: "Please sign in to access this page.",
@@ -28,16 +31,19 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   // During initial load, show nothing
   if (loading) {
+    console.log("Auth loading, returning null");
     return null;
   }
 
   // If authenticated, show the protected content
   if (user) {
+    console.log("User authenticated, showing protected content");
     return <>{children}</>;
   }
 
   // If we confirmed there's no user and not in loading state, redirect
   if (shouldRedirect) {
+    console.log("Redirecting to home from:", location.pathname);
     return <Navigate to="/" state={{ from: location.pathname }} replace />;
   }
 

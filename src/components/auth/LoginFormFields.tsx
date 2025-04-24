@@ -46,6 +46,7 @@ export const LoginFormFields = () => {
   });
 
   const onSubmit = async (data: FormValues) => {
+    console.log("Login attempt with email:", data.email);
     setFormError(null);
 
     // Basic empty value check (should not be possible because of zod, but defensive)
@@ -57,13 +58,16 @@ export const LoginFormFields = () => {
 
     setIsLoading(true);
     try {
+      console.log("Calling signIn function");
       const { error } = await signIn(data.email, data.password);
       
       // If there's an error from Supabase auth, handle it
       if (error) {
+        console.error("Login error from Supabase:", error);
         throw error;
       }
 
+      console.log("Login successful, dispatching event");
       // Only show success message if no error was thrown
       toast({
         title: "Successfully signed in",
@@ -73,6 +77,7 @@ export const LoginFormFields = () => {
       window.dispatchEvent(new Event("login:success"));
       // Don't navigate: AuthProvider handles redirection after session change
     } catch (error: any) {
+      console.error("Login error caught:", error);
       // The error type in useAuth just sets error in store, so the actual thrown error isn't very informative
       let errorMsg = "Please check your credentials and try again.";
       if (

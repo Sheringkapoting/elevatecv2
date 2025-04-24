@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/lib/auth';
@@ -17,6 +18,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Get the current URL - this is crucial for social auth redirects
     const currentUrl = window.location.origin;
     console.log("Current origin for auth redirects:", currentUrl);
+    console.log("Current location path:", location.pathname);
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -31,7 +33,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (shouldRedirectToProfile === 'true') {
           console.log("Redirecting to profile page after signup");
           sessionStorage.removeItem('should_redirect_profile');
-          navigate('/profile', { replace: true });
+          setTimeout(() => {
+            navigate('/profile', { replace: true });
+          }, 800); // Slightly longer delay to ensure auth state is fully processed
         }
       }
     });
@@ -77,11 +81,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               navigate('/profile', { replace: true });
               // Clear the signup flag after successful redirect
               sessionStorage.removeItem('is_signup_event');
-            }, 500);
+            }, 800); // Slightly longer delay for better reliability
           } else if (!location.pathname.includes('/profile')) {
             // For regular login, navigate to the requested page
             console.log("This is a regular login, redirecting to:", from);
-            navigate(from, { replace: true });
+            setTimeout(() => {
+              navigate(from, { replace: true });
+            }, 500);
           }
         }
         
@@ -100,6 +106,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             title: "Account created",
             description: "Your account has been created successfully."
           });
+          
+          // Redirect to profile page for new users
+          setTimeout(() => {
+            navigate('/profile', { replace: true });
+          }, 800);
         }
       } else if (event === 'SIGNED_OUT') {
         setSession(null);

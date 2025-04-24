@@ -59,6 +59,7 @@ export const useAuth = create<AuthState>((set, get) => ({
   userName: null,
   signUp: async (email: string, password: string, metadata?: Record<string, any>) => {
     try {
+      console.log("Signup attempt for email:", email);
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -66,15 +67,27 @@ export const useAuth = create<AuthState>((set, get) => ({
           data: metadata
         }
       });
+      
+      if (error) {
+        console.error("Signup error:", error);
+      } else {
+        console.log("Signup successful");
+        // Set flag for redirect to profile in session storage
+        sessionStorage.setItem('is_signup_event', 'true');
+        sessionStorage.setItem('should_redirect_profile', 'true');
+      }
+      
       set({ error: error });
       return { error };
     } catch (error) {
+      console.error("Unexpected signup error:", error);
       set({ error: error as AuthError });
       return { error: error as AuthError };
     }
   },
   signIn: async (email: string, password: string) => {
     try {
+      console.log("Login attempt for email:", email);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -86,6 +99,11 @@ export const useAuth = create<AuthState>((set, get) => ({
       // For debugging purposes
       if (error) {
         console.error("Login error:", error.message);
+      } else {
+        console.log("Login successful, session:", data.session?.user.id);
+        // Remove any signup flags during login
+        sessionStorage.removeItem('is_signup_event');
+        sessionStorage.removeItem('should_redirect_profile');
       }
       
       return { error };
