@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -9,7 +8,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
-import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
@@ -33,7 +31,6 @@ export const RegisterFormFields = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const { toast } = useToast();
   const { signUp } = useAuth();
-  const navigate = useNavigate();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -58,6 +55,10 @@ export const RegisterFormFields = () => {
 
       if (error) throw error;
 
+      // Set signup flag in session storage to help redirect logic
+      sessionStorage.setItem('is_signup_event', 'true');
+      sessionStorage.setItem('should_redirect_profile', 'true');
+
       // Dispatch a custom event to close any open dialogs
       const loginSuccessEvent = new CustomEvent('login:success');
       window.dispatchEvent(loginSuccessEvent);
@@ -69,11 +70,6 @@ export const RegisterFormFields = () => {
       
       // Reset form
       form.reset();
-      
-      // Add a slight delay before redirecting to ensure auth state is updated
-      setTimeout(() => {
-        navigate("/profile");
-      }, 500);
     } catch (error: any) {
       let errorMsg =
         error?.message ||

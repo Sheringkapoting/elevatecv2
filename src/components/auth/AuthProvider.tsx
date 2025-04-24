@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/lib/auth';
@@ -26,6 +25,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session) {
         console.log("User profile data:", session.user.user_metadata);
         setSession(session);
+
+        // Check if we need to redirect to profile after signup
+        const shouldRedirectToProfile = sessionStorage.getItem('should_redirect_profile');
+        if (shouldRedirectToProfile === 'true') {
+          console.log("Redirecting to profile page after signup");
+          sessionStorage.removeItem('should_redirect_profile');
+          navigate('/profile', { replace: true });
+        }
       }
     });
 
@@ -60,15 +67,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             description: "You have been successfully logged in."
           });
           
-          // Only navigate if not on profile page and not from a signup event
+          // Check if this is a new signup or regular login
           const isSignUp = sessionStorage.getItem('is_signup_event');
-          if (!location.pathname.includes('/profile') && !isSignUp) {
-            // Navigate to the page the user was trying to access before login
+          
+          if (isSignUp === 'true') {
+            console.log("This is a signup event, redirecting to profile");
+            // For signup events, always redirect to profile
+            setTimeout(() => {
+              navigate('/profile', { replace: true });
+              // Clear the signup flag after successful redirect
+              sessionStorage.removeItem('is_signup_event');
+            }, 500);
+          } else if (!location.pathname.includes('/profile')) {
+            // For regular login, navigate to the requested page
+            console.log("This is a regular login, redirecting to:", from);
             navigate(from, { replace: true });
           }
-          
-          // Clear the signup flag
-          sessionStorage.removeItem('is_signup_event');
         }
         
         // Check for new user flag in user metadata to identify signup events
@@ -77,19 +91,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                           session.user.created_at === session.user.updated_at;
                           
         if (isNewUser) {
+          console.log("Detected new user based on metadata");
           // Set flag to indicate this was a signup event
           sessionStorage.setItem('is_signup_event', 'true');
+          sessionStorage.setItem('should_redirect_profile', 'true');
           
           toast({
             title: "Account created",
             description: "Your account has been created successfully."
           });
-          
-          // For signup events, always redirect to profile
-          navigate('/profile', { replace: true });
         }
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
+        // Clear any session flags when signing out
+        sessionStorage.removeItem('is_signup_event');
+        sessionStorage.removeItem('should_redirect_profile');
       }
     });
 

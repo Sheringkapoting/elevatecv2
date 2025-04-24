@@ -1,30 +1,27 @@
-import { useState, useEffect } from "react";
+
+import { useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
 
 import ProfileAvatarHeader from "./profile/ProfileAvatarHeader";
 import ProfileTabs from "./profile/ProfileTabs";
 
 export default function ProfilePage() {
-  const { user, profileImage, userName } = useAuth();
+  const { user, profileImage, userName, loading } = useAuth();
   const { profile, isLoading } = useProfile();
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/");
-      toast({
-        title: "Authentication required",
-        description: "You must be logged in to view this page",
-        variant: "destructive",
-      });
-    }
-  }, [user, navigate, toast]);
+  // No need to redirect here since ProtectedRoute handles that
+  // This avoids duplicate redirects
 
+  // Show loading state if auth is still loading
+  if (loading) {
+    return <div className="container max-w-4xl py-10 mt-16">Loading profile...</div>;
+  }
+
+  // If no user (shouldn't happen with ProtectedRoute but just in case)
   if (!user) {
     return null;
   }
