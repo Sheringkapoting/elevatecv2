@@ -97,7 +97,7 @@ export function ProfileInformationForm({ userName, email, profile, user }: Profi
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="text-left">
         <CardTitle>Profile Information</CardTitle>
         <CardDescription>
           Update your personal information here. This information will be displayed publicly.
@@ -109,7 +109,7 @@ export function ProfileInformationForm({ userName, email, profile, user }: Profi
             <PersonalInformation form={profileForm} />
             <ContactInformation form={profileForm} />
             <ProfessionalLinks form={profileForm} />
-            <CardFooter className="px-0 pb-0 pt-4">
+            <CardFooter className="px-0 pb-0 pt-4 flex justify-start">
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>

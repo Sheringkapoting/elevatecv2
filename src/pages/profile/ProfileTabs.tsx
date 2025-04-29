@@ -22,7 +22,7 @@ export default function ProfileTabs({
 }: ProfileTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-      <TabsList className="grid w-full md:w-[400px] mx-auto grid-cols-2">
+      <TabsList className="w-full md:w-[400px] grid-cols-2 flex justify-start">
         <TabsTrigger value="profile">Profile Information</TabsTrigger>
         <TabsTrigger value="security">Security</TabsTrigger>
       </TabsList>
