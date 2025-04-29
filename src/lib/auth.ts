@@ -33,10 +33,16 @@ const getRedirectUrl = (customUrl?: string): string => {
 const getProfileImageFromMetadata = (user: User | null): string | null => {
   if (!user) return null;
   
-  return user.user_metadata?.avatar_url || 
+  // First check the user_metadata
+  const metadataImage = user.user_metadata?.avatar_url || 
          user.user_metadata?.picture || 
-         user.user_metadata?.user_image || 
-         null;
+         user.user_metadata?.user_image;
+  
+  // If we have an image from metadata, return that
+  if (metadataImage) return metadataImage;
+  
+  // Otherwise, check if the profile table has an image
+  return null;
 };
 
 // Helper to extract user name from metadata
@@ -194,7 +200,28 @@ export const useAuth = create<AuthState>((set, get) => ({
   },
   setSession: (session) => {
     const user = session?.user ?? null;
-    const profileImage = getProfileImageFromMetadata(user);
+    
+    // First try to get the profile image from the session user metadata
+    let profileImage = getProfileImageFromMetadata(user);
+    
+    // If the user exists and we have no profile image from metadata, try to get from profiles table
+    if (user && !profileImage) {
+      // We'll fetch the user's profile from the database to get the profile_picture
+      supabase.from('profiles')
+        .select('profile_picture')
+        .eq('id', user.id)
+        .single()
+        .then(({ data }) => {
+          if (data && data.profile_picture) {
+            // Update the profileImage state with the profile picture from the database
+            set(state => ({ ...state, profileImage: data.profile_picture }));
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching profile picture:", error);
+        });
+    }
+    
     const userName = getUserNameFromMetadata(user);
     
     console.log("Setting session with user:", user?.id);

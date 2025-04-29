@@ -21,7 +21,7 @@ export function useProfile() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, refetch } = useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
@@ -52,9 +52,14 @@ export function useProfile() {
     },
   });
 
+  const refreshProfile = async () => {
+    await refetch();
+  };
+
   return {
     profile,
     isLoading,
     updateProfile,
+    refreshProfile,
   };
 }
