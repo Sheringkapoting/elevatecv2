@@ -1,3 +1,4 @@
+
 import { type Session, type User, type AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { create } from 'zustand';
@@ -53,6 +54,27 @@ const getUserNameFromMetadata = (user: User | null): string | null => {
          user.user_metadata?.name || 
          user.email || 
          null;
+};
+
+// Helper function to fetch profile picture from database
+const fetchProfilePicture = async (userId: string): Promise<string | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('profile_picture')
+      .eq('id', userId)
+      .single();
+      
+    if (error) {
+      console.error("Error fetching profile picture:", error);
+      return null;
+    }
+    
+    return data?.profile_picture || null;
+  } catch (err) {
+    console.error("Unexpected error fetching profile picture:", err);
+    return null;
+  }
 };
 
 export const useAuth = create<AuthState>((set, get) => ({
@@ -203,32 +225,13 @@ export const useAuth = create<AuthState>((set, get) => ({
     
     // First try to get the profile image from the session user metadata
     let profileImage = getProfileImageFromMetadata(user);
-    
-    // If the user exists and we have no profile image from metadata, try to get from profiles table
-    if (user && !profileImage) {
-      // We'll fetch the user's profile from the database to get the profile_picture
-      // Fix: Using a proper promise handling pattern
-      supabase.from('profiles')
-        .select('profile_picture')
-        .eq('id', user.id)
-        .single()
-        .then(({ data }) => {
-          if (data && data.profile_picture) {
-            // Update the profileImage state with the profile picture from the database
-            set(state => ({ ...state, profileImage: data.profile_picture }));
-          }
-        })
-        .catch(error => {
-          console.error("Error fetching profile picture:", error);
-        });
-    }
-    
     const userName = getUserNameFromMetadata(user);
     
     console.log("Setting session with user:", user?.id);
-    console.log("Profile image:", profileImage);
+    console.log("Initial profile image from metadata:", profileImage);
     console.log("User name:", userName);
     
+    // Update the state immediately with what we have
     set({
       session,
       user,
@@ -236,5 +239,26 @@ export const useAuth = create<AuthState>((set, get) => ({
       userName,
       loading: false,
     });
+    
+    // If the user exists and we have no profile image from metadata, fetch from profiles table
+    // This will update the state asynchronously when the data arrives
+    if (user && !profileImage) {
+      console.log("No profile image in metadata, fetching from database for user:", user.id);
+      
+      // Use our helper function to fetch the profile picture
+      (async () => {
+        try {
+          const dbProfileImage = await fetchProfilePicture(user.id);
+          if (dbProfileImage) {
+            console.log("Found profile image in database:", dbProfileImage);
+            set(state => ({ ...state, profileImage: dbProfileImage }));
+          } else {
+            console.log("No profile image found in database");
+          }
+        } catch (error) {
+          console.error("Error in async profile picture fetch:", error);
+        }
+      })();
+    }
   },
 }));
