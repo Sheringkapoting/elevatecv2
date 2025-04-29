@@ -1,4 +1,3 @@
-
 import { type Session, type User, type AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { create } from 'zustand';
@@ -208,7 +207,7 @@ export const useAuth = create<AuthState>((set, get) => ({
     // If the user exists and we have no profile image from metadata, try to get from profiles table
     if (user && !profileImage) {
       // We'll fetch the user's profile from the database to get the profile_picture
-      // Fix: Using a proper async/await pattern with Promise handling
+      // Fix: Using a proper promise handling pattern
       supabase.from('profiles')
         .select('profile_picture')
         .eq('id', user.id)
