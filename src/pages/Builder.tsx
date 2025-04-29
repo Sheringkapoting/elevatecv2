@@ -203,7 +203,7 @@ const Builder = () => {
       <NavbarContainer />
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10">
+          <div className="text-left mb-10">
             <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Resume Builder</h1>
             <p className="mt-4 text-xl text-gray-500">
               Create a professional resume tailored to your target job
@@ -213,11 +213,11 @@ const Builder = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <Tabs defaultValue="personal">
-                <TabsList className="grid grid-cols-4 mb-8">
-                  <TabsTrigger value="personal">Personal</TabsTrigger>
-                  <TabsTrigger value="experience">Experience</TabsTrigger>
-                  <TabsTrigger value="education">Education</TabsTrigger>
-                  <TabsTrigger value="skills">Skills</TabsTrigger>
+                <TabsList className="grid grid-cols-4 mb-8 justify-start">
+                  <TabsTrigger value="personal" className="text-left">Personal</TabsTrigger>
+                  <TabsTrigger value="experience" className="text-left">Experience</TabsTrigger>
+                  <TabsTrigger value="education" className="text-left">Education</TabsTrigger>
+                  <TabsTrigger value="skills" className="text-left">Skills</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="personal">
@@ -255,7 +255,7 @@ const Builder = () => {
                 </TabsContent>
               </Tabs>
               
-              <div className="mt-8 flex justify-end space-x-4">
+              <div className="mt-8 flex justify-start space-x-4">
                 <Button
                   variant="outline"
                   className="border-primary-600 text-primary-600 hover:bg-primary-50"

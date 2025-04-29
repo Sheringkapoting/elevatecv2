@@ -21,10 +21,10 @@ export default function ProfileTabs({
   user
 }: ProfileTabsProps) {
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 w-full">
       <TabsList className="w-full md:w-[400px] grid-cols-2 flex justify-start">
-        <TabsTrigger value="profile">Profile Information</TabsTrigger>
-        <TabsTrigger value="security">Security</TabsTrigger>
+        <TabsTrigger value="profile" className="text-left">Profile Information</TabsTrigger>
+        <TabsTrigger value="security" className="text-left">Security</TabsTrigger>
       </TabsList>
 
       <TabsContent value="profile" className="space-y-4">

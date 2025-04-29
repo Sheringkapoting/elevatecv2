@@ -30,8 +30,8 @@ const PersonalInfoForm = ({ personalInfo, onInfoChange }: PersonalInfoFormProps)
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+            <div className="space-y-2 text-left">
+              <Label htmlFor="name" className="text-left">Full Name</Label>
               <Input
                 id="name"
                 name="name"
@@ -41,8 +41,8 @@ const PersonalInfoForm = ({ personalInfo, onInfoChange }: PersonalInfoFormProps)
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="title">Professional Title</Label>
+            <div className="space-y-2 text-left">
+              <Label htmlFor="title" className="text-left">Professional Title</Label>
               <Input
                 id="title"
                 name="title"
@@ -52,8 +52,8 @@ const PersonalInfoForm = ({ personalInfo, onInfoChange }: PersonalInfoFormProps)
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+            <div className="space-y-2 text-left">
+              <Label htmlFor="email" className="text-left">Email</Label>
               <Input
                 id="email"
                 name="email"
@@ -64,8 +64,8 @@ const PersonalInfoForm = ({ personalInfo, onInfoChange }: PersonalInfoFormProps)
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+            <div className="space-y-2 text-left">
+              <Label htmlFor="phone" className="text-left">Phone</Label>
               <Input
                 id="phone"
                 name="phone"
@@ -75,8 +75,8 @@ const PersonalInfoForm = ({ personalInfo, onInfoChange }: PersonalInfoFormProps)
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
+            <div className="space-y-2 text-left">
+              <Label htmlFor="location" className="text-left">Location</Label>
               <Input
                 id="location"
                 name="location"
@@ -86,8 +86,8 @@ const PersonalInfoForm = ({ personalInfo, onInfoChange }: PersonalInfoFormProps)
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="website">Website (Optional)</Label>
+            <div className="space-y-2 text-left">
+              <Label htmlFor="website" className="text-left">Website (Optional)</Label>
               <Input
                 id="website"
                 name="website"
@@ -97,8 +97,8 @@ const PersonalInfoForm = ({ personalInfo, onInfoChange }: PersonalInfoFormProps)
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="linkedin">LinkedIn (Optional)</Label>
+            <div className="space-y-2 text-left">
+              <Label htmlFor="linkedin" className="text-left">LinkedIn (Optional)</Label>
               <Input
                 id="linkedin"
                 name="linkedin"

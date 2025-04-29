@@ -43,7 +43,7 @@ const SkillsForm = ({
         <div className="space-y-6">
           <div className="flex items-center space-x-2 mb-4">
             <Award className="h-5 w-5 text-primary-600" />
-            <h2 className="text-xl font-medium text-gray-900">Skills</h2>
+            <h2 className="text-xl font-medium text-gray-900 text-left">Skills</h2>
           </div>
           
           <div className="space-y-4">

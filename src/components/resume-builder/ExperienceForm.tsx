@@ -68,8 +68,8 @@ const ExperienceForm = ({
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`${exp.id}-title`}>Job Title</Label>
+              <div className="space-y-2 text-left">
+                <Label htmlFor={`${exp.id}-title`} className="text-left">Job Title</Label>
                 <Input
                   id={`${exp.id}-title`}
                   value={exp.title}
@@ -78,8 +78,8 @@ const ExperienceForm = ({
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor={`${exp.id}-company`}>Company</Label>
+              <div className="space-y-2 text-left">
+                <Label htmlFor={`${exp.id}-company`} className="text-left">Company</Label>
                 <Input
                   id={`${exp.id}-company`}
                   value={exp.company}
@@ -88,8 +88,8 @@ const ExperienceForm = ({
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor={`${exp.id}-location`}>Location</Label>
+              <div className="space-y-2 text-left">
+                <Label htmlFor={`${exp.id}-location`} className="text-left">Location</Label>
                 <Input
                   id={`${exp.id}-location`}
                   value={exp.location}
@@ -99,8 +99,8 @@ const ExperienceForm = ({
               </div>
               
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor={`${exp.id}-startDate`}>Start Date</Label>
+                <div className="space-y-2 text-left">
+                  <Label htmlFor={`${exp.id}-startDate`} className="text-left">Start Date</Label>
                   <Input
                     id={`${exp.id}-startDate`}
                     value={exp.startDate}
@@ -109,8 +109,8 @@ const ExperienceForm = ({
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor={`${exp.id}-endDate`}>End Date</Label>
+                <div className="space-y-2 text-left">
+                  <Label htmlFor={`${exp.id}-endDate`} className="text-left">End Date</Label>
                   <Input
                     id={`${exp.id}-endDate`}
                     value={exp.endDate}
@@ -120,8 +120,8 @@ const ExperienceForm = ({
                 </div>
               </div>
               
-              <div className="md:col-span-2 space-y-2">
-                <Label htmlFor={`${exp.id}-description`}>Description</Label>
+              <div className="md:col-span-2 space-y-2 text-left">
+                <Label htmlFor={`${exp.id}-description`} className="text-left">Description</Label>
                 <Textarea
                   id={`${exp.id}-description`}
                   value={exp.description}

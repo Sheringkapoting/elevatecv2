@@ -67,8 +67,8 @@ const EducationForm = ({
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`${edu.id}-degree`}>Degree</Label>
+              <div className="space-y-2 text-left">
+                <Label htmlFor={`${edu.id}-degree`} className="text-left">Degree</Label>
                 <Input
                   id={`${edu.id}-degree`}
                   value={edu.degree}
@@ -77,8 +77,8 @@ const EducationForm = ({
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor={`${edu.id}-school`}>School</Label>
+              <div className="space-y-2 text-left">
+                <Label htmlFor={`${edu.id}-school`} className="text-left">School</Label>
                 <Input
                   id={`${edu.id}-school`}
                   value={edu.school}
@@ -87,8 +87,8 @@ const EducationForm = ({
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor={`${edu.id}-location`}>Location</Label>
+              <div className="space-y-2 text-left">
+                <Label htmlFor={`${edu.id}-location`} className="text-left">Location</Label>
                 <Input
                   id={`${edu.id}-location`}
                   value={edu.location}
@@ -98,8 +98,8 @@ const EducationForm = ({
               </div>
               
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor={`${edu.id}-startDate`}>Start Date</Label>
+                <div className="space-y-2 text-left">
+                  <Label htmlFor={`${edu.id}-startDate`} className="text-left">Start Date</Label>
                   <Input
                     id={`${edu.id}-startDate`}
                     value={edu.startDate}
@@ -108,8 +108,8 @@ const EducationForm = ({
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor={`${edu.id}-endDate`}>End Date</Label>
+                <div className="space-y-2 text-left">
+                  <Label htmlFor={`${edu.id}-endDate`} className="text-left">End Date</Label>
                   <Input
                     id={`${edu.id}-endDate`}
                     value={edu.endDate}
@@ -119,8 +119,8 @@ const EducationForm = ({
                 </div>
               </div>
               
-              <div className="md:col-span-2 space-y-2">
-                <Label htmlFor={`${edu.id}-description`}>Description (Optional)</Label>
+              <div className="md:col-span-2 space-y-2 text-left">
+                <Label htmlFor={`${edu.id}-description`} className="text-left">Description (Optional)</Label>
                 <Textarea
                   id={`${edu.id}-description`}
                   value={edu.description}
