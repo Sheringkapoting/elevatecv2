@@ -1,7 +1,5 @@
 
-import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -20,19 +18,6 @@ const HeroSection = () => {
                 Upload your resume, get instant ATS compatibility scores, and receive tailored improvements based on job descriptions. Build professional resumes that get through ATS systems and into hiring managers' hands.
               </p>
               <div className="mt-8 sm:mx-auto sm:max-w-lg sm:text-center lg:mx-0 lg:text-left">
-                <div className="flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-4">
-                  <Button asChild className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-6 text-base">
-                    <Link to="/analyze">
-                      Analyze Resume
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="border-primary-600 text-primary-600 hover:bg-primary-50 px-8 py-6 text-base">
-                    <Link to="/builder">
-                      Build Resume
-                    </Link>
-                  </Button>
-                </div>
                 <p className="mt-4 text-sm text-gray-500">
                   No credit card required. Start improving your resume in minutes.
                 </p>

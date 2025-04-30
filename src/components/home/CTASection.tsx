@@ -1,7 +1,4 @@
 
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-
 const CTASection = () => {
   return (
     <div className="bg-primary-600">
@@ -16,18 +13,6 @@ const CTASection = () => {
               <p className="mt-4 text-lg leading-6 text-gray-500">
                 Start analyzing and optimizing your resume today. Our AI-powered tools will help you pass ATS systems and impress hiring managers.
               </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <Button asChild className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-6 text-base">
-                  <Link to="/analyze">
-                    Analyze Your Resume
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" className="border-primary-600 text-primary-600 hover:bg-primary-50 px-8 py-6 text-base">
-                  <Link to="/builder">
-                    Build a New Resume
-                  </Link>
-                </Button>
-              </div>
             </div>
           </div>
           <div className="aspect-w-5 aspect-h-3 -mt-6 md:aspect-w-2 md:aspect-h-1">
