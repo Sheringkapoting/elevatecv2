@@ -24,17 +24,19 @@ const Analyze = () => {
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <AnalyzeHeader />
-          <AnalyzeTabs
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            resumeFile={resumeFile}
-            jobDescription={jobDescription}
-            isAnalyzing={isAnalyzing}
-            analysisComplete={analysisComplete}
-            setResumeFile={setResumeFile}
-            setJobDescription={setJobDescription}
-            onAnalyze={handleAnalyze}
-          />
+          <div className="w-full">
+            <AnalyzeTabs
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              resumeFile={resumeFile}
+              jobDescription={jobDescription}
+              isAnalyzing={isAnalyzing}
+              analysisComplete={analysisComplete}
+              setResumeFile={setResumeFile}
+              setJobDescription={setJobDescription}
+              onAnalyze={handleAnalyze}
+            />
+          </div>
         </div>
       </main>
       <Footer />

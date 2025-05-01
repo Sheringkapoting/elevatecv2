@@ -1,18 +1,17 @@
-
 @page "/analyze"
 @inject ISnackbar Snackbar
 
 <PageTitle>Resume Analysis - Elevate CV</PageTitle>
 
 <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-10">
+    <div class="text-left mb-10">
         <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">Resume Analysis</h1>
         <p class="mt-4 text-xl text-gray-500">
             Analyze your resume against job descriptions to increase your interview chances
         </p>
     </div>
     
-    <MudTabs Class="max-w-4xl mx-auto" Outlined="false" Position="Position.Top" Rounded="true" Border="true" ApplyEffectsToContainer="true">
+    <MudTabs Class="max-w-full w-full" Outlined="false" Position="Position.Top" Rounded="true" Border="true" ApplyEffectsToContainer="true">
         <MudTabPanel Text="Upload & Analyze" Icon="@Icons.Material.Filled.Upload">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <MudPaper Class="pa-6">
@@ -66,7 +65,7 @@
                 </MudPaper>
             </div>
             
-            <div class="mt-8 text-center">
+            <div class="mt-8 text-left">
                 <MudButton Variant="Variant.Filled" 
                           Color="Color.Primary" 
                           Size="Size.Large" 
@@ -214,7 +213,7 @@
                         </div>
                     </MudPaper>
                     
-                    <div class="flex justify-center space-x-4">
+                    <div class="flex justify-start space-x-4">
                         <MudButton Variant="Variant.Outlined" Color="Color.Primary">
                             Download Analysis Report
                         </MudButton>

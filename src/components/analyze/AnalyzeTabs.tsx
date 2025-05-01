@@ -30,7 +30,7 @@ const AnalyzeTabs = ({
   onAnalyze,
 }: AnalyzeTabsProps) => {
   return (
-    <Tabs value={activeTab} onValueChange={onTabChange} className="max-w-4xl mx-auto">
+    <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
       <TabsList className="grid w-full grid-cols-2 mb-8">
         <TabsTrigger value="upload">Upload & Analyze</TabsTrigger>
         <TabsTrigger value="results" disabled={!analysisComplete}>
@@ -42,7 +42,7 @@ const AnalyzeTabs = ({
           <ResumeUpload onFileChange={setResumeFile} resumeFile={resumeFile} />
           <JobDescription value={jobDescription} onChange={setJobDescription} />
         </div>
-        <div className="mt-8 text-center">
+        <div className="mt-8 text-left">
           <Button
             onClick={onAnalyze}
             disabled={isAnalyzing || !resumeFile || !jobDescription}
