@@ -8,8 +8,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_KEY')!;
+// Get environment variables
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
 async function extractTextFromPDF(buffer: Uint8Array): Promise<string> {
   try {
@@ -134,6 +135,17 @@ Deno.serve(async (req) => {
         error: "Missing authorization header"
       }), { 
         status: 401, 
+        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+      });
+    }
+    
+    // Check if environment variables are available
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+      console.error("Missing Supabase environment variables");
+      return new Response(JSON.stringify({ 
+        error: "Server configuration error: Missing environment variables"
+      }), { 
+        status: 500, 
         headers: { ...corsHeaders, "Content-Type": "application/json" } 
       });
     }
