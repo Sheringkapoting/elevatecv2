@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
@@ -7,7 +8,6 @@ import NotFound from "@/pages/NotFound";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { Toaster } from "@/components/ui/toaster";
 import NavbarContainer from "@/components/layout/NavbarContainer";
-import Footer from "@/components/layout/Footer";
 import Profile from "@/pages/Profile";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
@@ -58,7 +58,7 @@ function App() {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
-            <Footer />
+            {/* Footer is now only included in individual page components */}
           </div>
           <Toaster />
         </AuthProvider>

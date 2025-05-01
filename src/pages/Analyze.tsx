@@ -40,6 +40,6 @@ const Analyze = () => {
       <Footer />
     </div>
   );
-};
+}
 
 export default Analyze;
