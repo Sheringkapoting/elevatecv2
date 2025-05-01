@@ -1,0 +1,33 @@
+
+<div class="space-y-4">
+    <div class="flex items-center space-x-2 mb-4">
+        <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary" />
+        <MudText Typo="Typo.h5">Upload Resume</MudText>
+    </div>
+    
+    <MudFileUpload T="IBrowserFile" Accept=".pdf,.doc,.docx" OnFilesChanged="OnResumeFileChanged">
+        <ButtonTemplate>
+            <MudPaper Height="230px" Outlined="true" Class="d-flex flex-column align-center justify-center cursor-pointer pa-8">
+                <MudIcon Icon="@Icons.Material.Filled.CloudUpload" Size="Size.Large" Class="mb-4" />
+                <MudText Typo="Typo.body1" Class="mb-1">@(FileName ?? "Click to upload your resume")</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">PDF, DOC, or DOCX up to 5MB</MudText>
+            </MudPaper>
+        </ButtonTemplate>
+    </MudFileUpload>
+    
+    @if (!string.IsNullOrEmpty(FileName))
+    {
+        <div class="flex items-center space-x-2 text-sm text-primary-600 font-medium">
+            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" />
+            <span>Resume ready for analysis</span>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string? FileName { get; set; }
+    
+    [Parameter]
+    public EventCallback<InputFileChangeEventArgs> OnResumeFileChanged { get; set; }
+}

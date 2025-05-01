@@ -1,0 +1,51 @@
+
+<div class="space-y-8">
+    <AtsSummary Score="76" ScoreSummary="Your resume is fairly compatible with ATS systems" />
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <KeywordMatchingCard 
+            Score="68" 
+            MissingKeywords="@(new[] {".NET Core", "MudBlazor", "ASP.NET Identity", "Blazor"})" />
+        
+        <AnalysisScorecard Title="Formatting" Icon="@Icons.Material.Filled.Description" Score="85">
+            <div class="flex items-start">
+                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" Class="mr-2 mt-1" />
+                <MudText Typo="Typo.body2">Good use of section headings</MudText>
+            </div>
+            <div class="flex items-start">
+                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" Class="mr-2 mt-1" />
+                <MudText Typo="Typo.body2">Appropriate resume length</MudText>
+            </div>
+            <div class="flex items-start">
+                <MudIcon Icon="@Icons.Material.Filled.Cancel" Color="Color.Error" Size="Size.Small" Class="mr-2 mt-1" />
+                <MudText Typo="Typo.body2">Complex tables may not parse correctly</MudText>
+            </div>
+        </AnalysisScorecard>
+        
+        <AnalysisScorecard Title="Content Quality" Icon="@Icons.Material.Filled.Assignment" Score="75">
+            <div class="flex items-start">
+                <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Small" Class="mr-2 mt-1" />
+                <MudText Typo="Typo.body2">Use more achievement-oriented bullet points</MudText>
+            </div>
+            <div class="flex items-start">
+                <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Small" Class="mr-2 mt-1" />
+                <MudText Typo="Typo.body2">Quantify your accomplishments with metrics</MudText>
+            </div>
+            <div class="flex items-start">
+                <MudIcon Icon="@Icons.Material.Filled.Cancel" Color="Color.Error" Size="Size.Small" Class="mr-2 mt-1" />
+                <MudText Typo="Typo.body2">Skills section needs more specificity</MudText>
+            </div>
+        </AnalysisScorecard>
+    </div>
+    
+    <DetailedRecommendations />
+    
+    <div class="flex justify-start space-x-4">
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary">
+            Download Analysis Report
+        </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary">
+            Build Optimized Resume
+        </MudButton>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+
+<div class="space-y-4">
+    <div class="flex items-center space-x-2 mb-4">
+        <MudIcon Icon="@Icons.Material.Filled.Search" Color="Color.Primary" />
+        <MudText Typo="Typo.h5">Job Description</MudText>
+    </div>
+    
+    <MudTextField T="string" 
+                 Label="Paste the job description here" 
+                 Variant="Variant.Outlined" 
+                 Lines="10" 
+                 @bind-Value="JobDescription" />
+    
+    @if (!string.IsNullOrEmpty(JobDescription))
+    {
+        <div class="flex items-center space-x-2 text-sm text-primary-600 font-medium">
+            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" />
+            <span>Job description ready for analysis</span>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string JobDescription { get; set; } = string.Empty;
+    
+    [Parameter]
+    public EventCallback<string> JobDescriptionChanged { get; set; }
+}

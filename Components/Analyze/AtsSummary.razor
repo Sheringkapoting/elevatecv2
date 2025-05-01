@@ -1,0 +1,31 @@
+
+<MudPaper Class="pa-6">
+    <div class="flex flex-col md:flex-row items-start md:items-center md:justify-between">
+        <div class="flex items-center mb-4 md:mb-0">
+            <div class="mr-6">
+                <MudProgressCircular Value="@Score" Size="Size.Large" Color="Color.Primary" Class="ma-2">
+                    <MudText Typo="Typo.h5">@Score%</MudText>
+                </MudProgressCircular>
+            </div>
+            <div>
+                <MudText Typo="Typo.h5" Class="mb-1">ATS Compatibility Score</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    @ScoreSummary
+                </MudText>
+            </div>
+        </div>
+        
+        <MudButton Variant="Variant.Outlined" 
+                 Color="Color.Primary">
+            Download Full Report
+        </MudButton>
+    </div>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public int Score { get; set; }
+    
+    [Parameter]
+    public string ScoreSummary { get; set; } = "Your resume is fairly compatible with ATS systems";
+}

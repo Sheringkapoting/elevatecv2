@@ -1,0 +1,35 @@
+
+<MudPaper Class="pa-6">
+    <div class="space-y-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <MudIcon Icon="@Icons.Material.Filled.Search" Color="Color.Primary" Size="Size.Small" />
+                <MudText Typo="Typo.h6">Keyword Matching</MudText>
+            </div>
+            <MudText Typo="Typo.h6" Color="Color.Primary">@Score%</MudText>
+        </div>
+        
+        <MudProgressLinear Value="@Score" Color="Color.Primary" Class="my-2" />
+        
+        @if (MissingKeywords != null && MissingKeywords.Any())
+        {
+            <div class="pt-2">
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Missing Keywords:</MudText>
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var keyword in MissingKeywords)
+                    {
+                        <MudChip Color="Color.Error" Size="Size.Small">@keyword</MudChip>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public int Score { get; set; }
+    
+    [Parameter]
+    public string[]? MissingKeywords { get; set; }
+}

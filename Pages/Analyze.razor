@@ -1,227 +1,26 @@
+
 @page "/analyze"
 @inject ISnackbar Snackbar
 
 <PageTitle>Resume Analysis - Elevate CV</PageTitle>
 
 <div class="max-w-7xl mx-auto">
-    <div class="text-left mb-10">
-        <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">Resume Analysis</h1>
-        <p class="mt-4 text-xl text-gray-500">
-            Analyze your resume against job descriptions to increase your interview chances
-        </p>
-    </div>
+    <AnalyzeHeader />
     
     <MudTabs Class="max-w-full w-full" Outlined="false" Position="Position.Top" Rounded="true" Border="true" ApplyEffectsToContainer="true">
         <MudTabPanel Text="Upload & Analyze" Icon="@Icons.Material.Filled.Upload">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <MudPaper Class="pa-6">
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-2 mb-4">
-                            <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary" />
-                            <MudText Typo="Typo.h5">Upload Resume</MudText>
-                        </div>
-                        
-                        <MudFileUpload T="IBrowserFile" Accept=".pdf,.doc,.docx" OnFilesChanged="OnResumeFileChanged">
-                            <ButtonTemplate>
-                                <MudPaper Height="230px" Outlined="true" Class="d-flex flex-column align-center justify-center cursor-pointer pa-8">
-                                    <MudIcon Icon="@Icons.Material.Filled.CloudUpload" Size="Size.Large" Class="mb-4" />
-                                    <MudText Typo="Typo.body1" Class="mb-1">@(FileName ?? "Click to upload your resume")</MudText>
-                                    <MudText Typo="Typo.caption" Color="Color.Secondary">PDF, DOC, or DOCX up to 5MB</MudText>
-                                </MudPaper>
-                            </ButtonTemplate>
-                        </MudFileUpload>
-                        
-                        @if (!string.IsNullOrEmpty(FileName))
-                        {
-                            <div class="flex items-center space-x-2 text-sm text-primary-600 font-medium">
-                                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" />
-                                <span>Resume ready for analysis</span>
-                            </div>
-                        }
-                    </div>
-                </MudPaper>
-                
-                <MudPaper Class="pa-6">
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-2 mb-4">
-                            <MudIcon Icon="@Icons.Material.Filled.Search" Color="Color.Primary" />
-                            <MudText Typo="Typo.h5">Job Description</MudText>
-                        </div>
-                        
-                        <MudTextField T="string" 
-                                     Label="Paste the job description here" 
-                                     Variant="Variant.Outlined" 
-                                     Lines="10" 
-                                     @bind-Value="JobDescription" />
-                        
-                        @if (!string.IsNullOrEmpty(JobDescription))
-                        {
-                            <div class="flex items-center space-x-2 text-sm text-primary-600 font-medium">
-                                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" />
-                                <span>Job description ready for analysis</span>
-                            </div>
-                        }
-                    </div>
-                </MudPaper>
-            </div>
-            
-            <div class="mt-8 text-left">
-                <MudButton Variant="Variant.Filled" 
-                          Color="Color.Primary" 
-                          Size="Size.Large" 
-                          Class="px-8 py-3"
-                          Disabled="@(IsAnalyzing || string.IsNullOrEmpty(FileName) || string.IsNullOrEmpty(JobDescription))"
-                          OnClick="HandleAnalyze">
-                    @if (IsAnalyzing)
-                    {
-                        <MudProgressCircular Class="mr-2" Size="Size.Small" Indeterminate="true" />
-                        <span>Analyzing...</span>
-                    }
-                    else
-                    {
-                        <span>Analyze Resume</span>
-                    }
-                </MudButton>
-                
-                @if (IsAnalyzing)
-                {
-                    <MudText Class="mt-4" Typo="Typo.caption" Color="Color.Secondary">
-                        This usually takes less than a minute. We're comparing your resume against the job description...
-                    </MudText>
-                }
-            </div>
+            <UploadTab 
+                FileName="@FileName"
+                JobDescription="@JobDescription"
+                IsAnalyzing="@IsAnalyzing"
+                OnResumeFileChanged="OnResumeFileChanged"
+                OnJobDescriptionChanged="UpdateJobDescription"
+                HandleAnalyzeClick="HandleAnalyze" />
         </MudTabPanel>
         <MudTabPanel Text="Results & Recommendations" Icon="@Icons.Material.Filled.Assessment" Disabled="!AnalysisComplete">
             @if (AnalysisComplete)
             {
-                <div class="space-y-8">
-                    <MudPaper Class="pa-6">
-                        <div class="flex flex-col md:flex-row items-start md:items-center md:justify-between">
-                            <div class="flex items-center mb-4 md:mb-0">
-                                <div class="mr-6">
-                                    <MudProgressCircular Value="76" Size="Size.Large" Color="Color.Primary" Class="ma-2">
-                                        <MudText Typo="Typo.h5">76%</MudText>
-                                    </MudProgressCircular>
-                                </div>
-                                <div>
-                                    <MudText Typo="Typo.h5" Class="mb-1">ATS Compatibility Score</MudText>
-                                    <MudText Typo="Typo.body2" Color="Color.Secondary">
-                                        Your resume is fairly compatible with ATS systems
-                                    </MudText>
-                                </div>
-                            </div>
-                            
-                            <MudButton Variant="Variant.Outlined" 
-                                     Color="Color.Primary">
-                                Download Full Report
-                            </MudButton>
-                        </div>
-                    </MudPaper>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <ScoreCard Title="Keyword Matching" 
-                                  Icon="@Icons.Material.Filled.Search" 
-                                  Score="68" 
-                                  MissingKeywords="@(new[] {".NET Core", "MudBlazor", "ASP.NET Identity", "Blazor"})" />
-                        
-                        <MudPaper Class="pa-6">
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-2">
-                                        <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary" Size="Size.Small" />
-                                        <MudText Typo="Typo.h6">Formatting</MudText>
-                                    </div>
-                                    <MudText Typo="Typo.h6" Color="Color.Primary">85%</MudText>
-                                </div>
-                                
-                                <MudProgressLinear Value="85" Color="Color.Primary" Class="my-2" />
-                                
-                                <div class="space-y-2 pt-2">
-                                    <div class="flex items-start">
-                                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" Class="mr-2 mt-1" />
-                                        <MudText Typo="Typo.body2">Good use of section headings</MudText>
-                                    </div>
-                                    <div class="flex items-start">
-                                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" Class="mr-2 mt-1" />
-                                        <MudText Typo="Typo.body2">Appropriate resume length</MudText>
-                                    </div>
-                                    <div class="flex items-start">
-                                        <MudIcon Icon="@Icons.Material.Filled.Cancel" Color="Color.Error" Size="Size.Small" Class="mr-2 mt-1" />
-                                        <MudText Typo="Typo.body2">Complex tables may not parse correctly</MudText>
-                                    </div>
-                                </div>
-                            </div>
-                        </MudPaper>
-                        
-                        <MudPaper Class="pa-6">
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-2">
-                                        <MudIcon Icon="@Icons.Material.Filled.Assignment" Color="Color.Primary" Size="Size.Small" />
-                                        <MudText Typo="Typo.h6">Content Quality</MudText>
-                                    </div>
-                                    <MudText Typo="Typo.h6" Color="Color.Primary">75%</MudText>
-                                </div>
-                                
-                                <MudProgressLinear Value="75" Color="Color.Primary" Class="my-2" />
-                                
-                                <div class="space-y-2 pt-2">
-                                    <div class="flex items-start">
-                                        <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Small" Class="mr-2 mt-1" />
-                                        <MudText Typo="Typo.body2">Use more achievement-oriented bullet points</MudText>
-                                    </div>
-                                    <div class="flex items-start">
-                                        <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Small" Class="mr-2 mt-1" />
-                                        <MudText Typo="Typo.body2">Quantify your accomplishments with metrics</MudText>
-                                    </div>
-                                    <div class="flex items-start">
-                                        <MudIcon Icon="@Icons.Material.Filled.Cancel" Color="Color.Error" Size="Size.Small" Class="mr-2 mt-1" />
-                                        <MudText Typo="Typo.body2">Skills section needs more specificity</MudText>
-                                    </div>
-                                </div>
-                            </div>
-                        </MudPaper>
-                    </div>
-                    
-                    <MudPaper Class="pa-6">
-                        <div class="space-y-6">
-                            <div class="flex items-center space-x-2">
-                                <MudIcon Icon="@Icons.Material.Filled.BarChart" Color="Color.Primary" />
-                                <MudText Typo="Typo.h5">Detailed Recommendations</MudText>
-                            </div>
-                            
-                            <MudDivider />
-                            
-                            <RecommendationCard 
-                                Title="Add Missing Technical Skills" 
-                                Description="The job description emphasizes .NET technologies that are missing from your resume."
-                                Suggestion="Add a dedicated 'Technical Skills' section that includes: .NET Core, ASP.NET Identity, Blazor, MudBlazor, and other .NET-related technologies mentioned in the job description." />
-                            
-                            <MudDivider />
-                            
-                            <RecommendationCard 
-                                Title="Highlight Relevant Experience" 
-                                Description="Your work experience needs to better align with the job requirements."
-                                Suggestion="Restructure your experience bullet points to showcase: Experience with .NET frameworks and libraries, Frontend development skills with Blazor, Authentication implementation using ASP.NET Identity" />
-                            
-                            <MudDivider />
-                            
-                            <RecommendationCard 
-                                Title="Enhance Resume Formatting" 
-                                Description="While your formatting is generally good, there are some improvements to make it more ATS-friendly."
-                                Suggestion="Replace tables with simple formatting, use standard section headings (e.g., 'Experience', 'Skills', 'Education'), and ensure your contact information is at the top of the resume in plain text format." />
-                        </div>
-                    </MudPaper>
-                    
-                    <div class="flex justify-start space-x-4">
-                        <MudButton Variant="Variant.Outlined" Color="Color.Primary">
-                            Download Analysis Report
-                        </MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">
-                            Build Optimized Resume
-                        </MudButton>
-                    </div>
-                </div>
+                <ResultsTab />
             }
         </MudTabPanel>
     </MudTabs>
@@ -241,6 +40,11 @@
             FileName = file.Name;
             Snackbar.Add($"File \"{file.Name}\" ready for analysis.", Severity.Success);
         }
+    }
+    
+    private void UpdateJobDescription(string value)
+    {
+        JobDescription = value;
     }
     
     private async Task HandleAnalyze()

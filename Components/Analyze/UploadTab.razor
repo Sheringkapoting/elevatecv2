@@ -1,0 +1,63 @@
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <MudPaper Class="pa-6">
+        <ResumeUploadPanel FileName="@FileName" OnResumeFileChanged="OnResumeFileChanged" />
+    </MudPaper>
+    
+    <MudPaper Class="pa-6">
+        <JobDescriptionPanel JobDescription="@JobDescription" JobDescriptionChanged="OnJobDescriptionChanged" />
+    </MudPaper>
+</div>
+
+<div class="mt-8 text-left">
+    <MudButton Variant="Variant.Filled" 
+              Color="Color.Primary" 
+              Size="Size.Large" 
+              Class="px-8 py-3"
+              Disabled="@(IsAnalyzing || string.IsNullOrEmpty(FileName) || string.IsNullOrEmpty(JobDescription))"
+              OnClick="HandleAnalyzeClick">
+        @if (IsAnalyzing)
+        {
+            <MudProgressCircular Class="mr-2" Size="Size.Small" Indeterminate="true" />
+            <span>Analyzing...</span>
+        }
+        else
+        {
+            <span>Analyze Resume</span>
+        }
+    </MudButton>
+    
+    @if (IsAnalyzing)
+    {
+        <MudText Class="mt-4" Typo="Typo.caption" Color="Color.Secondary">
+            This usually takes less than a minute. We're comparing your resume against the job description...
+        </MudText>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string? FileName { get; set; }
+    
+    [Parameter]
+    public string JobDescription { get; set; } = string.Empty;
+    
+    [Parameter]
+    public bool IsAnalyzing { get; set; }
+    
+    [Parameter]
+    public EventCallback<InputFileChangeEventArgs> OnResumeFileChanged { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> OnJobDescriptionChanged { get; set; }
+    
+    [Parameter]
+    public EventCallback HandleAnalyzeClick { get; set; }
+    
+    private async Task OnJobDescriptionChanged(string value)
+    {
+        JobDescription = value;
+        if (OnJobDescriptionChanged.HasDelegate)
+            await OnJobDescriptionChanged.InvokeAsync(value);
+    }
+}
