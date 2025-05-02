@@ -254,23 +254,23 @@ const Dashboard = () => {
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-left py-4 text-gray-500">Loading recent analyses...</TableCell>
+                      <TableCell colSpan={5} className="text-center py-4 text-gray-500">Loading recent analyses...</TableCell>
                     </TableRow>
                   ) : recentAnalyses.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-left py-4 text-gray-500">
+                      <TableCell colSpan={5} className="text-center py-4 text-gray-500">
                         No resume analyses found. <Link to="/analyze" className="text-primary-600 hover:underline">Analyze your first resume</Link>
                       </TableCell>
                     </TableRow>
                   ) : (
                     recentAnalyses.map((analysis) => (
-                      <TableRow key={analysis.id}>
+                      <TableRow key={analysis.id} className="text-left">
                         <TableCell>
                           <div className="font-medium text-gray-900">{formatDate(analysis.created_at)}</div>
                           <div className="text-xs text-gray-500">{getElapsedTime(analysis.created_at)}</div>
                         </TableCell>
                         <TableCell className="font-medium">
-                          {getResumeFileName(analysis.resume_file_path)}
+                          {getResumeFileName(analysis.getResumeFileName())}
                         </TableCell>
                         <TableCell className="max-w-xs">
                           <div className="text-sm text-gray-900 truncate">
