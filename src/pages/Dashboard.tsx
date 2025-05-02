@@ -244,10 +244,10 @@ const Dashboard = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50">
-                    <TableHead className="w-[180px]">Date</TableHead>
-                    <TableHead className="w-[200px]">Name</TableHead>
-                    <TableHead>Job Description</TableHead>
-                    <TableHead className="w-[120px]">ATS Score</TableHead>
+                    <TableHead className="w-[180px] text-left">Date</TableHead>
+                    <TableHead className="w-[200px] text-left">Name</TableHead>
+                    <TableHead className="text-left">Job Description</TableHead>
+                    <TableHead className="w-[120px] text-left">ATS Score</TableHead>
                     <TableHead className="w-[100px] text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -322,10 +322,10 @@ const Dashboard = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50">
-                    <TableHead className="w-[200px]">Company</TableHead>
-                    <TableHead className="w-[250px]">Position</TableHead>
-                    <TableHead className="w-[120px]">Status</TableHead>
-                    <TableHead className="w-[150px]">Date</TableHead>
+                    <TableHead className="w-[200px] text-left">Company</TableHead>
+                    <TableHead className="w-[250px] text-left">Position</TableHead>
+                    <TableHead className="w-[120px] text-left">Status</TableHead>
+                    <TableHead className="w-[150px] text-left">Date</TableHead>
                     <TableHead className="w-[100px] text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -365,3 +365,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
