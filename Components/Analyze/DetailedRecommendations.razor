@@ -1,3 +1,4 @@
+@using MudBlazor
 
 <MudPaper Class="pa-6">
     <div class="text-left space-y-6">
@@ -8,23 +9,44 @@
         
         <MudDivider />
         
-        <RecommendationCard 
-            Title="Add Missing Technical Skills" 
-            Description="The job description emphasizes .NET technologies that are missing from your resume."
-            Suggestion="Add a dedicated 'Technical Skills' section that includes: .NET Core, ASP.NET Identity, Blazor, MudBlazor, and other .NET-related technologies mentioned in the job description." />
+        <!-- First Improvement Suggestion -->
+        <div class="flex items-start gap-4">
+            <div>
+                <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Warning" />
+            </div>
+            <div class="flex-grow">
+                <!-- Added text-left class to fix alignment -->
+                <MudText Typo="Typo.h6" Class="text-left">Improvement Suggestion</MudText>
+                <MudText Typo="Typo.body1">Add more job-related keywords like: communication.</MudText>
+            </div>
+        </div>
         
         <MudDivider />
         
-        <RecommendationCard 
-            Title="Highlight Relevant Experience" 
-            Description="Your work experience needs to better align with the job requirements."
-            Suggestion="Restructure your experience bullet points to showcase: Experience with .NET frameworks and libraries, Frontend development skills with Blazor, Authentication implementation using ASP.NET Identity" />
+        <!-- Second Improvement Suggestion -->
+        <div class="flex items-start gap-4">
+            <div>
+                <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Warning" />
+            </div>
+            <div class="flex-grow">
+                <!-- Added text-left class to fix alignment -->
+                <MudText Typo="Typo.h6" Class="text-left">Improvement Suggestion</MudText>
+                <MudText Typo="Typo.body1">Use more achievement-oriented bullet points to highlight accomplishments.</MudText>
+            </div>
+        </div>
         
         <MudDivider />
         
-        <RecommendationCard 
-            Title="Enhance Resume Formatting" 
-            Description="While your formatting is generally good, there are some improvements to make it more ATS-friendly."
-            Suggestion="Replace tables with simple formatting, use standard section headings (e.g., 'Experience', 'Skills', 'Education'), and ensure your contact information is at the top of the resume in plain text format." />
+        <!-- Third Improvement Suggestion -->
+        <div class="flex items-start gap-4">
+            <div>
+                <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Warning" />
+            </div>
+            <div class="flex-grow">
+                <!-- Added text-left class to fix alignment -->
+                <MudText Typo="Typo.h6" Class="text-left">Improvement Suggestion</MudText>
+                <MudText Typo="Typo.body1">Include more specific metrics and numbers to quantify achievements.</MudText>
+            </div>
+        </div>
     </div>
 </MudPaper>
