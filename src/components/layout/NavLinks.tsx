@@ -26,14 +26,14 @@ const NavLinks = ({ handleProtectedLink }: NavLinksProps) => {
         Dashboard
       </a>
 
-      <a
-        href="/analyze"
-        onClick={(e) => handleProtectedLink(e, "/analyze")}
+      {/* Changed from "a" tag with click handler to direct Link for Resume Analysis */}
+      <Link
+        to="/analyze"
         className="text-gray-700 hover:text-primary-600 inline-flex items-center"
       >
         <FileText className="mr-1 h-4 w-4" />
         Resume Analysis
-      </a>
+      </Link>
       
       <a
         href="/builder"
