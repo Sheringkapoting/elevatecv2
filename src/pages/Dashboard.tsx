@@ -230,6 +230,8 @@ const Dashboard = () => {
             </Card>
           </div>
           
+          // This is the fixed code for your tables in Dashboard.tsx
+
           {/* Recent Resume Analyses */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
@@ -248,7 +250,7 @@ const Dashboard = () => {
                     <TableHead className="w-[200px] text-left">Name</TableHead>
                     <TableHead className="text-left">Job Description</TableHead>
                     <TableHead className="w-[120px] text-left">ATS Score</TableHead>
-                    <TableHead className="w-[100px] text-right">Actions</TableHead>
+                    <TableHead className="w-[100px] text-left">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -289,7 +291,7 @@ const Dashboard = () => {
                             <span className="text-sm text-gray-900">{analysis.ats_score}%</span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-left">
                           <Button
                             variant="ghost"
                             size="sm"
@@ -308,7 +310,7 @@ const Dashboard = () => {
               </Table>
             </div>
           </div>
-          
+
           {/* Job Applications */}
           <div>
             <div className="flex items-center justify-between mb-6">
@@ -326,7 +328,7 @@ const Dashboard = () => {
                     <TableHead className="w-[250px] text-left">Position</TableHead>
                     <TableHead className="w-[120px] text-left">Status</TableHead>
                     <TableHead className="w-[150px] text-left">Date</TableHead>
-                    <TableHead className="w-[100px] text-right">Actions</TableHead>
+                    <TableHead className="w-[100px] text-left">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -346,7 +348,7 @@ const Dashboard = () => {
                       <TableCell className="text-gray-500">
                         {job.date}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-left">
                         <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700">
                           <ExternalLink className="h-4 w-4" />
                         </Button>
