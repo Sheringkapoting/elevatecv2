@@ -230,8 +230,6 @@ const Dashboard = () => {
             </Card>
           </div>
           
-          // This is the fixed code for your tables in Dashboard.tsx
-
           {/* Recent Resume Analyses */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
@@ -256,11 +254,11 @@ const Dashboard = () => {
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-4 text-gray-500">Loading recent analyses...</TableCell>
+                      <TableCell colSpan={5} className="text-left py-4 text-gray-500">Loading recent analyses...</TableCell>
                     </TableRow>
                   ) : recentAnalyses.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-4 text-gray-500">
+                      <TableCell colSpan={5} className="text-left py-4 text-gray-500">
                         No resume analyses found. <Link to="/analyze" className="text-primary-600 hover:underline">Analyze your first resume</Link>
                       </TableCell>
                     </TableRow>
@@ -333,7 +331,7 @@ const Dashboard = () => {
                 </TableHeader>
                 <TableBody>
                   {jobApplications.map((job) => (
-                    <TableRow key={job.id}>
+                    <TableRow key={job.id} className="text-left">
                       <TableCell className="font-medium">{job.company}</TableCell>
                       <TableCell>{job.position}</TableCell>
                       <TableCell>
@@ -348,7 +346,7 @@ const Dashboard = () => {
                       <TableCell className="text-gray-500">
                         {job.date}
                       </TableCell>
-                      <TableCell className="text-left">
+                      <TableCell>
                         <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700">
                           <ExternalLink className="h-4 w-4" />
                         </Button>
