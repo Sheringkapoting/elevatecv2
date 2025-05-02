@@ -264,21 +264,21 @@ const Dashboard = () => {
                     </TableRow>
                   ) : (
                     recentAnalyses.map((analysis) => (
-                      <TableRow key={analysis.id} className="text-left">
-                        <TableCell>
+                      <TableRow key={analysis.id}>
+                        <TableCell className="text-left">
                           <div className="font-medium text-gray-900">{formatDate(analysis.created_at)}</div>
                           <div className="text-xs text-gray-500">{getElapsedTime(analysis.created_at)}</div>
                         </TableCell>
-                        <TableCell className="font-medium">
-                          {getResumeFileName(analysis.getResumeFileName())}
+                        <TableCell className="font-medium text-left">
+                          {getResumeFileName(analysis.resume_file_path)}
                         </TableCell>
-                        <TableCell className="max-w-xs">
+                        <TableCell className="max-w-xs text-left">
                           <div className="text-sm text-gray-900 truncate">
                             {analysis.job_description?.substring(0, 100)}
                             {analysis.job_description?.length > 100 ? "..." : ""}
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-left">
                           <div className="flex items-center">
                             <div className="w-full bg-gray-200 rounded-full h-2 mr-2">
                               <div
