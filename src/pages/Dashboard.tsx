@@ -1,3 +1,4 @@
+
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,14 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell
+} from "@/components/ui/table";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -121,6 +130,15 @@ const Dashboard = () => {
     }
   };
 
+  // Function to extract filename from path
+  const getResumeFileName = (filePath: string) => {
+    if (!filePath) return "Untitled Resume";
+    const parts = filePath.split('/');
+    const fileName = parts[parts.length - 1];
+    // Remove any UUID or timestamp from the filename
+    return fileName.replace(/^[0-9a-f-]+-/, '').replace(/\.[^/.]+$/, '');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <NavbarContainer />
@@ -223,74 +241,71 @@ const Dashboard = () => {
             </div>
             
             <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="min-w-full divide-y divide-gray-200">
-                <div className="bg-gray-50 px-6 py-3">
-                  <div className="grid grid-cols-12 gap-3">
-                    <div className="col-span-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
-                    </div>
-                    <div className="col-span-5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Job Description
-                    </div>
-                    <div className="col-span-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ATS Score
-                    </div>
-                    <div className="col-span-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white divide-y divide-gray-200">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="w-[180px]">Date</TableHead>
+                    <TableHead className="w-[200px]">Name</TableHead>
+                    <TableHead>Job Description</TableHead>
+                    <TableHead className="w-[120px]">ATS Score</TableHead>
+                    <TableHead className="w-[100px] text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {isLoading ? (
-                    <div className="px-6 py-4 text-center text-gray-500">Loading recent analyses...</div>
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-4 text-gray-500">Loading recent analyses...</TableCell>
+                    </TableRow>
                   ) : recentAnalyses.length === 0 ? (
-                    <div className="px-6 py-4 text-center text-gray-500">
-                      No resume analyses found. <Link to="/analyze" className="text-primary-600 hover:underline">Analyze your first resume</Link>
-                    </div>
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-4 text-gray-500">
+                        No resume analyses found. <Link to="/analyze" className="text-primary-600 hover:underline">Analyze your first resume</Link>
+                      </TableCell>
+                    </TableRow>
                   ) : (
                     recentAnalyses.map((analysis) => (
-                      <div key={analysis.id} className="px-6 py-4">
-                        <div className="grid grid-cols-12 gap-3 items-center">
-                          <div className="col-span-3">
-                            <div className="text-sm font-medium text-gray-900">{formatDate(analysis.created_at)}</div>
-                            <div className="text-xs text-gray-500">{getElapsedTime(analysis.created_at)}</div>
+                      <TableRow key={analysis.id}>
+                        <TableCell>
+                          <div className="font-medium text-gray-900">{formatDate(analysis.created_at)}</div>
+                          <div className="text-xs text-gray-500">{getElapsedTime(analysis.created_at)}</div>
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {getResumeFileName(analysis.resume_file_path)}
+                        </TableCell>
+                        <TableCell className="max-w-xs">
+                          <div className="text-sm text-gray-900 truncate">
+                            {analysis.job_description?.substring(0, 100)}
+                            {analysis.job_description?.length > 100 ? "..." : ""}
                           </div>
-                          <div className="col-span-5">
-                            <div className="text-sm text-gray-900 truncate max-w-xs">
-                              {analysis.job_description.substring(0, 100)}
-                              {analysis.job_description.length > 100 ? "..." : ""}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center">
+                            <div className="w-full bg-gray-200 rounded-full h-2 mr-2">
+                              <div
+                                className="bg-primary-600 h-2 rounded-full"
+                                style={{ width: `${analysis.ats_score}%` }}
+                              ></div>
                             </div>
+                            <span className="text-sm text-gray-900">{analysis.ats_score}%</span>
                           </div>
-                          <div className="col-span-2">
-                            <div className="flex items-center">
-                              <div className="w-full bg-gray-200 rounded-full h-2 mr-2">
-                                <div
-                                  className="bg-primary-600 h-2 rounded-full"
-                                  style={{ width: `${analysis.ats_score}%` }}
-                                ></div>
-                              </div>
-                              <span className="text-sm text-gray-900">{analysis.ats_score}%</span>
-                            </div>
-                          </div>
-                          <div className="col-span-2 text-right space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-gray-500 hover:text-gray-700"
-                              onClick={() => {
-                                // Open analysis results in a new tab or navigate to them
-                                window.open(`/analyze?id=${analysis.id}`, '_blank');
-                              }}
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-500 hover:text-gray-700"
+                            onClick={() => {
+                              window.open(`/analyze?id=${analysis.id}`, '_blank');
+                            }}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
                     ))
                   )}
-                </div>
-              </div>
+                </TableBody>
+              </Table>
             </div>
           </div>
           
@@ -304,58 +319,42 @@ const Dashboard = () => {
             </div>
             
             <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="min-w-full divide-y divide-gray-200">
-                <div className="bg-gray-50 px-6 py-3">
-                  <div className="grid grid-cols-12 gap-3">
-                    <div className="col-span-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Company
-                    </div>
-                    <div className="col-span-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Position
-                    </div>
-                    <div className="col-span-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </div>
-                    <div className="col-span-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
-                    </div>
-                    <div className="col-span-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white divide-y divide-gray-200">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="w-[200px]">Company</TableHead>
+                    <TableHead className="w-[250px]">Position</TableHead>
+                    <TableHead className="w-[120px]">Status</TableHead>
+                    <TableHead className="w-[150px]">Date</TableHead>
+                    <TableHead className="w-[100px] text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {jobApplications.map((job) => (
-                    <div key={job.id} className="px-6 py-4">
-                      <div className="grid grid-cols-12 gap-3 items-center">
-                        <div className="col-span-3">
-                          <div className="text-sm font-medium text-gray-900">{job.company}</div>
-                        </div>
-                        <div className="col-span-3">
-                          <div className="text-sm text-gray-900">{job.position}</div>
-                        </div>
-                        <div className="col-span-2">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                              job.status
-                            )}`}
-                          >
-                            {job.status}
-                          </span>
-                        </div>
-                        <div className="col-span-2 text-sm text-gray-500">
-                          {job.date}
-                        </div>
-                        <div className="col-span-2 text-right space-x-2">
-                          <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700">
-                            <ExternalLink className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
+                    <TableRow key={job.id}>
+                      <TableCell className="font-medium">{job.company}</TableCell>
+                      <TableCell>{job.position}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                            job.status
+                          )}`}
+                        >
+                          {job.status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-gray-500">
+                        {job.date}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700">
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </div>
-              </div>
+                </TableBody>
+              </Table>
             </div>
           </div>
         </div>
