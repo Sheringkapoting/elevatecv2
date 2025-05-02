@@ -215,8 +215,9 @@ const AnalysisResults = () => {
                   {index > 0 && <Separator className="my-4" />}
                   <div className="flex items-start">
                     <AlertCircle className="h-5 w-5 text-amber-500 mr-3 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium mb-1">Improvement Suggestion</p>
+                    <div className="flex-grow">
+                      {/* Added text-left class to fix alignment */}
+                      <p className="font-medium mb-1 text-left">Improvement Suggestion</p>
                       <p className="text-gray-600">{suggestion}</p>
                     </div>
                   </div>
