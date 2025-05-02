@@ -1,14 +1,12 @@
 
-<div class="pb-4">
-    <MudText Typo="Typo.h6" Class="mb-2">@Title</MudText>
-    <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">
-        @Description
-    </MudText>
-    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-4">
-        <MudText Typo="Typo.body2">
-            <strong>Suggestion:</strong> @Suggestion
-        </MudText>
-    </MudAlert>
+<div class="text-left mb-4">
+    <div class="mb-2">
+        <MudText Typo="Typo.h6" Class="text-primary-600">@Title</MudText>
+    </div>
+    <MudText Typo="Typo.body2" Class="mb-2 text-gray-600">@Description</MudText>
+    <div class="pl-4 border-l-2 border-primary-600">
+        <MudText Typo="Typo.body2">@Suggestion</MudText>
+    </div>
 </div>
 
 @code {
