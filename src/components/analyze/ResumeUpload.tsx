@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, CheckCircle, FileText, MagicWand } from "lucide-react";
+import { Upload, CheckCircle, FileText, Wand2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface ResumeUploadProps {
@@ -87,7 +87,7 @@ const ResumeUpload = ({ onFileChange, resumeFile }: ResumeUploadProps) => {
                 className="w-full flex items-center justify-center"
                 onClick={handleAutoFillResume}
               >
-                <MagicWand className="h-4 w-4 mr-2" />
+                <Wand2 className="h-4 w-4 mr-2" />
                 Use for Resume Builder
               </Button>
             </div>
