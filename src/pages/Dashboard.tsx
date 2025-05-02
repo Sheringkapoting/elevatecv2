@@ -82,6 +82,15 @@ const Dashboard = () => {
     return `${Math.floor(diffDays / 30)} months ago`;
   };
 
+  // Function to extract filename from path
+  const getResumeFileName = (filePath: string) => {
+    if (!filePath) return "Untitled Resume";
+    const parts = filePath.split('/');
+    const fileName = parts[parts.length - 1];
+    // Remove any UUID or timestamp from the filename
+    return fileName.replace(/^[0-9a-f-]+-/, '').replace(/\.[^/.]+$/, '');
+  };
+
   // Mock data for job applications
   const jobApplications = [
     {
@@ -128,15 +137,6 @@ const Dashboard = () => {
       default:
         return "bg-gray-100 text-gray-800";
     }
-  };
-
-  // Function to extract filename from path
-  const getResumeFileName = (filePath: string) => {
-    if (!filePath) return "Untitled Resume";
-    const parts = filePath.split('/');
-    const fileName = parts[parts.length - 1];
-    // Remove any UUID or timestamp from the filename
-    return fileName.replace(/^[0-9a-f-]+-/, '').replace(/\.[^/.]+$/, '');
   };
 
   return (
@@ -365,4 +365,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
