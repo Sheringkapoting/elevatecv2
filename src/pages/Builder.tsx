@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,8 @@ import ExperienceForm from "@/components/resume-builder/ExperienceForm";
 import EducationForm from "@/components/resume-builder/EducationForm";
 import SkillsForm from "@/components/resume-builder/SkillsForm";
 import ResumePreview from "@/components/resume-builder/ResumePreview";
+import { supabase } from "@/integrations/supabase/client";
+import { parseResumeText, ParsedResumeData } from "@/utils/resumeParser";
 
 const templates = [
   {
@@ -77,6 +78,77 @@ const Builder = () => {
   const [resumeData, setResumeData] = useState(initialResumeData);
   const [selectedTemplate, setSelectedTemplate] = useState("professional");
   const { toast } = useToast();
+  
+  // Check if we need to auto-fill from uploaded resume
+  useEffect(() => {
+    const checkForResumeData = async () => {
+      const shouldAutoFill = sessionStorage.getItem("resume_file_for_builder");
+      
+      if (shouldAutoFill) {
+        // Clear the flag
+        sessionStorage.removeItem("resume_file_for_builder");
+        
+        // Look for the most recent resume analysis
+        const { data: user } = await supabase.auth.getUser();
+        if (user?.user) {
+          const { data: analyses, error } = await supabase
+            .from('resume_analysis')
+            .select('*')
+            .eq('user_id', user.user.id)
+            .order('created_at', { ascending: false })
+            .limit(1);
+          
+          if (analyses && analyses.length > 0) {
+            // Get the resume file content
+            const resumePath = analyses[0].resume_file_path;
+            
+            try {
+              // Download the resume file
+              const { data: fileData, error: downloadError } = await supabase
+                .storage
+                .from('resumes')
+                .download(resumePath);
+                
+              if (downloadError) {
+                throw downloadError;
+              }
+              
+              if (fileData) {
+                // For text files
+                let resumeText = '';
+                try {
+                  resumeText = await fileData.text();
+                } catch (e) {
+                  // If not a text file, use the job description as fallback
+                  resumeText = analyses[0].job_description || '';
+                }
+                
+                // Parse the resume text
+                const parsedData: ParsedResumeData = parseResumeText(resumeText);
+                
+                // Update the form with parsed data
+                setResumeData(parsedData);
+                
+                toast({
+                  title: "Resume data imported",
+                  description: "Your resume has been used to pre-fill the builder form.",
+                });
+              }
+            } catch (error) {
+              console.error("Error downloading resume:", error);
+              toast({
+                title: "Error importing resume data",
+                description: "Could not retrieve resume content. Please fill the form manually.",
+                variant: "destructive",
+              });
+            }
+          }
+        }
+      }
+    };
+    
+    checkForResumeData();
+  }, [toast]);
   
   const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

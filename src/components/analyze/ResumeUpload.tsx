@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, CheckCircle, FileText } from "lucide-react";
+import { Upload, CheckCircle, FileText, MagicWand } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface ResumeUploadProps {
   onFileChange: (file: File) => void;
@@ -12,6 +13,7 @@ interface ResumeUploadProps {
 
 const ResumeUpload = ({ onFileChange, resumeFile }: ResumeUploadProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -21,6 +23,28 @@ const ResumeUpload = ({ onFileChange, resumeFile }: ResumeUploadProps) => {
         description: `File "${e.target.files[0].name}" ready for analysis.`,
       });
     }
+  };
+
+  const handleAutoFillResume = () => {
+    if (!resumeFile) {
+      toast({
+        title: "No resume uploaded",
+        description: "Please upload your resume first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Store the file in session storage to be accessed by the builder
+    sessionStorage.setItem("resume_file_for_builder", "true");
+    
+    toast({
+      title: "Redirecting to Resume Builder",
+      description: "Your resume will be used to auto-fill the builder form.",
+    });
+    
+    // Navigate to the builder page
+    navigate("/builder");
   };
 
   return (
@@ -52,9 +76,20 @@ const ResumeUpload = ({ onFileChange, resumeFile }: ResumeUploadProps) => {
           </div>
           
           {resumeFile && (
-            <div className="flex items-center space-x-2 text-sm text-primary-600 font-medium">
-              <CheckCircle className="h-4 w-4" />
-              <span>Resume ready for analysis</span>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2 text-sm text-primary-600 font-medium">
+                <CheckCircle className="h-4 w-4" />
+                <span>Resume ready for analysis</span>
+              </div>
+              
+              <Button 
+                variant="outline" 
+                className="w-full flex items-center justify-center"
+                onClick={handleAutoFillResume}
+              >
+                <MagicWand className="h-4 w-4 mr-2" />
+                Use for Resume Builder
+              </Button>
             </div>
           )}
         </div>
