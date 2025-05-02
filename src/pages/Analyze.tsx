@@ -13,6 +13,7 @@ const Analyze = () => {
     setJobDescription,
     isAnalyzing,
     analysisComplete,
+    analysisResults,
     activeTab,
     setActiveTab,
     handleAnalyze,
@@ -32,6 +33,7 @@ const Analyze = () => {
               jobDescription={jobDescription}
               isAnalyzing={isAnalyzing}
               analysisComplete={analysisComplete}
+              analysisResults={analysisResults}
               setResumeFile={setResumeFile}
               setJobDescription={setJobDescription}
               onAnalyze={handleAnalyze}
@@ -42,6 +44,6 @@ const Analyze = () => {
       <Footer />
     </div>
   );
-}
+};
 
 export default Analyze;

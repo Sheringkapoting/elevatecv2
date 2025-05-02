@@ -1,4 +1,3 @@
-
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -8,35 +7,71 @@ import {
   Eye, Download, ExternalLink, ChevronRight, Briefcase
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 
 const Dashboard = () => {
-  // Mock data for recent resumes
-  const recentResumes = [
-    {
-      id: 1,
-      name: "Software Developer - Google",
-      lastUpdated: "2 days ago",
-      atsScore: 86,
-      views: 12,
-      downloads: 3,
-    },
-    {
-      id: 2,
-      name: "Frontend Developer - Microsoft",
-      lastUpdated: "1 week ago",
-      atsScore: 78,
-      views: 8,
-      downloads: 1,
-    },
-    {
-      id: 3,
-      name: "Full Stack Developer - Amazon",
-      lastUpdated: "2 weeks ago",
-      atsScore: 92,
-      views: 15,
-      downloads: 4,
-    },
-  ];
+  const { user } = useAuth();
+  const [recentAnalyses, setRecentAnalyses] = useState<any[]>([]);
+  const [averageAtsScore, setAverageAtsScore] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchResumeAnalyses = async () => {
+      if (!user?.id) return;
+      
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from("resume_analysis")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(5);
+          
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setRecentAnalyses(data);
+          
+          // Calculate average ATS score
+          const totalScore = data.reduce((sum, analysis) => sum + (analysis.ats_score || 0), 0);
+          setAverageAtsScore(Math.round(totalScore / data.length));
+        }
+      } catch (error) {
+        console.error("Error fetching resume analyses:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchResumeAnalyses();
+  }, [user]);
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+  
+  // Helper function to get elapsed time text
+  const getElapsedTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    return `${Math.floor(diffDays / 30)} months ago`;
+  };
 
   // Mock data for job applications
   const jobApplications = [
@@ -119,11 +154,15 @@ const Dashboard = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm font-medium text-gray-500">Average ATS Score</p>
-                    <h3 className="text-3xl font-bold text-gray-900 mt-2">85%</h3>
-                    <p className="text-sm text-green-600 flex items-center mt-1">
-                      <TrendingUp className="h-4 w-4 mr-1" />
-                      <span>+12% from last month</span>
-                    </p>
+                    <h3 className="text-3xl font-bold text-gray-900 mt-2">
+                      {isLoading ? "..." : `${averageAtsScore}%`}
+                    </h3>
+                    {recentAnalyses.length > 1 && (
+                      <p className="text-sm text-green-600 flex items-center mt-1">
+                        <TrendingUp className="h-4 w-4 mr-1" />
+                        <span>Based on {recentAnalyses.length} analyses</span>
+                      </p>
+                    )}
                   </div>
                   <div className="bg-primary-100 p-3 rounded-full">
                     <BarChart2 className="h-6 w-6 text-primary-600" />
@@ -136,12 +175,16 @@ const Dashboard = () => {
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Total Resumes</p>
-                    <h3 className="text-3xl font-bold text-gray-900 mt-2">7</h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                      <Clock className="h-4 w-4 inline mr-1" />
-                      <span>Last update: 2 days ago</span>
-                    </p>
+                    <p className="text-sm font-medium text-gray-500">Total Analyses</p>
+                    <h3 className="text-3xl font-bold text-gray-900 mt-2">
+                      {isLoading ? "..." : recentAnalyses.length}
+                    </h3>
+                    {recentAnalyses.length > 0 && (
+                      <p className="text-sm text-gray-500 mt-1">
+                        <Clock className="h-4 w-4 inline mr-1" />
+                        <span>Last analysis: {getElapsedTime(recentAnalyses[0]?.created_at)}</span>
+                      </p>
+                    )}
                   </div>
                   <div className="bg-blue-100 p-3 rounded-full">
                     <FileText className="h-6 w-6 text-blue-600" />
@@ -169,12 +212,12 @@ const Dashboard = () => {
             </Card>
           </div>
           
-          {/* Recent Resumes */}
+          {/* Recent Resume Analyses */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Recent Resumes</h2>
-              <Link to="/builder" className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center">
-                View All
+              <h2 className="text-xl font-bold text-gray-900">Recent Resume Analyses</h2>
+              <Link to="/analyze" className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center">
+                New Analysis
                 <ChevronRight className="ml-1 h-4 w-4" />
               </Link>
             </div>
@@ -183,17 +226,14 @@ const Dashboard = () => {
               <div className="min-w-full divide-y divide-gray-200">
                 <div className="bg-gray-50 px-6 py-3">
                   <div className="grid grid-cols-12 gap-3">
-                    <div className="col-span-5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Resume Name
+                    <div className="col-span-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
                     </div>
-                    <div className="col-span-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Last Updated
+                    <div className="col-span-5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Job Description
                     </div>
                     <div className="col-span-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       ATS Score
-                    </div>
-                    <div className="col-span-1 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Views
                     </div>
                     <div className="col-span-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
@@ -201,48 +241,54 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="bg-white divide-y divide-gray-200">
-                  {recentResumes.map((resume) => (
-                    <div key={resume.id} className="px-6 py-4">
-                      <div className="grid grid-cols-12 gap-3 items-center">
-                        <div className="col-span-5">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10 bg-primary-100 rounded-full flex items-center justify-center">
-                              <FileText className="h-5 w-5 text-primary-600" />
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{resume.name}</div>
+                  {isLoading ? (
+                    <div className="px-6 py-4 text-center text-gray-500">Loading recent analyses...</div>
+                  ) : recentAnalyses.length === 0 ? (
+                    <div className="px-6 py-4 text-center text-gray-500">
+                      No resume analyses found. <Link to="/analyze" className="text-primary-600 hover:underline">Analyze your first resume</Link>
+                    </div>
+                  ) : (
+                    recentAnalyses.map((analysis) => (
+                      <div key={analysis.id} className="px-6 py-4">
+                        <div className="grid grid-cols-12 gap-3 items-center">
+                          <div className="col-span-3">
+                            <div className="text-sm font-medium text-gray-900">{formatDate(analysis.created_at)}</div>
+                            <div className="text-xs text-gray-500">{getElapsedTime(analysis.created_at)}</div>
+                          </div>
+                          <div className="col-span-5">
+                            <div className="text-sm text-gray-900 truncate max-w-xs">
+                              {analysis.job_description.substring(0, 100)}
+                              {analysis.job_description.length > 100 ? "..." : ""}
                             </div>
                           </div>
-                        </div>
-                        <div className="col-span-2 text-sm text-gray-500">
-                          {resume.lastUpdated}
-                        </div>
-                        <div className="col-span-2">
-                          <div className="flex items-center">
-                            <div className="w-full bg-gray-200 rounded-full h-2 mr-2">
-                              <div
-                                className="bg-primary-600 h-2 rounded-full"
-                                style={{ width: `${resume.atsScore}%` }}
-                              ></div>
+                          <div className="col-span-2">
+                            <div className="flex items-center">
+                              <div className="w-full bg-gray-200 rounded-full h-2 mr-2">
+                                <div
+                                  className="bg-primary-600 h-2 rounded-full"
+                                  style={{ width: `${analysis.ats_score}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm text-gray-900">{analysis.ats_score}%</span>
                             </div>
-                            <span className="text-sm text-gray-900">{resume.atsScore}%</span>
                           </div>
-                        </div>
-                        <div className="col-span-1 text-center flex items-center justify-center text-sm text-gray-500">
-                          <Eye className="h-4 w-4 mr-1" />
-                          {resume.views}
-                        </div>
-                        <div className="col-span-2 text-right space-x-2">
-                          <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700">
-                            <ExternalLink className="h-4 w-4" />
-                          </Button>
+                          <div className="col-span-2 text-right space-x-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-gray-500 hover:text-gray-700"
+                              onClick={() => {
+                                // Open analysis results in a new tab or navigate to them
+                                window.open(`/analyze?id=${analysis.id}`, '_blank');
+                              }}
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
             </div>
