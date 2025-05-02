@@ -36,7 +36,6 @@ function App() {
                     </ProtectedRoute>
                   } 
                 />
-                {/* Analyze page is now directly accessible without ProtectedRoute wrapper */}
                 <Route path="/analyze" element={<Analyze />} />
                 <Route 
                   path="/builder" 
