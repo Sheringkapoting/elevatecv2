@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -20,12 +19,23 @@ interface AnalysisResult {
   created_at: string;
 }
 
-const AnalysisResults = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+interface AnalysisResultsProps {
+  analysisResult?: AnalysisResult | null;
+}
+
+const AnalysisResults = ({ analysisResult: propResult }: AnalysisResultsProps) => {
+  const [isLoading, setIsLoading] = useState(!propResult);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(propResult || null);
   const { user } = useAuth();
 
   useEffect(() => {
+    // If we have props result, use it and skip fetching
+    if (propResult) {
+      setAnalysisResult(propResult);
+      setIsLoading(false);
+      return;
+    }
+
     const fetchAnalysisResults = async () => {
       if (!user?.id) return;
       
@@ -50,7 +60,7 @@ const AnalysisResults = () => {
     };
 
     fetchAnalysisResults();
-  }, [user]);
+  }, [user, propResult]);
 
   if (isLoading) {
     return <LoadingSkeleton />;
@@ -216,7 +226,6 @@ const AnalysisResults = () => {
                   <div className="flex items-start">
                     <AlertCircle className="h-5 w-5 text-amber-500 mr-3 mt-0.5 flex-shrink-0" />
                     <div className="flex-grow">
-                      {/* Added text-left class to fix alignment */}
                       <p className="font-medium mb-1 text-left">Improvement Suggestion</p>
                       <p className="text-gray-600">{suggestion}</p>
                     </div>

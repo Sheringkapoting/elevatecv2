@@ -71,7 +71,9 @@ const AnalyzeTabs = ({
         </div>
       </TabsContent>
       <TabsContent value="results" className="mt-6">
-        {analysisComplete && <AnalysisResults results={analysisResults} />}
+        {analysisComplete && analysisResults && (
+          <AnalysisResults analysisResult={analysisResults} />
+        )}
       </TabsContent>
     </Tabs>
   );
