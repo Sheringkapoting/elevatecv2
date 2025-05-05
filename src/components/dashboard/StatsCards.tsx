@@ -34,13 +34,19 @@ const StatsCards = ({ averageAtsScore, totalCount, recentAnalyses, isLoading }: 
               <h3 className="text-3xl font-bold text-gray-900 mt-2">
                 {isLoading ? "..." : `${averageAtsScore}%`}
               </h3>
-              {recentAnalyses.length > 1 && (
+              {totalCount > 1 && (
                 <p className="text-sm text-green-600 flex items-center mt-1">
                   <TrendingUp className="h-4 w-4 mr-1" />
                   <span>Based on {totalCount} analyses</span>
                 </p>
               )}
-              {recentAnalyses.length === 0 && !isLoading && (
+              {totalCount === 1 && (
+                <p className="text-sm text-gray-500 flex items-center mt-1">
+                  <TrendingUp className="h-4 w-4 mr-1" />
+                  <span>Based on 1 analysis</span>
+                </p>
+              )}
+              {totalCount === 0 && !isLoading && (
                 <p className="text-sm text-gray-500 mt-1">
                   No data available
                 </p>

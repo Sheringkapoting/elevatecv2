@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -22,7 +21,7 @@ export const useDashboardData = () => {
       try {
         setIsLoading(true);
         
-        // First, get the total count of analyses for pagination
+        // First, get the total count of analyses for pagination and display
         const { count, error: countError } = await supabase
           .from("resume_analysis")
           .select("*", { count: "exact", head: true })
@@ -35,6 +34,22 @@ export const useDashboardData = () => {
         
         // Then fetch the paginated analyses if there are any
         if (count && count > 0) {
+          // Calculate average ATS score from ALL records (not just current page)
+          const { data: allData, error: avgError } = await supabase
+            .from("resume_analysis")
+            .select("ats_score")
+            .eq("user_id", user.id);
+          
+          if (avgError) throw avgError;
+          
+          if (allData && allData.length > 0) {
+            const totalScore = allData.reduce((sum, analysis) => sum + (analysis.ats_score || 0), 0);
+            setAverageAtsScore(Math.round(totalScore / allData.length));
+          } else {
+            setAverageAtsScore(0);
+          }
+
+          // Fetch paginated data for display in the table
           const from = (currentPage - 1) * itemsPerPage;
           const to = from + itemsPerPage - 1;
           
@@ -47,27 +62,7 @@ export const useDashboardData = () => {
             
           if (error) throw error;
           
-          if (data && data.length > 0) {
-            setRecentAnalyses(data);
-            
-            // Calculate average ATS score
-            const { data: allData, error: avgError } = await supabase
-              .from("resume_analysis")
-              .select("ats_score")
-              .eq("user_id", user.id);
-            
-            if (avgError) throw avgError;
-            
-            if (allData && allData.length > 0) {
-              const totalScore = allData.reduce((sum, analysis) => sum + (analysis.ats_score || 0), 0);
-              setAverageAtsScore(Math.round(totalScore / allData.length));
-            } else {
-              setAverageAtsScore(0);
-            }
-          } else {
-            setRecentAnalyses([]);
-            setAverageAtsScore(0);
-          }
+          setRecentAnalyses(data || []);
         } else {
           // No data available
           setRecentAnalyses([]);
