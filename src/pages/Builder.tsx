@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
@@ -13,6 +14,7 @@ import ResumePreview from "@/components/resume-builder/ResumePreview";
 import { supabase } from "@/integrations/supabase/client";
 import { parseResumeText, ParsedResumeData } from "@/utils/resumeParser";
 
+// Extended template definitions with more options
 const templates = [
   {
     id: "professional",
@@ -31,6 +33,25 @@ const templates = [
     name: "Minimal",
     description: "Simple and minimal design focusing on content",
     color: "bg-gray-800",
+  },
+  {
+    id: "creative",
+    name: "Creative",
+    description: "Bold design for creative industry positions",
+    color: "bg-rose-600",
+    imageUrl: "/placeholder.svg"
+  },
+  {
+    id: "executive",
+    name: "Executive",
+    description: "Sophisticated design for senior positions",
+    color: "bg-emerald-700",
+  },
+  {
+    id: "tech",
+    name: "Tech",
+    description: "Modern template for tech industry roles",
+    color: "bg-blue-600",
   },
 ];
 

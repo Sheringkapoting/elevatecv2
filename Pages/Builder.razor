@@ -12,16 +12,87 @@
     </div>
     
     <MudPaper Class="pa-6 mb-6">
-        <MudText Typo="Typo.h5" Class="mb-4">Coming Soon</MudText>
-        <MudText>
-            We're working on implementing a complete resume builder with .NET and Blazor.
-            Please check back later or try the Resume Analysis feature in the meantime.
-        </MudText>
+        <MudGrid>
+            <MudItem xs="12" md="8">
+                <MudText Typo="Typo.h5" Class="mb-4">Resume Builder</MudText>
+                <MudText Class="mb-4">
+                    We're implementing a complete resume builder with .NET and Blazor.
+                    Choose from one of our professional templates below.
+                </MudText>
+                
+                <MudTabs Outlined="true" Position="Position.Top" Rounded="true" ApplyEffectsToContainer="true" Class="mt-6">
+                    <MudTabPanel Text="Personal Info">
+                        <MudTextField Label="Full Name" Variant="Variant.Outlined" Class="mb-3" />
+                        <MudTextField Label="Professional Title" Variant="Variant.Outlined" Class="mb-3" />
+                        <MudTextField Label="Email" Variant="Variant.Outlined" Class="mb-3" />
+                        <MudTextField Label="Phone" Variant="Variant.Outlined" Class="mb-3" />
+                        <MudTextField Label="Location" Variant="Variant.Outlined" />
+                    </MudTabPanel>
+                    <MudTabPanel Text="Experience">
+                        <MudText>Add your work experience details here</MudText>
+                    </MudTabPanel>
+                    <MudTabPanel Text="Education">
+                        <MudText>Add your education details here</MudText>
+                    </MudTabPanel>
+                    <MudTabPanel Text="Skills">
+                        <MudText>Add your skills here</MudText>
+                    </MudTabPanel>
+                </MudTabs>
+            </MudItem>
+            
+            <MudItem xs="12" md="4">
+                <MudText Typo="Typo.h5" Class="mb-4">Resume Templates</MudText>
+                <MudText Class="mb-4">Choose a template for your resume</MudText>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <MudCard Outlined="true" Class="cursor-pointer">
+                        <MudCardContent>
+                            <div class="bg-primary h-20 mb-2 rounded"></div>
+                            <MudText Typo="Typo.body1">Professional</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                    
+                    <MudCard Outlined="true" Class="cursor-pointer">
+                        <MudCardContent>
+                            <div class="bg-secondary h-20 mb-2 rounded"></div>
+                            <MudText Typo="Typo.body1">Modern</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                    
+                    <MudCard Outlined="true" Class="cursor-pointer">
+                        <MudCardContent>
+                            <div class="bg-dark h-20 mb-2 rounded"></div>
+                            <MudText Typo="Typo.body1">Minimal</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                    
+                    <MudCard Outlined="true" Class="cursor-pointer">
+                        <MudCardContent>
+                            <div class="bg-error h-20 mb-2 rounded"></div>
+                            <MudText Typo="Typo.body1">Creative</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </div>
+                
+                <MudPaper Class="pa-4 mt-6">
+                    <MudText Typo="Typo.h6" Class="mb-2">Resume Preview</MudText>
+                    <div class="h-60 bg-gray-100 rounded-lg d-flex align-center justify-center">
+                        <MudText Align="Align.Center" Color="Color.Secondary">Fill in your details to preview your resume</MudText>
+                    </div>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
     </MudPaper>
     
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/analyze">
-        Try Resume Analysis
-    </MudButton>
+    <div class="flex justify-between items-center">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/analyze">
+            Try Resume Analysis
+        </MudButton>
+        
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" EndIcon="@Icons.Material.Filled.Download" Disabled="true">
+            Download Resume
+        </MudButton>
+    </div>
 </div>
 
 <Footer />

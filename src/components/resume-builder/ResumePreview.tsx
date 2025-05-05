@@ -1,11 +1,13 @@
 
 import { FileText, Mail, Phone, MapPin } from "lucide-react";
+import ResumeTemplatesGallery from "./ResumeTemplatesGallery";
 
 interface Template {
   id: string;
   name: string;
   description: string;
   color: string;
+  imageUrl?: string;
 }
 
 interface PreviewProps {
@@ -54,30 +56,14 @@ const ResumePreview = ({
     <div className="sticky top-28">
       <h2 className="text-xl font-medium text-gray-900 mb-4">Resume Preview</h2>
       
-      <div className="p-4 bg-gray-100 rounded-lg mb-6">
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Template</h3>
-        <div className="grid grid-cols-3 gap-2">
-          {templates.map((template) => (
-            <div
-              key={template.id}
-              className={`cursor-pointer rounded-md border-2 p-2 ${
-                selectedTemplate === template.id
-                  ? "border-primary-600"
-                  : "border-gray-200"
-              }`}
-              onClick={() => onTemplateSelect(template.id)}
-            >
-              <div className={`w-full h-4 rounded ${template.color} mb-2`}></div>
-              <div className="text-xs font-medium text-gray-900 truncate">
-                {template.name}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <ResumeTemplatesGallery 
+        templates={templates} 
+        selectedTemplate={selectedTemplate} 
+        onTemplateSelect={onTemplateSelect} 
+      />
       
-      <div className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
-        <div className="bg-primary-600 px-6 py-4 text-white">
+      <div className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden mt-6">
+        <div className={`px-6 py-4 text-white ${templates.find(t => t.id === selectedTemplate)?.color}`}>
           <h3 className="text-lg font-bold">
             {resumeData.personalInfo.name || "Your Name"}
           </h3>
