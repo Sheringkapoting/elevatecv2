@@ -124,7 +124,7 @@ export function SocialAuthButtons({
             </g>
           </svg>
         )}
-        Sign in with Google
+        Google
       </Button>
 
       <Button
@@ -132,20 +132,16 @@ export function SocialAuthButtons({
         variant="outline"
         className="w-full flex items-center justify-center"
         onClick={handleMicrosoftLogin}
-        disabled={!!currentIsLoading}
+        disabled={true} // Disabled Microsoft button
       >
-        {currentIsLoading === "microsoft" ? (
-          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-        ) : (
-          <svg className="h-4 w-4 mr-2" viewBox="0 0 23 23">
-            <path fill="#f3f3f3" d="M0 0h23v23H0z" />
-            <path fill="#f35325" d="M1 1h10v10H1z" />
-            <path fill="#81bc06" d="M12 1h10v10H12z" />
-            <path fill="#05a6f0" d="M1 12h10v10H1z" />
-            <path fill="#ffba08" d="M12 12h10v10H12z" />
-          </svg>
-        )}
-        Sign in with Microsoft
+        <svg className="h-4 w-4 mr-2" viewBox="0 0 23 23">
+          <path fill="#f3f3f3" d="M0 0h23v23H0z" />
+          <path fill="#f35325" d="M1 1h10v10H1z" />
+          <path fill="#81bc06" d="M12 1h10v10H12z" />
+          <path fill="#05a6f0" d="M1 12h10v10H1z" />
+          <path fill="#ffba08" d="M12 12h10v10H12z" />
+        </svg>
+        Microsoft
       </Button>
 
       <Button
@@ -165,7 +161,7 @@ export function SocialAuthButtons({
             />
           </svg>
         )}
-        Sign in with LinkedIn
+        LinkedIn
       </Button>
     </div>
   );
