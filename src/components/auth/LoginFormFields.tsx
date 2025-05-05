@@ -59,6 +59,9 @@ export const LoginFormFields = () => {
 
     setIsLoading(true);
     try {
+      // Set explicit login flag to signal intentional login
+      sessionStorage.setItem('is_explicit_login', 'true');
+      
       console.log("[LoginFormFields] Calling signIn function");
       const { error } = await signIn(data.email, data.password);
       
@@ -86,6 +89,9 @@ export const LoginFormFields = () => {
         message: error.message,
         stack: error.stack
       });
+      
+      // Clear the explicit login flag on error
+      sessionStorage.removeItem('is_explicit_login');
       
       let errorMsg = "Please check your credentials and try again.";
       if (error?.message?.includes("Invalid login credentials")) {

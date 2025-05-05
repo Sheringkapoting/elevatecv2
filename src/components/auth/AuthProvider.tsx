@@ -68,27 +68,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session) {
         setSession(session);
         
+        // Only process sign-in events that are explicitly flagged
         if (event === 'SIGNED_IN') {
-          console.log("[AuthProvider] Processing successful sign in");
-          toast({
-            title: "Login successful",
-            description: "You have been successfully logged in."
-          });
+          // Check for explicit login flag to prevent unwanted redirects
+          const isExplicitLogin = sessionStorage.getItem('is_explicit_login');
           
-          // Check if this is a new signup or regular login
-          const isSignUp = sessionStorage.getItem('is_signup_event');
-          
-          if (isSignUp === 'true') {
-            console.log("[AuthProvider] Processing signup event");
-            setTimeout(() => {
-              navigate('/profile', { replace: true });
-              sessionStorage.removeItem('is_signup_event');
-            }, 800);
+          if (isExplicitLogin === 'true') {
+            console.log("[AuthProvider] Processing explicit sign in, showing toast");
+            toast({
+              title: "Login successful",
+              description: "You have been successfully logged in."
+            });
+            
+            // Remove the flag after processing
+            sessionStorage.removeItem('is_explicit_login');
+            
+            // Check if this is a new signup or regular login
+            const isSignUp = sessionStorage.getItem('is_signup_event');
+            
+            if (isSignUp === 'true') {
+              console.log("[AuthProvider] Processing signup event");
+              setTimeout(() => {
+                navigate('/profile', { replace: true });
+                sessionStorage.removeItem('is_signup_event');
+              }, 800);
+            } else {
+              console.log("[AuthProvider] Processing regular login, redirecting to:", from);
+              setTimeout(() => {
+                navigate(from, { replace: true });
+              }, 500);
+            }
           } else {
-            console.log("[AuthProvider] Processing regular login, redirecting to:", from);
-            setTimeout(() => {
-              navigate(from, { replace: true });
-            }, 500);
+            console.log("[AuthProvider] Session established but not explicitly logging in, no redirect");
           }
         }
         
@@ -118,6 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(null);
         sessionStorage.removeItem('is_signup_event');
         sessionStorage.removeItem('should_redirect_profile');
+        sessionStorage.removeItem('is_explicit_login');
       }
     });
 
@@ -141,6 +153,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.log("Successfully established session from OAuth redirect");
             console.log("User profile data from redirect:", data.session.user.user_metadata);
             setSession(data.session);
+            
+            // Set explicit login flag for OAuth flows
+            sessionStorage.setItem('is_explicit_login', 'true');
+            
             toast({
               title: "Login successful",
               description: "You have been successfully logged in."
