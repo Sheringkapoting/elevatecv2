@@ -5,14 +5,31 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
-export function SocialAuthButtons() {
+interface SocialAuthButtonsProps {
+  // Add optional props to maintain compatibility with existing usage
+  isLoading?: string | null;
+  setIsLoading?: (provider: string | null) => void;
+  context?: string;
+  hideOrText?: boolean;
+}
+
+export function SocialAuthButtons({ 
+  isLoading: externalIsLoading, 
+  setIsLoading: externalSetIsLoading,
+  context = "login",
+  hideOrText = false
+}: SocialAuthButtonsProps = {}) {
   const { signInWithGoogle, signInWithMicrosoft, signInWithLinkedIn } = useAuth();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [internalIsLoading, setInternalIsLoading] = useState<string | null>(null);
+  
+  // Use either external or internal state management
+  const currentIsLoading = externalIsLoading !== undefined ? externalIsLoading : internalIsLoading;
+  const setCurrentIsLoading = externalSetIsLoading || setInternalIsLoading;
 
   const handleGoogleLogin = async () => {
     try {
-      setIsLoading("google");
+      setCurrentIsLoading("google");
       // Set explicit login flag for social login
       sessionStorage.setItem('is_explicit_login', 'true');
       await signInWithGoogle();
@@ -25,13 +42,13 @@ export function SocialAuthButtons() {
       // Clear flag on error
       sessionStorage.removeItem('is_explicit_login');
     } finally {
-      setIsLoading(null);
+      setCurrentIsLoading(null);
     }
   };
 
   const handleMicrosoftLogin = async () => {
     try {
-      setIsLoading("microsoft");
+      setCurrentIsLoading("microsoft");
       // Set explicit login flag for social login
       sessionStorage.setItem('is_explicit_login', 'true');
       await signInWithMicrosoft();
@@ -44,13 +61,13 @@ export function SocialAuthButtons() {
       // Clear flag on error
       sessionStorage.removeItem('is_explicit_login');
     } finally {
-      setIsLoading(null);
+      setCurrentIsLoading(null);
     }
   };
 
   const handleLinkedInLogin = async () => {
     try {
-      setIsLoading("linkedin");
+      setCurrentIsLoading("linkedin");
       // Set explicit login flag for social login
       sessionStorage.setItem('is_explicit_login', 'true');
       await signInWithLinkedIn();
@@ -63,20 +80,27 @@ export function SocialAuthButtons() {
       // Clear flag on error
       sessionStorage.removeItem('is_explicit_login');
     } finally {
-      setIsLoading(null);
+      setCurrentIsLoading(null);
     }
   };
 
   return (
     <div className="space-y-3">
+      {!hideOrText && <div className="relative flex items-center justify-center text-xs uppercase my-4">
+        <span className="bg-background px-2 text-muted-foreground">
+          Or continue with
+        </span>
+        <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-border"></div>
+      </div>}
+      
       <Button
         type="button"
         variant="outline"
         className="w-full flex items-center justify-center"
         onClick={handleGoogleLogin}
-        disabled={!!isLoading}
+        disabled={!!currentIsLoading}
       >
-        {isLoading === "google" ? (
+        {currentIsLoading === "google" ? (
           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
         ) : (
           <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
@@ -108,9 +132,9 @@ export function SocialAuthButtons() {
         variant="outline"
         className="w-full flex items-center justify-center"
         onClick={handleMicrosoftLogin}
-        disabled={!!isLoading}
+        disabled={!!currentIsLoading}
       >
-        {isLoading === "microsoft" ? (
+        {currentIsLoading === "microsoft" ? (
           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
         ) : (
           <svg className="h-4 w-4 mr-2" viewBox="0 0 23 23">
@@ -129,9 +153,9 @@ export function SocialAuthButtons() {
         variant="outline"
         className="w-full flex items-center justify-center"
         onClick={handleLinkedInLogin}
-        disabled={!!isLoading}
+        disabled={!!currentIsLoading}
       >
-        {isLoading === "linkedin" ? (
+        {currentIsLoading === "linkedin" ? (
           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
         ) : (
           <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
