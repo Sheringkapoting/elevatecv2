@@ -68,7 +68,7 @@ const RecentAnalysesTable = ({
               </TableRow>
             ) : recentAnalyses.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-4 text-gray-500">
+                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
                   No resume analyses found. <Link to="/analyze" className="text-primary-600 hover:underline">Analyze your first resume</Link>
                 </TableCell>
               </TableRow>
@@ -117,7 +117,7 @@ const RecentAnalysesTable = ({
           </TableBody>
         </Table>
         
-        {/* Pagination */}
+        {/* Only show pagination if there are pages to navigate */}
         {totalPages > 1 && (
           <div className="py-4 border-t border-gray-200">
             <Pagination>

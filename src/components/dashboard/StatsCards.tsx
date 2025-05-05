@@ -40,6 +40,11 @@ const StatsCards = ({ averageAtsScore, totalCount, recentAnalyses, isLoading }: 
                   <span>Based on {totalCount} analyses</span>
                 </p>
               )}
+              {recentAnalyses.length === 0 && !isLoading && (
+                <p className="text-sm text-gray-500 mt-1">
+                  No data available
+                </p>
+              )}
             </div>
             <div className="bg-primary-100 p-3 rounded-full">
               <BarChart2 className="h-6 w-6 text-primary-600" />
@@ -60,6 +65,12 @@ const StatsCards = ({ averageAtsScore, totalCount, recentAnalyses, isLoading }: 
                 <p className="text-sm text-gray-500 mt-1">
                   <Clock className="h-4 w-4 inline mr-1" />
                   <span>Last analysis: {getElapsedTime(recentAnalyses[0]?.created_at)}</span>
+                </p>
+              )}
+              {recentAnalyses.length === 0 && !isLoading && (
+                <p className="text-sm text-gray-500 mt-1">
+                  <Clock className="h-4 w-4 inline mr-1" />
+                  <span>No analyses yet</span>
                 </p>
               )}
             </div>

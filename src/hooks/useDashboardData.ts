@@ -13,7 +13,7 @@ export const useDashboardData = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalCount, setTotalCount] = useState<number>(0);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(totalCount / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
 
   useEffect(() => {
     const fetchResumeAnalyses = async () => {
@@ -30,43 +30,53 @@ export const useDashboardData = () => {
         
         if (countError) throw countError;
         
-        if (count !== null) {
-          setTotalCount(count);
-        }
+        // Update total count - if null, set to 0
+        setTotalCount(count || 0);
         
-        // Then fetch the paginated analyses
-        const from = (currentPage - 1) * itemsPerPage;
-        const to = from + itemsPerPage - 1;
-        
-        const { data, error } = await supabase
-          .from("resume_analysis")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-          .range(from, to);
+        // Then fetch the paginated analyses if there are any
+        if (count && count > 0) {
+          const from = (currentPage - 1) * itemsPerPage;
+          const to = from + itemsPerPage - 1;
           
-        if (error) throw error;
-        
-        if (data && data.length > 0) {
-          setRecentAnalyses(data);
-          
-          // Calculate average ATS score - fetch all analyses for accurate average
-          const { data: allData, error: avgError } = await supabase
+          const { data, error } = await supabase
             .from("resume_analysis")
-            .select("ats_score")
-            .eq("user_id", user.id);
+            .select("*")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .range(from, to);
+            
+          if (error) throw error;
           
-          if (avgError) throw avgError;
-          
-          if (allData && allData.length > 0) {
-            const totalScore = allData.reduce((sum, analysis) => sum + (analysis.ats_score || 0), 0);
-            setAverageAtsScore(Math.round(totalScore / allData.length));
+          if (data && data.length > 0) {
+            setRecentAnalyses(data);
+            
+            // Calculate average ATS score
+            const { data: allData, error: avgError } = await supabase
+              .from("resume_analysis")
+              .select("ats_score")
+              .eq("user_id", user.id);
+            
+            if (avgError) throw avgError;
+            
+            if (allData && allData.length > 0) {
+              const totalScore = allData.reduce((sum, analysis) => sum + (analysis.ats_score || 0), 0);
+              setAverageAtsScore(Math.round(totalScore / allData.length));
+            } else {
+              setAverageAtsScore(0);
+            }
+          } else {
+            setRecentAnalyses([]);
+            setAverageAtsScore(0);
           }
         } else {
+          // No data available
           setRecentAnalyses([]);
+          setAverageAtsScore(0);
         }
       } catch (error) {
         console.error("Error fetching resume analyses:", error);
+        setRecentAnalyses([]);
+        setAverageAtsScore(0);
       } finally {
         setIsLoading(false);
       }
