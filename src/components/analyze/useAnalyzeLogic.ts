@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -15,8 +14,14 @@ export function useAnalyzeLogic() {
   const { user } = useAuth();
 
   useEffect(() => {
+    // Check if there is an analysis ID in the query params
     const checkForExistingAnalysis = async () => {
       if (!user?.id) return;
+      
+      // Check for an ID in query params
+      const queryParams = new URLSearchParams(window.location.search);
+      const analysisId = queryParams.get('id');
+      
       try {
         const { data, error } = await supabase
           .from("resume_analysis")
@@ -28,6 +33,24 @@ export function useAnalyzeLogic() {
         if (error) throw error;
         
         if (data && data.length > 0) {
+          // If an ID was specified, fetch that specific analysis
+          if (analysisId) {
+            const { data: specificAnalysis, error: specificError } = await supabase
+              .from("resume_analysis")
+              .select("*")
+              .eq("id", analysisId)
+              .eq("user_id", user.id)
+              .single();
+              
+            if (!specificError && specificAnalysis) {
+              setAnalysisComplete(true);
+              setAnalysisResults(specificAnalysis);
+              setActiveTab("results");
+              return;
+            }
+          }
+          
+          // Otherwise, show the most recent analysis
           setAnalysisComplete(true);
           setAnalysisResults(data[0]);
         }
@@ -76,15 +99,18 @@ export function useAnalyzeLogic() {
       uploadedFilePath = await saveResumeToStorage(resumeFile);
       console.log("Resume saved to storage at:", uploadedFilePath);
       
-      // Call edge function to analyze resume
+      // Get current session for authorization
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("No active session found. Please sign in again.");
       
+      // Call edge function to analyze resume with a unique timestamp to prevent caching
+      const timestamp = Date.now();
       const { data, error } = await supabase.functions.invoke("analyze-resume", {
         body: {
           resumeFilePath: uploadedFilePath,
           jobDescription: jobDescription,
           user_id: user.id,
+          timestamp: timestamp // Add timestamp to prevent caching
         },
       });
       

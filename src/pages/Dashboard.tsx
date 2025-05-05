@@ -1,4 +1,3 @@
-
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -19,12 +18,26 @@ import {
   TableRow,
   TableCell
 } from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
+} from "@/components/ui/pagination";
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [recentAnalyses, setRecentAnalyses] = useState<any[]>([]);
   const [averageAtsScore, setAverageAtsScore] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   useEffect(() => {
     const fetchResumeAnalyses = async () => {
@@ -32,21 +45,49 @@ const Dashboard = () => {
       
       try {
         setIsLoading(true);
+        
+        // First, get the total count of analyses for pagination
+        const { count, error: countError } = await supabase
+          .from("resume_analysis")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id);
+        
+        if (countError) throw countError;
+        
+        if (count !== null) {
+          setTotalCount(count);
+        }
+        
+        // Then fetch the paginated analyses
+        const from = (currentPage - 1) * itemsPerPage;
+        const to = from + itemsPerPage - 1;
+        
         const { data, error } = await supabase
           .from("resume_analysis")
           .select("*")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
-          .limit(5);
+          .range(from, to);
           
         if (error) throw error;
         
         if (data && data.length > 0) {
           setRecentAnalyses(data);
           
-          // Calculate average ATS score
-          const totalScore = data.reduce((sum, analysis) => sum + (analysis.ats_score || 0), 0);
-          setAverageAtsScore(Math.round(totalScore / data.length));
+          // Calculate average ATS score - fetch all analyses for accurate average
+          const { data: allData, error: avgError } = await supabase
+            .from("resume_analysis")
+            .select("ats_score")
+            .eq("user_id", user.id);
+          
+          if (avgError) throw avgError;
+          
+          if (allData && allData.length > 0) {
+            const totalScore = allData.reduce((sum, analysis) => sum + (analysis.ats_score || 0), 0);
+            setAverageAtsScore(Math.round(totalScore / allData.length));
+          }
+        } else {
+          setRecentAnalyses([]);
         }
       } catch (error) {
         console.error("Error fetching resume analyses:", error);
@@ -56,7 +97,13 @@ const Dashboard = () => {
     };
     
     fetchResumeAnalyses();
-  }, [user]);
+  }, [user, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -144,6 +191,7 @@ const Dashboard = () => {
       <NavbarContainer />
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
+          {/* Header section */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
@@ -178,7 +226,7 @@ const Dashboard = () => {
                     {recentAnalyses.length > 1 && (
                       <p className="text-sm text-green-600 flex items-center mt-1">
                         <TrendingUp className="h-4 w-4 mr-1" />
-                        <span>Based on {recentAnalyses.length} analyses</span>
+                        <span>Based on {totalCount} analyses</span>
                       </p>
                     )}
                   </div>
@@ -195,7 +243,7 @@ const Dashboard = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-500">Total Analyses</p>
                     <h3 className="text-3xl font-bold text-gray-900 mt-2">
-                      {isLoading ? "..." : recentAnalyses.length}
+                      {isLoading ? "..." : totalCount}
                     </h3>
                     {recentAnalyses.length > 0 && (
                       <p className="text-sm text-gray-500 mt-1">
@@ -306,6 +354,41 @@ const Dashboard = () => {
                   )}
                 </TableBody>
               </Table>
+              
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="py-4 border-t border-gray-200">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                      
+                      {[...Array(totalPages)].map((_, i) => (
+                        <PaginationItem key={i}>
+                          <PaginationLink
+                            onClick={() => handlePageChange(i + 1)}
+                            isActive={currentPage === i + 1}
+                            className="cursor-pointer"
+                          >
+                            {i + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
             </div>
           </div>
 
