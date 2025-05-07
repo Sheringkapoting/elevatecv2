@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -65,8 +66,10 @@ export function useAnalyzeLogic() {
   const saveResumeToStorage = async (file: File): Promise<string> => {
     if (!user?.id) throw new Error("User not authenticated");
     
+    // Generate a unique filename with timestamp to prevent overwriting
     const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}.${fileExt}`;
+    const uniqueId = Date.now();
+    const fileName = `${uniqueId}.${fileExt}`;
     const filePath = `${user.id}/${fileName}`;
     
     const { error } = await supabase.storage
@@ -105,18 +108,24 @@ export function useAnalyzeLogic() {
       
       // Call edge function to analyze resume with a unique timestamp to prevent caching
       const timestamp = Date.now();
+      const nonce = Math.random().toString(36).substring(2, 15);
+      
       const { data, error } = await supabase.functions.invoke("analyze-resume", {
         body: {
           resumeFilePath: uploadedFilePath,
           jobDescription: jobDescription,
           user_id: user.id,
-          timestamp: timestamp // Add timestamp to prevent caching
+          timestamp: timestamp, // Add timestamp to prevent caching
+          nonce: nonce // Add random value to ensure uniqueness
         },
       });
       
       if (error) throw new Error(`Error during resume analysis: ${error.message}`);
       
       console.log("Analysis complete:", data);
+      
+      // Reset active tab to ensure results tab becomes active
+      setActiveTab("upload");
       
       // Set analysis results for display
       setAnalysisResults(data);
@@ -128,7 +137,11 @@ export function useAnalyzeLogic() {
         description: `Your resume scored ${data.ats_score || 0}% for ATS compatibility.`,
       });
       
-      setActiveTab("results");
+      // Switch to results tab after a brief delay
+      setTimeout(() => {
+        setActiveTab("results");
+      }, 100);
+      
     } catch (e: any) {
       setIsAnalyzing(false);
       toast({ 
