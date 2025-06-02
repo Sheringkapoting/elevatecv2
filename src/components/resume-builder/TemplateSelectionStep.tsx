@@ -2,12 +2,16 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useState } from "react";
+import TemplatePreviewModal from "./TemplatePreviewModal";
 
 interface Template {
   id: string;
   name: string;
   description: string;
   color: string;
+  category: string;
   imageUrl?: string;
 }
 
@@ -170,6 +174,58 @@ const ResumePreview = ({ template }: { template: Template }) => {
             </div>
           </div>
         );
+
+      case "elegant":
+        return (
+          <div className="bg-white text-black text-xs p-4 h-full">
+            <div className="text-center mb-3 pb-3 border-b-2 border-gray-300">
+              <h3 className="font-bold text-sm tracking-wide">SOPHIA RODRIGUEZ</h3>
+              <p className="text-xs text-gray-600 italic">Business Analyst | Strategic Planning</p>
+              <p className="text-xs text-gray-500">sophia@email.com | (555) 246-8135</p>
+            </div>
+            <div className="space-y-2">
+              <div>
+                <h4 className="font-semibold text-xs mb-1 text-center">PROFESSIONAL SUMMARY</h4>
+                <p className="text-xs text-gray-700">Results-driven business analyst with 6+ years of experience...</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-xs mb-1 text-center">PROFESSIONAL EXPERIENCE</h4>
+                <div className="text-xs text-center">
+                  <p className="font-medium">Senior Business Analyst</p>
+                  <p className="text-gray-600">Fortune 500 Company | 2021 - Present</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "contemporary":
+        return (
+          <div className="bg-white text-black text-xs p-4 h-full">
+            <div className="flex items-center mb-3 pb-2 border-b border-orange-400">
+              <div className="w-8 h-8 bg-orange-400 rounded-full mr-3 flex items-center justify-center text-white font-bold text-xs">
+                JD
+              </div>
+              <div>
+                <h3 className="font-bold text-sm">JORDAN DAVIS</h3>
+                <p className="text-xs text-gray-600">Product Manager | Innovation</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div>
+                <h4 className="font-semibold text-xs mb-1 text-orange-600">ABOUT ME</h4>
+                <p className="text-xs text-gray-700">Innovative product manager driving digital transformation...</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-xs mb-1 text-orange-600">WORK EXPERIENCE</h4>
+                <div className="text-xs">
+                  <p className="font-medium">Product Manager</p>
+                  <p className="text-gray-600">StartupXYZ | 2020 - Present</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
       
       default:
         return (
@@ -193,53 +249,117 @@ const TemplateSelectionStep = ({
   onTemplateSelect, 
   onContinue 
 }: TemplateSelectionStepProps) => {
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
+
+  const handleTemplatePreview = (template: Template) => {
+    setPreviewTemplate(template);
+    setPreviewModalOpen(true);
+  };
+
   return (
     <div className="max-w-7xl mx-auto py-12">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Please select a template for your resume.</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Resume Template</h2>
         <p className="text-xl text-gray-600">
-          You can always change it later.
+          Select a professional template that best represents your style. You can always change it later.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <RadioGroup 
+        value={selectedTemplate} 
+        onValueChange={onTemplateSelect}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+      >
         {templates.map((template) => (
-          <Card 
-            key={template.id}
-            className={`cursor-pointer transition-all hover:shadow-lg ${
-              selectedTemplate === template.id 
-                ? 'ring-2 ring-primary-500 shadow-lg' 
-                : 'hover:shadow-md'
-            }`}
-            onClick={() => onTemplateSelect(template.id)}
-          >
-            <CardContent className="p-4">
-              <div className="relative">
-                <ResumePreview template={template} />
-                {selectedTemplate === template.id && (
-                  <div className="absolute -top-2 -right-2">
-                    <CheckCircle className="h-6 w-6 text-primary-600 bg-white rounded-full" />
+          <div key={template.id} className="relative">
+            <Card 
+              className={`cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 hover:border-primary-400 ${
+                selectedTemplate === template.id 
+                  ? 'ring-2 ring-primary-500 shadow-xl border-primary-500' 
+                  : 'hover:shadow-lg border-gray-200'
+              }`}
+              onClick={() => onTemplateSelect(template.id)}
+            >
+              <CardContent className="p-4">
+                <div className="relative">
+                  <ResumePreview template={template} />
+                  
+                  {/* Radio button indicator */}
+                  <div className="absolute top-2 left-2">
+                    <RadioGroupItem
+                      value={template.id}
+                      id={template.id}
+                      className={`w-5 h-5 ${
+                        selectedTemplate === template.id 
+                          ? 'border-primary-600 bg-primary-600' 
+                          : 'border-gray-300'
+                      }`}
+                    />
                   </div>
-                )}
-              </div>
-              <div className="mt-4 text-center">
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">{template.name}</h3>
-                <p className="text-sm text-gray-600">{template.description}</p>
-              </div>
-            </CardContent>
-          </Card>
+
+                  {/* Selected indicator */}
+                  {selectedTemplate === template.id && (
+                    <div className="absolute -top-2 -right-2 animate-scale-in">
+                      <CheckCircle className="h-6 w-6 text-primary-600 bg-white rounded-full shadow-md" />
+                    </div>
+                  )}
+
+                  {/* Preview button overlay */}
+                  <div 
+                    className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center opacity-0 hover:opacity-100 rounded-lg"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTemplatePreview(template);
+                    }}
+                  >
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="bg-white text-gray-900 hover:bg-gray-100"
+                    >
+                      Preview
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="mt-4 text-center">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{template.name}</h3>
+                  <p className="text-sm text-gray-600 mb-1">{template.description}</p>
+                  <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">
+                    {template.category}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         ))}
-      </div>
+      </RadioGroup>
 
       <div className="text-center">
         <Button 
           onClick={onContinue}
           disabled={!selectedTemplate}
-          className="px-8 py-3 text-lg"
+          size="lg"
+          className="px-8 py-3 text-lg transition-all duration-300 hover:scale-105"
         >
           Continue with {templates.find(t => t.id === selectedTemplate)?.name || 'Selected'} Template
         </Button>
       </div>
+
+      {/* Template Preview Modal */}
+      {previewTemplate && (
+        <TemplatePreviewModal
+          template={previewTemplate}
+          isOpen={previewModalOpen}
+          onClose={() => setPreviewModalOpen(false)}
+          onSelect={() => {
+            onTemplateSelect(previewTemplate.id);
+            setPreviewModalOpen(false);
+          }}
+          isSelected={selectedTemplate === previewTemplate.id}
+        />
+      )}
     </div>
   );
 };

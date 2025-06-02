@@ -15,44 +15,63 @@ import TemplateSelectionStep from "@/components/resume-builder/TemplateSelection
 import { supabase } from "@/integrations/supabase/client";
 import { parseResumeText, ParsedResumeData } from "@/utils/resumeParser";
 
-// Extended template definitions with more options
+// Extended template definitions with 8 templates
 const templates = [
   {
     id: "professional",
     name: "Professional",
     description: "Clean and professional design suitable for corporate roles",
     color: "bg-primary-600",
+    category: "Business",
   },
   {
     id: "modern",
     name: "Modern",
     description: "Contemporary design with a creative touch",
     color: "bg-indigo-600",
+    category: "Creative",
   },
   {
     id: "minimal",
     name: "Minimal",
     description: "Simple and minimal design focusing on content",
     color: "bg-gray-800",
+    category: "Simple",
   },
   {
     id: "creative",
     name: "Creative",
     description: "Bold design for creative industry positions",
     color: "bg-rose-600",
-    imageUrl: "/placeholder.svg"
+    category: "Creative",
   },
   {
     id: "executive",
-    name: "Executive",
+    name: "Executive", 
     description: "Sophisticated design for senior positions",
     color: "bg-emerald-700",
+    category: "Business",
   },
   {
     id: "tech",
     name: "Tech",
     description: "Modern template for tech industry roles",
     color: "bg-blue-600",
+    category: "Technology",
+  },
+  {
+    id: "elegant",
+    name: "Elegant",
+    description: "Refined and sophisticated layout for professional roles",
+    color: "bg-purple-600",
+    category: "Professional",
+  },
+  {
+    id: "contemporary",
+    name: "Contemporary",
+    description: "Fresh and modern design with visual elements",
+    color: "bg-orange-500",
+    category: "Modern",
   },
 ];
 
