@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
@@ -11,6 +10,8 @@ import ExperienceForm from "@/components/resume-builder/ExperienceForm";
 import EducationForm from "@/components/resume-builder/EducationForm";
 import SkillsForm from "@/components/resume-builder/SkillsForm";
 import ResumePreview from "@/components/resume-builder/ResumePreview";
+import ResumeSelectionStep from "@/components/resume-builder/ResumeSelectionStep";
+import TemplateSelectionStep from "@/components/resume-builder/TemplateSelectionStep";
 import { supabase } from "@/integrations/supabase/client";
 import { parseResumeText, ParsedResumeData } from "@/utils/resumeParser";
 
@@ -95,9 +96,13 @@ const initialResumeData = {
   ],
 };
 
+type BuilderStep = 'selection' | 'template' | 'builder';
+
 const Builder = () => {
+  const [currentStep, setCurrentStep] = useState<BuilderStep>('selection');
   const [resumeData, setResumeData] = useState(initialResumeData);
   const [selectedTemplate, setSelectedTemplate] = useState("professional");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const { toast } = useToast();
   
   // Check if we need to auto-fill from uploaded resume
@@ -171,6 +176,19 @@ const Builder = () => {
     checkForResumeData();
   }, [toast]);
   
+  const handleExistingResumeSelected = () => {
+    setCurrentStep('template');
+  };
+
+  const handleNewResumeUploaded = (file: File) => {
+    setUploadedFile(file);
+    setCurrentStep('template');
+  };
+
+  const handleTemplateSelected = () => {
+    setCurrentStep('builder');
+  };
+
   const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setResumeData({
@@ -291,18 +309,28 @@ const Builder = () => {
     });
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <NavbarContainer />
-      <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-left mb-10">
-            <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Resume Builder</h1>
-            <p className="mt-4 text-xl text-gray-500">
-              Create a professional resume tailored to your target job
-            </p>
-          </div>
-          
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 'selection':
+        return (
+          <ResumeSelectionStep
+            onExistingResumeSelected={handleExistingResumeSelected}
+            onNewResumeUploaded={handleNewResumeUploaded}
+          />
+        );
+      
+      case 'template':
+        return (
+          <TemplateSelectionStep
+            templates={templates}
+            selectedTemplate={selectedTemplate}
+            onTemplateSelect={setSelectedTemplate}
+            onContinue={handleTemplateSelected}
+          />
+        );
+      
+      case 'builder':
+        return (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <Tabs defaultValue="personal">
@@ -376,6 +404,28 @@ const Builder = () => {
               />
             </div>
           </div>
+        );
+      
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <NavbarContainer />
+      <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          {currentStep === 'builder' && (
+            <div className="text-left mb-10">
+              <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Resume Builder</h1>
+              <p className="mt-4 text-xl text-gray-500">
+                Create a professional resume tailored to your target job
+              </p>
+            </div>
+          )}
+          
+          {renderCurrentStep()}
         </div>
       </main>
       <Footer />
