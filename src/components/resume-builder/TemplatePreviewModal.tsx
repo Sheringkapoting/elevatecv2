@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -136,6 +135,111 @@ const TemplatePreviewModal = ({
                   ))}
                 </div>
               </section>
+            </div>
+          </div>
+        );
+
+      case "contemporary":
+        return (
+          <div className="bg-white text-black p-8 min-h-[600px]">
+            {/* Double column layout */}
+            <div className="flex h-full">
+              {/* Left sidebar */}
+              <div className="w-1/3 bg-orange-500 text-white p-6 mr-6">
+                <div className="text-center mb-6">
+                  <div className="w-24 h-24 bg-white rounded-full mx-auto mb-4 flex items-center justify-center text-orange-500 font-bold text-2xl">
+                    JD
+                  </div>
+                  <h1 className="text-xl font-bold">JORDAN DAVIS</h1>
+                  <p className="text-sm opacity-90">Product Manager</p>
+                </div>
+                
+                <div className="space-y-6">
+                  <section>
+                    <h3 className="font-bold mb-3 text-sm">CONTACT</h3>
+                    <div className="space-y-2 text-sm">
+                      <p>jordan@email.com</p>
+                      <p>(555) 135-7924</p>
+                      <p>San Francisco, CA</p>
+                      <p>linkedin.com/in/jordandavis</p>
+                    </div>
+                  </section>
+                  
+                  <section>
+                    <h3 className="font-bold mb-3 text-sm">SKILLS</h3>
+                    <div className="space-y-2">
+                      {["Product Strategy", "Agile Development", "User Research", "Data Analysis", "Roadmap Planning"].map((skill) => (
+                        <div key={skill} className="bg-white bg-opacity-20 px-3 py-2 rounded text-sm">{skill}</div>
+                      ))}
+                    </div>
+                  </section>
+                  
+                  <section>
+                    <h3 className="font-bold mb-3 text-sm">EDUCATION</h3>
+                    <div className="text-sm">
+                      <p className="font-semibold">MBA in Technology Management</p>
+                      <p className="opacity-90">Stanford University</p>
+                      <p className="opacity-80">2019</p>
+                    </div>
+                  </section>
+                </div>
+              </div>
+              
+              {/* Right main content */}
+              <div className="w-2/3">
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold text-orange-600 mb-3">ABOUT ME</h2>
+                  <p className="text-sm text-gray-700">
+                    Innovative product manager driving digital transformation through data-driven decisions 
+                    and user-centric design. Passionate about building products that solve real-world problems 
+                    and create meaningful impact for users and businesses.
+                  </p>
+                </div>
+                
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold text-orange-600 mb-3">WORK EXPERIENCE</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-semibold">Senior Product Manager</h3>
+                          <p className="text-gray-600">StartupXYZ | San Francisco, CA</p>
+                        </div>
+                        <span className="text-sm text-gray-500">2020 - Present</span>
+                      </div>
+                      <ul className="mt-2 text-sm text-gray-700 list-disc list-inside space-y-1">
+                        <li>Led product development for mobile app with 500K+ users</li>
+                        <li>Increased user retention by 35% through feature optimization</li>
+                        <li>Collaborated with engineering teams to deliver 15+ feature releases</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-semibold">Product Manager</h3>
+                          <p className="text-gray-600">Tech Corp | Palo Alto, CA</p>
+                        </div>
+                        <span className="text-sm text-gray-500">2018 - 2020</span>
+                      </div>
+                      <ul className="mt-2 text-sm text-gray-700 list-disc list-inside space-y-1">
+                        <li>Managed product roadmap for B2B SaaS platform</li>
+                        <li>Conducted user research and competitive analysis</li>
+                        <li>Worked with cross-functional teams of 12+ members</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h2 className="text-xl font-bold text-orange-600 mb-3">ACHIEVEMENTS</h2>
+                  <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
+                    <li>Product of the Year Award - TechCrunch Disrupt 2022</li>
+                    <li>Led team that achieved 120% of quarterly revenue targets</li>
+                    <li>Featured speaker at ProductCon 2023</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         );

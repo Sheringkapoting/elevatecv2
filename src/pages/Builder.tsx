@@ -69,7 +69,7 @@ const templates = [
   {
     id: "contemporary",
     name: "Contemporary",
-    description: "Fresh and modern design with visual elements",
+    description: "Fresh modern design with visual sidebar layout",
     color: "bg-orange-500",
     category: "Modern",
   },
