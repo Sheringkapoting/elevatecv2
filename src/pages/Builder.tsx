@@ -15,63 +15,71 @@ import TemplateSelectionStep from "@/components/resume-builder/TemplateSelection
 import { supabase } from "@/integrations/supabase/client";
 import { parseResumeText, ParsedResumeData } from "@/utils/resumeParser";
 
-// Extended template definitions with 8 templates
+// Updated template definitions with enhanced layout types
 const templates = [
   {
-    id: "professional",
-    name: "Professional",
-    description: "Clean and professional design suitable for corporate roles",
-    color: "bg-primary-600",
-    category: "Business",
-  },
-  {
-    id: "modern",
-    name: "Modern",
-    description: "Contemporary design with a creative touch",
-    color: "bg-indigo-600",
-    category: "Creative",
-  },
-  {
-    id: "minimal",
-    name: "Minimal",
-    description: "Simple and minimal design focusing on content",
-    color: "bg-gray-800",
-    category: "Simple",
-  },
-  {
-    id: "creative",
-    name: "Creative",
-    description: "Bold design for creative industry positions",
-    color: "bg-rose-600",
-    category: "Creative",
-  },
-  {
-    id: "executive",
-    name: "Executive", 
-    description: "Sophisticated design for senior positions",
-    color: "bg-emerald-700",
-    category: "Business",
-  },
-  {
-    id: "tech",
-    name: "Tech",
-    description: "Modern template for tech industry roles",
+    id: "double-column",
+    name: "Double Column",
+    description: "Professional layout with sidebar for skills and contact",
     color: "bg-blue-600",
-    category: "Technology",
+    category: "Professional",
+    layout: "two-column"
   },
   {
     id: "elegant",
     name: "Elegant",
-    description: "Refined and sophisticated layout for professional roles",
+    description: "Sophisticated dark sidebar with clean typography",
     color: "bg-purple-600",
     category: "Professional",
+    layout: "sidebar-dark"
   },
   {
-    id: "contemporary",
-    name: "Contemporary",
-    description: "Fresh modern design with visual sidebar layout",
-    color: "bg-orange-500",
+    id: "minimalist",
+    name: "Minimalist",
+    description: "Clean and simple Ivy League style",
+    color: "bg-gray-800",
+    category: "Simple",
+    layout: "single-column"
+  },
+  {
+    id: "modern-accent",
+    name: "Modern Accent",
+    description: "Contemporary design with color highlights",
+    color: "bg-emerald-600",
     category: "Modern",
+    layout: "accent-modern"
+  },
+  {
+    id: "corporate",
+    name: "Corporate",
+    description: "Traditional corporate format",
+    color: "bg-indigo-600",
+    category: "Business",
+    layout: "corporate"
+  },
+  {
+    id: "creative-portfolio",
+    name: "Creative Portfolio",
+    description: "Bold design for creative professionals",
+    color: "bg-rose-600",
+    category: "Creative",
+    layout: "portfolio"
+  },
+  {
+    id: "tech-modern",
+    name: "Tech Modern",
+    description: "Modern template for tech industry",
+    color: "bg-cyan-600",
+    category: "Technology",
+    layout: "tech-grid"
+  },
+  {
+    id: "executive",
+    name: "Executive",
+    description: "Premium layout for senior positions",
+    color: "bg-amber-600",
+    category: "Executive",
+    layout: "executive"
   },
 ];
 
@@ -120,7 +128,7 @@ type BuilderStep = 'selection' | 'template' | 'builder';
 const Builder = () => {
   const [currentStep, setCurrentStep] = useState<BuilderStep>('selection');
   const [resumeData, setResumeData] = useState(initialResumeData);
-  const [selectedTemplate, setSelectedTemplate] = useState("professional");
+  const [selectedTemplate, setSelectedTemplate] = useState("double-column");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const { toast } = useToast();
   
