@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Upload, FileText, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
+import AnimatedResumeAnalysis from "./AnimatedResumeAnalysis";
 
 interface ResumeSelectionStepProps {
   onExistingResumeSelected: () => void;
@@ -92,18 +92,9 @@ const ResumeSelectionStep = ({ onExistingResumeSelected, onNewResumeUploaded }: 
 
   return (
     <div className="max-w-4xl mx-auto text-center py-12">
-      {/* Header with avatar and message */}
+      {/* Header with animated avatar and message */}
       <div className="mb-12">
-        <div className="relative mx-auto w-32 h-32 mb-6">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-green-50 to-orange-100 rounded-full"></div>
-          <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center">
-            <img 
-              src="/lovable-uploads/53fcfbed-c50f-4d70-b285-266e953cc988.png" 
-              alt="Assistant" 
-              className="w-20 h-20 rounded-full object-cover"
-            />
-          </div>
-        </div>
+        <AnimatedResumeAnalysis />
         <h2 className="text-2xl font-semibold text-gray-900 mb-2">
           Great. Please upload it for a quick start.
         </h2>
