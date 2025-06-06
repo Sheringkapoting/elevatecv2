@@ -78,7 +78,7 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
   return (
     <div className="w-64 p-6 bg-white border-r border-gray-200">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+        <h3 className="text-lg font-semibold text-gray-900 text-left">Filters</h3>
         <Button variant="ghost" size="sm" onClick={clearFilters} className="text-blue-600 hover:text-blue-700">
           Clear filters
         </Button>
@@ -86,7 +86,7 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
 
       {/* Headshot Filter */}
       <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-900 mb-3">Headshot</h4>
+        <h4 className="text-sm font-medium text-gray-900 mb-3 text-left">Headshot</h4>
         <div className="space-y-2">
           {['With photo', 'Without photo'].map((option) => (
             <div key={option} className="flex items-center space-x-2">
@@ -97,7 +97,7 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
                   handleFilterChange('headshot', option, checked as boolean)
                 }
               />
-              <label htmlFor={`headshot-${option}`} className="text-sm text-gray-700">
+              <label htmlFor={`headshot-${option}`} className="text-sm text-gray-700 text-left">
                 {option}
               </label>
             </div>
@@ -107,7 +107,7 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
 
       {/* Columns Filter */}
       <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-900 mb-3">Columns</h4>
+        <h4 className="text-sm font-medium text-gray-900 mb-3 text-left">Columns</h4>
         <div className="space-y-2">
           {['1 column', '2 columns'].map((option) => (
             <div key={option} className="flex items-center space-x-2">
@@ -118,7 +118,7 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
                   handleFilterChange('columns', option, checked as boolean)
                 }
               />
-              <label htmlFor={`columns-${option}`} className="text-sm text-gray-700">
+              <label htmlFor={`columns-${option}`} className="text-sm text-gray-700 text-left">
                 {option}
               </label>
             </div>
@@ -128,7 +128,7 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
 
       {/* Style Filter */}
       <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-900 mb-3">Style</h4>
+        <h4 className="text-sm font-medium text-gray-900 mb-3 text-left">Style</h4>
         <div className="space-y-2">
           {['Traditional', 'Creative', 'Contemporary'].map((option) => (
             <div key={option} className="flex items-center space-x-2">
@@ -139,7 +139,7 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
                   handleFilterChange('style', option, checked as boolean)
                 }
               />
-              <label htmlFor={`style-${option}`} className="text-sm text-gray-700">
+              <label htmlFor={`style-${option}`} className="text-sm text-gray-700 text-left">
                 {option}
               </label>
             </div>
@@ -147,9 +147,9 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
         </div>
       </div>
 
-      {/* Enhanced Occupation Filter */}
+      {/* Occupation Filter */}
       <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-900 mb-3">Filter Occupations</h4>
+        <h4 className="text-sm font-medium text-gray-900 mb-3 text-left">Occupation</h4>
         <div className="space-y-2">
           {visibleOccupations.map((option) => (
             <div key={option} className="flex items-center space-x-2">
@@ -160,7 +160,7 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
                   handleFilterChange('occupation', option, checked as boolean)
                 }
               />
-              <label htmlFor={`occupation-${option}`} className="text-sm text-gray-700">
+              <label htmlFor={`occupation-${option}`} className="text-sm text-gray-700 text-left">
                 {option}
               </label>
             </div>
@@ -172,7 +172,7 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
           variant="ghost"
           size="sm"
           onClick={() => setShowMoreOccupations(!showMoreOccupations)}
-          className="mt-3 p-0 h-auto text-blue-600 hover:text-blue-700 justify-start"
+          className="mt-3 p-0 h-auto text-blue-600 hover:text-blue-700 flex items-center justify-start"
         >
           {showMoreOccupations ? (
             <>
