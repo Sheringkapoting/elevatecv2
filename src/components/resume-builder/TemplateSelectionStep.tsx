@@ -1,13 +1,15 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Filter } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TemplatePreviewModal from "./TemplatePreviewModal";
 import TemplateFilters, { FilterState } from "./TemplateFilters";
 import { getTemplatePreview } from "./TemplatePreviewComponents";
 import ColorPaletteSelector from "./ColorPaletteSelector";
 import { ColorPalette, TemplateProvider, useTemplate } from "@/contexts/TemplateContext";
+import GuidedFilterModal, { FilterSelections } from "./GuidedFilterModal";
 
 interface Template {
   id: string;
@@ -80,8 +82,6 @@ const enhancedTemplates: Template[] = [
     headshot: "With photo",
     occupation: ["Management & Executive", "Business & Finance"]
   },
-  
-  // Second image templates
   {
     id: "polished",
     name: "Polished",
@@ -130,8 +130,6 @@ const enhancedTemplates: Template[] = [
     headshot: "Without photo",
     occupation: ["Computer & Technology", "Arts & Entertainment"]
   },
-  
-  // Third image templates
   {
     id: "stylish",
     name: "Stylish",
@@ -180,8 +178,6 @@ const enhancedTemplates: Template[] = [
     headshot: "Without photo",
     occupation: ["Business & Finance", "Management & Executive"]
   },
-  
-  // Fourth image templates
   {
     id: "compact",
     name: "Compact",
@@ -230,8 +226,6 @@ const enhancedTemplates: Template[] = [
     headshot: "With photo",
     occupation: ["Computer & Technology", "Arts & Entertainment"]
   },
-  
-  // Fifth image templates
   {
     id: "classic",
     name: "Classic",
@@ -282,37 +276,32 @@ const enhancedTemplates: Template[] = [
   }
 ];
 
-// Color palettes for each template
+// Enhanced color palettes with more options per template
 const templateColorPalettes: Record<string, ColorPalette[]> = {
   "double-column": [
-    { id: "blue", name: "Blue", primary: "#1e40af", secondary: "#3b82f6", accent: "#60a5fa", text: "#1f2937", background: "#ffffff", colors: ["#1e40af", "#10b981", "#8b5cf6", "#f59e0b", "#ef4444", "#6366f1"] },
+    { id: "teal", name: "Teal", primary: "#0d9488", secondary: "#14b8a6", accent: "#5eead4", text: "#1f2937", background: "#ffffff", colors: ["#0d9488", "#14b8a6", "#5eead4"] },
+    { id: "blue", name: "Blue", primary: "#1e40af", secondary: "#3b82f6", accent: "#60a5fa", text: "#1f2937", background: "#ffffff", colors: ["#1e40af", "#3b82f6", "#60a5fa"] },
     { id: "green", name: "Green", primary: "#059669", secondary: "#10b981", accent: "#34d399", text: "#1f2937", background: "#ffffff", colors: ["#059669", "#10b981", "#34d399"] },
-    { id: "purple", name: "Purple", primary: "#7c3aed", secondary: "#8b5cf6", accent: "#a78bfa", text: "#1f2937", background: "#ffffff", colors: ["#7c3aed", "#8b5cf6", "#a78bfa"] },
     { id: "orange", name: "Orange", primary: "#ea580c", secondary: "#f97316", accent: "#fb923c", text: "#1f2937", background: "#ffffff", colors: ["#ea580c", "#f97316", "#fb923c"] },
-    { id: "red", name: "Red", primary: "#dc2626", secondary: "#ef4444", accent: "#f87171", text: "#1f2937", background: "#ffffff", colors: ["#dc2626", "#ef4444", "#f87171"] },
-    { id: "indigo", name: "Indigo", primary: "#4338ca", secondary: "#6366f1", accent: "#818cf8", text: "#1f2937", background: "#ffffff", colors: ["#4338ca", "#6366f1", "#818cf8"] }
+    { id: "purple", name: "Purple", primary: "#7c3aed", secondary: "#8b5cf6", accent: "#a78bfa", text: "#1f2937", background: "#ffffff", colors: ["#7c3aed", "#8b5cf6", "#a78bfa"] },
+    { id: "red", name: "Red", primary: "#dc2626", secondary: "#ef4444", accent: "#f87171", text: "#1f2937", background: "#ffffff", colors: ["#dc2626", "#ef4444", "#f87171"] }
   ],
   "elegant": [
-    { id: "teal", name: "Teal", primary: "#0d9488", secondary: "#14b8a6", accent: "#5eead4", text: "#1f2937", background: "#ffffff", colors: ["#0d9488", "#14b8a6", "#5eead4"] },
-    { id: "blue", name: "Blue", primary: "#2563eb", secondary: "#3b82f6", accent: "#93c5fd", text: "#1f2937", background: "#ffffff", colors: ["#2563eb", "#3b82f6", "#93c5fd"] },
-    { id: "pink", name: "Pink", primary: "#db2777", secondary: "#ec4899", accent: "#f9a8d4", text: "#1f2937", background: "#ffffff", colors: ["#db2777", "#ec4899", "#f9a8d4"] },
-    { id: "orange", name: "Orange", primary: "#ea580c", secondary: "#f97316", accent: "#fdba74", text: "#1f2937", background: "#ffffff", colors: ["#ea580c", "#f97316", "#fdba74"] },
-    { id: "gray", name: "Gray", primary: "#4b5563", secondary: "#6b7280", accent: "#9ca3af", text: "#1f2937", background: "#ffffff", colors: ["#4b5563", "#6b7280", "#9ca3af"] },
-    { id: "emerald", name: "Emerald", primary: "#059669", secondary: "#10b981", accent: "#6ee7b7", text: "#1f2937", background: "#ffffff", colors: ["#059669", "#10b981", "#6ee7b7"] }
-  ],
-  "executive": [
-    { id: "rose", name: "Rose", primary: "#e11d48", secondary: "#f43f5e", accent: "#fda4af", text: "#1f2937", background: "#ffffff", colors: ["#e11d48", "#f43f5e", "#fda4af"] },
-    { id: "blue", name: "Blue", primary: "#2563eb", secondary: "#3b82f6", accent: "#93c5fd", text: "#1f2937", background: "#ffffff", colors: ["#2563eb", "#3b82f6", "#93c5fd"] },
-    { id: "amber", name: "Amber", primary: "#d97706", secondary: "#f59e0b", accent: "#fbbf24", text: "#1f2937", background: "#ffffff", colors: ["#d97706", "#f59e0b", "#fbbf24"] },
     { id: "slate", name: "Slate", primary: "#475569", secondary: "#64748b", accent: "#94a3b8", text: "#1f2937", background: "#ffffff", colors: ["#475569", "#64748b", "#94a3b8"] },
+    { id: "blue", name: "Blue", primary: "#2563eb", secondary: "#3b82f6", accent: "#93c5fd", text: "#1f2937", background: "#ffffff", colors: ["#2563eb", "#3b82f6", "#93c5fd"] },
+    { id: "purple", name: "Purple", primary: "#7c3aed", secondary: "#8b5cf6", accent: "#c4b5fd", text: "#1f2937", background: "#ffffff", colors: ["#7c3aed", "#8b5cf6", "#c4b5fd"] },
     { id: "emerald", name: "Emerald", primary: "#059669", secondary: "#10b981", accent: "#6ee7b7", text: "#1f2937", background: "#ffffff", colors: ["#059669", "#10b981", "#6ee7b7"] },
-    { id: "red", name: "Red", primary: "#dc2626", secondary: "#ef4444", accent: "#fca5a5", text: "#1f2937", background: "#ffffff", colors: ["#dc2626", "#ef4444", "#fca5a5"] }
+    { id: "pink", name: "Pink", primary: "#db2777", secondary: "#ec4899", accent: "#f9a8d4", text: "#1f2937", background: "#ffffff", colors: ["#db2777", "#ec4899", "#f9a8d4"] }
   ]
 };
 
 // Default palette for templates without specific palettes
 const defaultPalettes: ColorPalette[] = [
-  { id: "default", name: "Default", primary: "#3b82f6", secondary: "#60a5fa", accent: "#93c5fd", text: "#1f2937", background: "#ffffff", colors: ["#3b82f6", "#60a5fa", "#93c5fd"] }
+  { id: "blue", name: "Blue", primary: "#3b82f6", secondary: "#60a5fa", accent: "#93c5fd", text: "#1f2937", background: "#ffffff", colors: ["#3b82f6", "#60a5fa", "#93c5fd"] },
+  { id: "green", name: "Green", primary: "#10b981", secondary: "#34d399", accent: "#6ee7b7", text: "#1f2937", background: "#ffffff", colors: ["#10b981", "#34d399", "#6ee7b7"] },
+  { id: "purple", name: "Purple", primary: "#8b5cf6", secondary: "#a78bfa", accent: "#c4b5fd", text: "#1f2937", background: "#ffffff", colors: ["#8b5cf6", "#a78bfa", "#c4b5fd"] },
+  { id: "orange", name: "Orange", primary: "#f97316", secondary: "#fb923c", accent: "#fdba74", text: "#1f2937", background: "#ffffff", colors: ["#f97316", "#fb923c", "#fdba74"] },
+  { id: "red", name: "Red", primary: "#ef4444", secondary: "#f87171", accent: "#fca5a5", text: "#1f2937", background: "#ffffff", colors: ["#ef4444", "#f87171", "#fca5a5"] }
 ];
 
 const TemplateSelectionContent = ({ 
@@ -323,7 +312,14 @@ const TemplateSelectionContent = ({
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const [filteredTemplates, setFilteredTemplates] = useState<Template[]>(enhancedTemplates);
+  const [showGuidedFilter, setShowGuidedFilter] = useState(false);
+  const [filterSelections, setFilterSelections] = useState<FilterSelections | null>(null);
   const { setSelectedTemplate } = useTemplate();
+
+  // Auto-show guided filter on component mount
+  useEffect(() => {
+    setShowGuidedFilter(true);
+  }, []);
 
   const handleTemplatePreview = (template: Template) => {
     setPreviewTemplate(template);
@@ -369,6 +365,43 @@ const TemplateSelectionContent = ({
     setFilteredTemplates(filtered);
   };
 
+  const handleGuidedFilterComplete = (selections: FilterSelections) => {
+    setFilterSelections(selections);
+    setShowGuidedFilter(false);
+    
+    // Apply guided filter selections
+    let filtered = enhancedTemplates;
+    
+    // Filter by photo preference
+    if (selections.hasPhoto !== null) {
+      const photoFilter = selections.hasPhoto ? "With photo" : "Without photo";
+      filtered = filtered.filter(template => template.headshot === photoFilter);
+    }
+    
+    // Filter by layout
+    if (selections.layout) {
+      const layoutFilter = selections.layout === "two-column" ? "2 columns" : "1 column";
+      filtered = filtered.filter(template => template.columns === layoutFilter);
+    }
+    
+    // Filter by style
+    if (selections.style) {
+      let styleFilter = "Traditional";
+      if (selections.style === "modern-subtle") styleFilter = "Contemporary";
+      if (selections.style === "bold-striking") styleFilter = "Creative";
+      filtered = filtered.filter(template => template.style === styleFilter);
+    }
+    
+    // Filter by occupation
+    if (selections.occupation.length > 0) {
+      filtered = filtered.filter(template => 
+        template.occupation.some(occ => selections.occupation.includes(occ))
+      );
+    }
+    
+    setFilteredTemplates(filtered);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex">
@@ -380,11 +413,21 @@ const TemplateSelectionContent = ({
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Best templates for 10+ years of experience
+              Best templates for {filterSelections?.experience || "10+ years of experience"}
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-600 mb-4">
               You can always change your template later.
             </p>
+            
+            {/* Filter button */}
+            <Button
+              variant="outline"
+              onClick={() => setShowGuidedFilter(true)}
+              className="mb-4"
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              Update Filters
+            </Button>
           </div>
 
           {/* Template Grid - 3 columns responsive */}
@@ -461,15 +504,17 @@ const TemplateSelectionContent = ({
                     {/* Template Info */}
                     <div className="p-4 bg-white">
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">{template.name}</h3>
-                      <p className="text-xs text-gray-600 mb-2">{template.description}</p>
+                      <p className="text-xs text-gray-600 mb-3">{template.description}</p>
                       
-                      {/* Color palette selectors */}
-                      <ColorPaletteSelector 
-                        templateId={template.id}
-                        palettes={templateColorPalettes[template.id] || defaultPalettes}
-                      />
+                      {/* Enhanced Color palette selectors */}
+                      <div className="mb-3">
+                        <ColorPaletteSelector 
+                          templateId={template.id}
+                          palettes={templateColorPalettes[template.id] || defaultPalettes}
+                        />
+                      </div>
                       
-                      <div className="flex items-center gap-2 mt-3">
+                      <div className="flex items-center gap-2">
                         <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded font-medium">
                           {template.category}
                         </span>
@@ -522,6 +567,13 @@ const TemplateSelectionContent = ({
               isSelected={selectedTemplate === previewTemplate.id}
             />
           )}
+
+          {/* Guided Filter Modal */}
+          <GuidedFilterModal
+            isOpen={showGuidedFilter}
+            onClose={() => setShowGuidedFilter(false)}
+            onComplete={handleGuidedFilterComplete}
+          />
         </div>
       </div>
     </div>

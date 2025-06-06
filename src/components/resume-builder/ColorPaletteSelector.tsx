@@ -18,12 +18,12 @@ const ColorPaletteSelector: React.FC<ColorPaletteSelectorProps> = ({
   };
 
   return (
-    <div className="flex gap-1 mt-2">
+    <div className="flex gap-1 mt-2 flex-wrap">
       {palettes.map((palette) => (
         <button
           key={palette.id}
           onClick={() => handlePaletteSelect(palette)}
-          className={`w-4 h-4 rounded-full border-2 transition-all duration-200 hover:scale-110 ${
+          className={`w-5 h-5 rounded-full border-2 transition-all duration-200 hover:scale-110 ${
             selectedColorPalette?.id === palette.id
               ? 'border-gray-800 shadow-md scale-110'
               : 'border-gray-300'
