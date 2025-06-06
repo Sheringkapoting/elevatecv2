@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface TemplateFiltersProps {
   onFiltersChange: (filters: FilterState) => void;
@@ -21,6 +22,36 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
     style: [],
     occupation: [],
   });
+  
+  const [showMoreOccupations, setShowMoreOccupations] = useState(false);
+
+  const allOccupations = [
+    'Management & Executive',
+    'Office & Administrative Support',
+    'Business & Finance',
+    'Retail & Sales',
+    'Healthcare & Medical',
+    'Food & Beverage',
+    'Transportation',
+    'Education & Library',
+    'Home Health & Nursing Aides',
+    'Personal Care & Service',
+    'Community & Social Service',
+    'Computer & Technology',
+    'Manufacturing & Production',
+    'Construction & Trade',
+    'Arts & Entertainment',
+    'Technician',
+    'Public Safety',
+    'Groundskeeping',
+    'Architecture & Engineering',
+    'Science',
+    'Legal',
+    'Agriculture & Natural Resources',
+    'Military'
+  ];
+
+  const visibleOccupations = showMoreOccupations ? allOccupations : allOccupations.slice(0, 6);
 
   const handleFilterChange = (category: keyof FilterState, value: string, checked: boolean) => {
     const newFilters = { ...filters };
@@ -116,16 +147,11 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
         </div>
       </div>
 
-      {/* Occupation Filter */}
+      {/* Enhanced Occupation Filter */}
       <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-900 mb-3">Occupation</h4>
+        <h4 className="text-sm font-medium text-gray-900 mb-3">Filter Occupations</h4>
         <div className="space-y-2">
-          {[
-            'Management & Executive',
-            'Office & Administrative Support',
-            'Business & Finance',
-            'Retail & Sales'
-          ].map((option) => (
+          {visibleOccupations.map((option) => (
             <div key={option} className="flex items-center space-x-2">
               <Checkbox
                 id={`occupation-${option}`}
@@ -140,6 +166,26 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
             </div>
           ))}
         </div>
+        
+        {/* Show More/Less Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowMoreOccupations(!showMoreOccupations)}
+          className="mt-3 p-0 h-auto text-blue-600 hover:text-blue-700 justify-start"
+        >
+          {showMoreOccupations ? (
+            <>
+              <ChevronUp className="h-4 w-4 mr-1" />
+              Show less
+            </>
+          ) : (
+            <>
+              <ChevronDown className="h-4 w-4 mr-1" />
+              Show more
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );

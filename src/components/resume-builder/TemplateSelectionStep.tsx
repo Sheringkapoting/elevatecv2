@@ -7,6 +7,8 @@ import { useState } from "react";
 import TemplatePreviewModal from "./TemplatePreviewModal";
 import TemplateFilters, { FilterState } from "./TemplateFilters";
 import { getTemplatePreview } from "./TemplatePreviewComponents";
+import ColorPaletteSelector from "./ColorPaletteSelector";
+import { ColorPalette, TemplateProvider, useTemplate } from "@/contexts/TemplateContext";
 
 interface Template {
   id: string;
@@ -52,7 +54,7 @@ const enhancedTemplates: Template[] = [
     columns: "2 columns",
     style: "Contemporary",
     headshot: "With photo",
-    occupation: ["Creative", "Management & Executive"]
+    occupation: ["Computer & Technology", "Management & Executive"]
   },
   {
     id: "minimalist",
@@ -100,7 +102,7 @@ const enhancedTemplates: Template[] = [
     columns: "1 column",
     style: "Creative",
     headshot: "Without photo",
-    occupation: ["Creative", "Retail & Sales"]
+    occupation: ["Arts & Entertainment", "Retail & Sales"]
   },
   {
     id: "tech-modern",
@@ -112,7 +114,7 @@ const enhancedTemplates: Template[] = [
     columns: "1 column",
     style: "Contemporary",
     headshot: "Without photo",
-    occupation: ["Office & Administrative Support", "Business & Finance"]
+    occupation: ["Computer & Technology", "Business & Finance"]
   },
   {
     id: "executive",
@@ -128,7 +130,40 @@ const enhancedTemplates: Template[] = [
   }
 ];
 
-const TemplateSelectionStep = ({ 
+// Color palettes for each template
+const templateColorPalettes: Record<string, ColorPalette[]> = {
+  "double-column": [
+    { id: "blue", name: "Blue", primary: "#1e40af", secondary: "#3b82f6", accent: "#60a5fa", text: "#1f2937", background: "#ffffff", colors: ["#1e40af", "#10b981", "#8b5cf6", "#f59e0b", "#ef4444", "#6366f1"] },
+    { id: "green", name: "Green", primary: "#059669", secondary: "#10b981", accent: "#34d399", text: "#1f2937", background: "#ffffff", colors: ["#059669", "#10b981", "#34d399"] },
+    { id: "purple", name: "Purple", primary: "#7c3aed", secondary: "#8b5cf6", accent: "#a78bfa", text: "#1f2937", background: "#ffffff", colors: ["#7c3aed", "#8b5cf6", "#a78bfa"] },
+    { id: "orange", name: "Orange", primary: "#ea580c", secondary: "#f97316", accent: "#fb923c", text: "#1f2937", background: "#ffffff", colors: ["#ea580c", "#f97316", "#fb923c"] },
+    { id: "red", name: "Red", primary: "#dc2626", secondary: "#ef4444", accent: "#f87171", text: "#1f2937", background: "#ffffff", colors: ["#dc2626", "#ef4444", "#f87171"] },
+    { id: "indigo", name: "Indigo", primary: "#4338ca", secondary: "#6366f1", accent: "#818cf8", text: "#1f2937", background: "#ffffff", colors: ["#4338ca", "#6366f1", "#818cf8"] }
+  ],
+  "elegant": [
+    { id: "teal", name: "Teal", primary: "#0d9488", secondary: "#14b8a6", accent: "#5eead4", text: "#1f2937", background: "#ffffff", colors: ["#0d9488", "#14b8a6", "#5eead4"] },
+    { id: "blue", name: "Blue", primary: "#2563eb", secondary: "#3b82f6", accent: "#93c5fd", text: "#1f2937", background: "#ffffff", colors: ["#2563eb", "#3b82f6", "#93c5fd"] },
+    { id: "pink", name: "Pink", primary: "#db2777", secondary: "#ec4899", accent: "#f9a8d4", text: "#1f2937", background: "#ffffff", colors: ["#db2777", "#ec4899", "#f9a8d4"] },
+    { id: "orange", name: "Orange", primary: "#ea580c", secondary: "#f97316", accent: "#fdba74", text: "#1f2937", background: "#ffffff", colors: ["#ea580c", "#f97316", "#fdba74"] },
+    { id: "gray", name: "Gray", primary: "#4b5563", secondary: "#6b7280", accent: "#9ca3af", text: "#1f2937", background: "#ffffff", colors: ["#4b5563", "#6b7280", "#9ca3af"] },
+    { id: "emerald", name: "Emerald", primary: "#059669", secondary: "#10b981", accent: "#6ee7b7", text: "#1f2937", background: "#ffffff", colors: ["#059669", "#10b981", "#6ee7b7"] }
+  ],
+  "executive": [
+    { id: "rose", name: "Rose", primary: "#e11d48", secondary: "#f43f5e", accent: "#fda4af", text: "#1f2937", background: "#ffffff", colors: ["#e11d48", "#f43f5e", "#fda4af"] },
+    { id: "blue", name: "Blue", primary: "#2563eb", secondary: "#3b82f6", accent: "#93c5fd", text: "#1f2937", background: "#ffffff", colors: ["#2563eb", "#3b82f6", "#93c5fd"] },
+    { id: "amber", name: "Amber", primary: "#d97706", secondary: "#f59e0b", accent: "#fbbf24", text: "#1f2937", background: "#ffffff", colors: ["#d97706", "#f59e0b", "#fbbf24"] },
+    { id: "slate", name: "Slate", primary: "#475569", secondary: "#64748b", accent: "#94a3b8", text: "#1f2937", background: "#ffffff", colors: ["#475569", "#64748b", "#94a3b8"] },
+    { id: "emerald", name: "Emerald", primary: "#059669", secondary: "#10b981", accent: "#6ee7b7", text: "#1f2937", background: "#ffffff", colors: ["#059669", "#10b981", "#6ee7b7"] },
+    { id: "red", name: "Red", primary: "#dc2626", secondary: "#ef4444", accent: "#fca5a5", text: "#1f2937", background: "#ffffff", colors: ["#dc2626", "#ef4444", "#fca5a5"] }
+  ]
+};
+
+// Default palette for templates without specific palettes
+const defaultPalettes: ColorPalette[] = [
+  { id: "default", name: "Default", primary: "#3b82f6", secondary: "#60a5fa", accent: "#93c5fd", text: "#1f2937", background: "#ffffff", colors: ["#3b82f6", "#60a5fa", "#93c5fd"] }
+];
+
+const TemplateSelectionContent = ({ 
   selectedTemplate, 
   onTemplateSelect, 
   onContinue 
@@ -136,10 +171,16 @@ const TemplateSelectionStep = ({
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const [filteredTemplates, setFilteredTemplates] = useState<Template[]>(enhancedTemplates);
+  const { setSelectedTemplate } = useTemplate();
 
   const handleTemplatePreview = (template: Template) => {
     setPreviewTemplate(template);
     setPreviewModalOpen(true);
+  };
+
+  const handleTemplateSelect = (templateId: string) => {
+    onTemplateSelect(templateId);
+    setSelectedTemplate(templateId);
   };
 
   const handleFiltersChange = (filters: FilterState) => {
@@ -194,11 +235,11 @@ const TemplateSelectionStep = ({
             </p>
           </div>
 
-          {/* Template Grid - 4 columns */}
+          {/* Template Grid - 3 columns responsive */}
           <RadioGroup 
             value={selectedTemplate} 
-            onValueChange={onTemplateSelect}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
+            onValueChange={handleTemplateSelect}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8"
           >
             {filteredTemplates.map((template) => (
               <div key={template.id} className="relative group">
@@ -208,7 +249,7 @@ const TemplateSelectionStep = ({
                       ? 'ring-4 ring-primary-500 shadow-xl scale-[1.02] border-primary-500' 
                       : 'hover:shadow-lg border-gray-200 hover:border-primary-300'
                   }`}
-                  onClick={() => onTemplateSelect(template.id)}
+                  onClick={() => handleTemplateSelect(template.id)}
                 >
                   <CardContent className="p-0 relative">
                     {/* Template Preview */}
@@ -270,41 +311,13 @@ const TemplateSelectionStep = ({
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">{template.name}</h3>
                       <p className="text-xs text-gray-600 mb-2">{template.description}</p>
                       
-                      {/* Color palette indicators */}
-                      <div className="flex gap-1 mb-2">
-                        {template.id === 'double-column' && (
-                          <>
-                            <div className="w-4 h-4 rounded-full bg-blue-800"></div>
-                            <div className="w-4 h-4 rounded-full bg-green-600"></div>
-                            <div className="w-4 h-4 rounded-full bg-purple-600"></div>
-                            <div className="w-4 h-4 rounded-full bg-orange-600"></div>
-                            <div className="w-4 h-4 rounded-full bg-red-600"></div>
-                            <div className="w-4 h-4 rounded-full bg-indigo-800"></div>
-                          </>
-                        )}
-                        {template.id === 'elegant' && (
-                          <>
-                            <div className="w-4 h-4 rounded-full bg-teal-600"></div>
-                            <div className="w-4 h-4 rounded-full bg-blue-500"></div>
-                            <div className="w-4 h-4 rounded-full bg-pink-500"></div>
-                            <div className="w-4 h-4 rounded-full bg-orange-500"></div>
-                            <div className="w-4 h-4 rounded-full bg-gray-600"></div>
-                            <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                          </>
-                        )}
-                        {template.id === 'executive' && (
-                          <>
-                            <div className="w-4 h-4 rounded-full bg-pink-400"></div>
-                            <div className="w-4 h-4 rounded-full bg-blue-400"></div>
-                            <div className="w-4 h-4 rounded-full bg-yellow-600"></div>
-                            <div className="w-4 h-4 rounded-full bg-gray-600"></div>
-                            <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                            <div className="w-4 h-4 rounded-full bg-red-400"></div>
-                          </>
-                        )}
-                      </div>
+                      {/* Color palette selectors */}
+                      <ColorPaletteSelector 
+                        templateId={template.id}
+                        palettes={templateColorPalettes[template.id] || defaultPalettes}
+                      />
                       
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 mt-3">
                         <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded font-medium">
                           {template.category}
                         </span>
@@ -351,7 +364,7 @@ const TemplateSelectionStep = ({
               isOpen={previewModalOpen}
               onClose={() => setPreviewModalOpen(false)}
               onSelect={() => {
-                onTemplateSelect(previewTemplate.id);
+                handleTemplateSelect(previewTemplate.id);
                 setPreviewModalOpen(false);
               }}
               isSelected={selectedTemplate === previewTemplate.id}
@@ -360,6 +373,14 @@ const TemplateSelectionStep = ({
         </div>
       </div>
     </div>
+  );
+};
+
+const TemplateSelectionStep = (props: TemplateSelectionStepProps) => {
+  return (
+    <TemplateProvider>
+      <TemplateSelectionContent {...props} />
+    </TemplateProvider>
   );
 };
 
