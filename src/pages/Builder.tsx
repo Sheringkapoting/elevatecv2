@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
@@ -15,7 +16,7 @@ import TemplateSelectionStep from "@/components/resume-builder/TemplateSelection
 import { supabase } from "@/integrations/supabase/client";
 import { parseResumeText, ParsedResumeData } from "@/utils/resumeParser";
 
-// Updated template definitions with enhanced layout types
+// Updated template definitions with complete filter properties
 const templates = [
   {
     id: "double-column",
@@ -23,7 +24,11 @@ const templates = [
     description: "Professional layout with sidebar for skills and contact",
     color: "bg-blue-600",
     category: "Professional",
-    layout: "two-column"
+    layout: "two-column",
+    columns: "2 columns",
+    style: "Traditional",
+    headshot: "With photo",
+    occupation: ["Business & Finance", "Management & Executive"]
   },
   {
     id: "elegant",
@@ -31,7 +36,11 @@ const templates = [
     description: "Sophisticated dark sidebar with clean typography",
     color: "bg-purple-600",
     category: "Professional",
-    layout: "sidebar-dark"
+    layout: "sidebar-dark",
+    columns: "2 columns",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Creative", "Management & Executive"]
   },
   {
     id: "minimalist",
@@ -39,7 +48,11 @@ const templates = [
     description: "Clean and simple Ivy League style",
     color: "bg-gray-800",
     category: "Simple",
-    layout: "single-column"
+    layout: "single-column",
+    columns: "1 column",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Business & Finance", "Office & Administrative Support"]
   },
   {
     id: "modern-accent",
@@ -47,7 +60,11 @@ const templates = [
     description: "Contemporary design with color highlights",
     color: "bg-emerald-600",
     category: "Modern",
-    layout: "accent-modern"
+    layout: "accent-modern",
+    columns: "1 column",
+    style: "Contemporary",
+    headshot: "Without photo",
+    occupation: ["Retail & Sales", "Management & Executive"]
   },
   {
     id: "corporate",
@@ -55,7 +72,11 @@ const templates = [
     description: "Traditional corporate format",
     color: "bg-indigo-600",
     category: "Business",
-    layout: "corporate"
+    layout: "corporate",
+    columns: "1 column",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Business & Finance", "Management & Executive"]
   },
   {
     id: "creative-portfolio",
@@ -63,7 +84,11 @@ const templates = [
     description: "Bold design for creative professionals",
     color: "bg-rose-600",
     category: "Creative",
-    layout: "portfolio"
+    layout: "portfolio",
+    columns: "1 column",
+    style: "Creative",
+    headshot: "Without photo",
+    occupation: ["Creative", "Retail & Sales"]
   },
   {
     id: "tech-modern",
@@ -71,7 +96,11 @@ const templates = [
     description: "Modern template for tech industry",
     color: "bg-cyan-600",
     category: "Technology",
-    layout: "tech-grid"
+    layout: "tech-grid",
+    columns: "1 column",
+    style: "Contemporary",
+    headshot: "Without photo",
+    occupation: ["Office & Administrative Support", "Business & Finance"]
   },
   {
     id: "executive",
@@ -79,7 +108,11 @@ const templates = [
     description: "Premium layout for senior positions",
     color: "bg-amber-600",
     category: "Executive",
-    layout: "executive"
+    layout: "executive",
+    columns: "1 column",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Management & Executive"]
   },
 ];
 
