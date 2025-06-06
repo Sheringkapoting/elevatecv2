@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
@@ -30,37 +29,26 @@ interface TemplateSelectionStepProps {
   onContinue: () => void;
 }
 
-// Enhanced template data with filter properties
+// Enhanced template data with all templates from the images
 const enhancedTemplates: Template[] = [
+  // First image templates
   {
     id: "double-column",
     name: "Double Column",
-    description: "Professional layout with sidebar for skills and contact",
-    color: "bg-blue-600",
+    description: "Professional layout with teal sidebar for skills and contact",
+    color: "bg-teal-600",
     category: "Professional",
     layout: "two-column",
     columns: "2 columns",
     style: "Traditional",
-    headshot: "With photo",
+    headshot: "Without photo",
     occupation: ["Business & Finance", "Management & Executive"]
   },
   {
-    id: "elegant",
-    name: "Elegant",
-    description: "Sophisticated dark sidebar with clean typography",
-    color: "bg-purple-600",
-    category: "Professional",
-    layout: "sidebar-dark",
-    columns: "2 columns",
-    style: "Contemporary",
-    headshot: "With photo",
-    occupation: ["Computer & Technology", "Management & Executive"]
-  },
-  {
-    id: "minimalist",
-    name: "Minimalist",
-    description: "Clean and simple Ivy League style",
-    color: "bg-gray-800",
+    id: "ivy-league",
+    name: "Ivy League",
+    description: "Clean and simple traditional style",
+    color: "bg-gray-600",
     category: "Simple",
     layout: "single-column",
     columns: "1 column",
@@ -69,64 +57,228 @@ const enhancedTemplates: Template[] = [
     occupation: ["Business & Finance", "Office & Administrative Support"]
   },
   {
-    id: "modern-accent",
-    name: "Modern Accent",
-    description: "Contemporary design with color highlights",
-    color: "bg-emerald-600",
-    category: "Modern",
-    layout: "accent-modern",
-    columns: "1 column",
+    id: "elegant",
+    name: "Elegant",
+    description: "Sophisticated dark sidebar with professional styling",
+    color: "bg-slate-700",
+    category: "Professional",
+    layout: "sidebar-dark",
+    columns: "2 columns",
     style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Computer & Technology", "Management & Executive"]
+  },
+  {
+    id: "contemporary",
+    name: "Contemporary",
+    description: "Modern green sidebar with clean typography",
+    color: "bg-green-500",
+    category: "Modern",
+    layout: "sidebar-green",
+    columns: "2 columns",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Management & Executive", "Business & Finance"]
+  },
+  
+  // Second image templates
+  {
+    id: "polished",
+    name: "Polished",
+    description: "Professional teal design with achievement highlights",
+    color: "bg-teal-600",
+    category: "Professional",
+    layout: "sidebar-teal",
+    columns: "2 columns",
+    style: "Traditional",
     headshot: "Without photo",
     occupation: ["Retail & Sales", "Management & Executive"]
   },
   {
-    id: "corporate",
-    name: "Corporate",
-    description: "Traditional corporate format",
-    color: "bg-indigo-600",
-    category: "Business",
-    layout: "corporate",
+    id: "modern",
+    name: "Modern",
+    description: "Clean modern layout with blue accents",
+    color: "bg-blue-500",
+    category: "Modern",
+    layout: "modern-blue",
     columns: "1 column",
+    style: "Contemporary",
+    headshot: "Without photo",
+    occupation: ["Computer & Technology", "Retail & Sales"]
+  },
+  {
+    id: "creative",
+    name: "Creative",
+    description: "Dark professional design with photo emphasis",
+    color: "bg-slate-800",
+    category: "Creative",
+    layout: "creative-dark",
+    columns: "2 columns",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Business & Finance", "Management & Executive"]
+  },
+  {
+    id: "timeline",
+    name: "Timeline",
+    description: "Orange timeline design for career progression",
+    color: "bg-orange-500",
+    category: "Modern",
+    layout: "timeline-orange",
+    columns: "1 column",
+    style: "Contemporary",
+    headshot: "Without photo",
+    occupation: ["Computer & Technology", "Arts & Entertainment"]
+  },
+  
+  // Third image templates
+  {
+    id: "stylish",
+    name: "Stylish",
+    description: "Purple minimalist design for tech professionals",
+    color: "bg-purple-600",
+    category: "Modern",
+    layout: "stylish-purple",
+    columns: "1 column",
+    style: "Contemporary",
+    headshot: "Without photo",
+    occupation: ["Computer & Technology", "Arts & Entertainment"]
+  },
+  {
+    id: "single-column",
+    name: "Single Column",
+    description: "Traditional single column layout",
+    color: "bg-gray-600",
+    category: "Simple",
+    layout: "single-traditional",
+    columns: "1 column",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Retail & Sales", "Business & Finance"]
+  },
+  {
+    id: "elegant-with-logos",
+    name: "Elegant with Logos",
+    description: "Teal sidebar design with company logos",
+    color: "bg-teal-600",
+    category: "Professional",
+    layout: "elegant-logos",
+    columns: "2 columns",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Computer & Technology", "Arts & Entertainment"]
+  },
+  {
+    id: "double-column-with-logos",
+    name: "Double Column with Logos",
+    description: "Blue header design with structured layout",
+    color: "bg-blue-600",
+    category: "Professional",
+    layout: "double-logos",
+    columns: "2 columns",
     style: "Traditional",
     headshot: "Without photo",
     occupation: ["Business & Finance", "Management & Executive"]
   },
+  
+  // Fourth image templates
   {
-    id: "creative-portfolio",
-    name: "Creative Portfolio",
-    description: "Bold design for creative professionals",
-    color: "bg-rose-600",
-    category: "Creative",
-    layout: "portfolio",
-    columns: "1 column",
-    style: "Creative",
-    headshot: "Without photo",
-    occupation: ["Arts & Entertainment", "Retail & Sales"]
+    id: "compact",
+    name: "Compact",
+    description: "Blue sidebar compact design",
+    color: "bg-blue-500",
+    category: "Professional",
+    layout: "compact-blue",
+    columns: "2 columns",
+    style: "Traditional",
+    headshot: "With photo",
+    occupation: ["Education & Library", "Office & Administrative Support"]
   },
   {
-    id: "tech-modern",
-    name: "Tech Modern",
-    description: "Modern template for tech industry",
-    color: "bg-cyan-600",
-    category: "Technology",
-    layout: "tech-grid",
+    id: "modern-with-logos",
+    name: "Modern with Logos",
+    description: "Red accent modern layout with company integration",
+    color: "bg-red-500",
+    category: "Modern",
+    layout: "modern-logos",
     columns: "1 column",
     style: "Contemporary",
     headshot: "Without photo",
-    occupation: ["Computer & Technology", "Business & Finance"]
+    occupation: ["Computer & Technology", "Retail & Sales"]
   },
   {
-    id: "executive",
-    name: "Executive",
-    description: "Premium layout for senior positions",
-    color: "bg-amber-600",
-    category: "Executive",
-    layout: "executive",
+    id: "multicolumn",
+    name: "Multicolumn",
+    description: "Multi-section layout with photo emphasis",
+    color: "bg-blue-600",
+    category: "Professional",
+    layout: "multi-section",
+    columns: "2 columns",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Business & Finance", "Management & Executive"]
+  },
+  {
+    id: "timeline-with-logos",
+    name: "Timeline with Logos",
+    description: "Green timeline layout with company logos",
+    color: "bg-green-500",
+    category: "Modern",
+    layout: "timeline-logos",
+    columns: "1 column",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Computer & Technology", "Arts & Entertainment"]
+  },
+  
+  // Fifth image templates
+  {
+    id: "classic",
+    name: "Classic",
+    description: "Traditional professional layout",
+    color: "bg-gray-800",
+    category: "Simple",
+    layout: "classic-traditional",
     columns: "1 column",
     style: "Traditional",
     headshot: "Without photo",
-    occupation: ["Management & Executive"]
+    occupation: ["Business & Finance", "Office & Administrative Support"]
+  },
+  {
+    id: "ivy-league-with-logos",
+    name: "Ivy League with Logos",
+    description: "Clean traditional design with company integration",
+    color: "bg-gray-600",
+    category: "Simple",
+    layout: "ivy-logos",
+    columns: "1 column",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Business & Finance", "Education & Library"]
+  },
+  {
+    id: "high-performer",
+    name: "High Performer",
+    description: "Blue professional layout for executives",
+    color: "bg-blue-600",
+    category: "Executive",
+    layout: "high-performer",
+    columns: "1 column",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Management & Executive", "Business & Finance"]
+  },
+  {
+    id: "minimal",
+    name: "Minimal",
+    description: "Clean minimal design with photo accent",
+    color: "bg-gray-800",
+    category: "Simple",
+    layout: "minimal-clean",
+    columns: "1 column",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Computer & Technology", "Arts & Entertainment"]
   }
 ];
 

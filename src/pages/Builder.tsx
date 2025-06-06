@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
@@ -114,6 +113,198 @@ const templates = [
     headshot: "Without photo",
     occupation: ["Management & Executive"]
   },
+  {
+    id: "ivy-league",
+    name: "Ivy League",
+    description: "Clean and simple traditional style",
+    color: "bg-gray-600",
+    category: "Simple",
+    layout: "single-column",
+    columns: "1 column",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Business & Finance", "Office & Administrative Support"]
+  },
+  {
+    id: "contemporary",
+    name: "Contemporary",
+    description: "Modern green sidebar with clean typography",
+    color: "bg-green-500",
+    category: "Modern",
+    layout: "sidebar-green",
+    columns: "2 columns",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Management & Executive", "Business & Finance"]
+  },
+  {
+    id: "polished",
+    name: "Polished",
+    description: "Professional teal design with achievement highlights",
+    color: "bg-teal-600",
+    category: "Professional",
+    layout: "sidebar-teal",
+    columns: "2 columns",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Retail & Sales", "Management & Executive"]
+  },
+  {
+    id: "timeline",
+    name: "Timeline",
+    description: "Orange timeline design for career progression",
+    color: "bg-orange-500",
+    category: "Modern",
+    layout: "timeline-orange",
+    columns: "1 column",
+    style: "Contemporary",
+    headshot: "Without photo",
+    occupation: ["Computer & Technology", "Arts & Entertainment"]
+  },
+  {
+    id: "stylish",
+    name: "Stylish",
+    description: "Purple minimalist design for tech professionals",
+    color: "bg-purple-600",
+    category: "Modern",
+    layout: "stylish-purple",
+    columns: "1 column",
+    style: "Contemporary",
+    headshot: "Without photo",
+    occupation: ["Computer & Technology", "Arts & Entertainment"]
+  },
+  {
+    id: "single-column",
+    name: "Single Column",
+    description: "Traditional single column layout",
+    color: "bg-gray-600",
+    category: "Simple",
+    layout: "single-traditional",
+    columns: "1 column",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Retail & Sales", "Business & Finance"]
+  },
+  {
+    id: "elegant-with-logos",
+    name: "Elegant with Logos",
+    description: "Teal sidebar design with company logos",
+    color: "bg-teal-600",
+    category: "Professional",
+    layout: "elegant-logos",
+    columns: "2 columns",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Computer & Technology", "Arts & Entertainment"]
+  },
+  {
+    id: "double-column-with-logos",
+    name: "Double Column with Logos",
+    description: "Blue header design with structured layout",
+    color: "bg-blue-600",
+    category: "Professional",
+    layout: "double-logos",
+    columns: "2 columns",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Business & Finance", "Management & Executive"]
+  },
+  {
+    id: "compact",
+    name: "Compact",
+    description: "Blue sidebar compact design",
+    color: "bg-blue-500",
+    category: "Professional",
+    layout: "compact-blue",
+    columns: "2 columns",
+    style: "Traditional",
+    headshot: "With photo",
+    occupation: ["Education & Library", "Office & Administrative Support"]
+  },
+  {
+    id: "modern-with-logos",
+    name: "Modern with Logos",
+    description: "Red accent modern layout with company integration",
+    color: "bg-red-500",
+    category: "Modern",
+    layout: "modern-logos",
+    columns: "1 column",
+    style: "Contemporary",
+    headshot: "Without photo",
+    occupation: ["Computer & Technology", "Retail & Sales"]
+  },
+  {
+    id: "multicolumn",
+    name: "Multicolumn",
+    description: "Multi-section layout with photo emphasis",
+    color: "bg-blue-600",
+    category: "Professional",
+    layout: "multi-section",
+    columns: "2 columns",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Business & Finance", "Management & Executive"]
+  },
+  {
+    id: "timeline-with-logos",
+    name: "Timeline with Logos",
+    description: "Green timeline layout with company logos",
+    color: "bg-green-500",
+    category: "Modern",
+    layout: "timeline-logos",
+    columns: "1 column",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Computer & Technology", "Arts & Entertainment"]
+  },
+  {
+    id: "classic",
+    name: "Classic",
+    description: "Traditional professional layout",
+    color: "bg-gray-800",
+    category: "Simple",
+    layout: "classic-traditional",
+    columns: "1 column",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Business & Finance", "Office & Administrative Support"]
+  },
+  {
+    id: "ivy-league-with-logos",
+    name: "Ivy League with Logos",
+    description: "Clean traditional design with company integration",
+    color: "bg-gray-600",
+    category: "Simple",
+    layout: "ivy-logos",
+    columns: "1 column",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Business & Finance", "Education & Library"]
+  },
+  {
+    id: "high-performer",
+    name: "High Performer",
+    description: "Blue professional layout for executives",
+    color: "bg-blue-600",
+    category: "Executive",
+    layout: "high-performer",
+    columns: "1 column",
+    style: "Traditional",
+    headshot: "Without photo",
+    occupation: ["Management & Executive", "Business & Finance"]
+  },
+  {
+    id: "minimal",
+    name: "Minimal",
+    description: "Clean minimal design with photo accent",
+    color: "bg-gray-800",
+    category: "Simple",
+    layout: "minimal-clean",
+    columns: "1 column",
+    style: "Contemporary",
+    headshot: "With photo",
+    occupation: ["Computer & Technology", "Arts & Entertainment"]
+  }
 ];
 
 const initialResumeData = {
