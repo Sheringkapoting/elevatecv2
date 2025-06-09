@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 export interface FilterSelections {
@@ -161,12 +161,31 @@ const GuidedFilterModal = ({ isOpen, onClose, onComplete }: GuidedFilterModalPro
     }
   ];
 
+  // Match the occupation options from TemplateFilters.tsx
   const occupationOptions = [
-    "Management & Executive",
-    "Office & Administrative Support", 
-    "Business & Finance",
-    "Retail & Sales",
-    "Healthcare & Medical"
+    'Management & Executive',
+    'Office & Administrative Support',
+    'Business & Finance',
+    'Retail & Sales',
+    'Healthcare & Medical',
+    'Food & Beverage',
+    'Transportation',
+    'Education & Library',
+    'Home Health & Nursing Aides',
+    'Personal Care & Service',
+    'Community & Social Service',
+    'Computer & Technology',
+    'Manufacturing & Production',
+    'Construction & Trade',
+    'Arts & Entertainment',
+    'Technician',
+    'Public Safety',
+    'Groundskeeping',
+    'Architecture & Engineering',
+    'Science',
+    'Legal',
+    'Agriculture & Natural Resources',
+    'Military'
   ];
 
   const handleNext = () => {
@@ -276,7 +295,7 @@ const GuidedFilterModal = ({ isOpen, onClose, onComplete }: GuidedFilterModalPro
 
       case "occupation":
         return (
-          <div className="space-y-3 max-w-md mx-auto">
+          <div className="grid grid-cols-2 gap-3 max-w-2xl mx-auto">
             {occupationOptions.map((option) => (
               <label key={option} className="flex items-center space-x-3 cursor-pointer">
                 <input
@@ -290,7 +309,7 @@ const GuidedFilterModal = ({ isOpen, onClose, onComplete }: GuidedFilterModalPro
                   }}
                   className="rounded border-gray-300"
                 />
-                <span className="text-left">{option}</span>
+                <span className="text-left text-sm">{option}</span>
               </label>
             ))}
           </div>
@@ -322,13 +341,7 @@ const GuidedFilterModal = ({ isOpen, onClose, onComplete }: GuidedFilterModalPro
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="relative">
-          <button
-            onClick={onClose}
-            className="absolute right-0 top-0 p-2 hover:bg-gray-100 rounded"
-          >
-            <X className="h-4 w-4" />
-          </button>
+        <DialogHeader>
           <div className="text-center">
             {/* Progress dots */}
             <div className="flex justify-center space-x-2 mb-4">

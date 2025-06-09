@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Filter } from "lucide-react";
@@ -314,6 +313,12 @@ const TemplateSelectionContent = ({
   const [filteredTemplates, setFilteredTemplates] = useState<Template[]>(enhancedTemplates);
   const [showGuidedFilter, setShowGuidedFilter] = useState(false);
   const [filterSelections, setFilterSelections] = useState<FilterSelections | null>(null);
+  const [sidebarFilters, setSidebarFilters] = useState<FilterState>({
+    headshot: [],
+    columns: [],
+    style: [],
+    occupation: [],
+  });
   const { setSelectedTemplate } = useTemplate();
 
   // Auto-show guided filter on component mount
@@ -331,7 +336,7 @@ const TemplateSelectionContent = ({
     setSelectedTemplate(templateId);
   };
 
-  const handleFiltersChange = (filters: FilterState) => {
+  const applyFilters = (filters: FilterState) => {
     let filtered = enhancedTemplates;
 
     // Apply headshot filter
@@ -365,48 +370,58 @@ const TemplateSelectionContent = ({
     setFilteredTemplates(filtered);
   };
 
-  const handleGuidedFilterComplete = (selections: FilterSelections) => {
-    setFilterSelections(selections);
-    setShowGuidedFilter(false);
-    
-    // Apply guided filter selections
-    let filtered = enhancedTemplates;
-    
-    // Filter by photo preference
+  const handleFiltersChange = (filters: FilterState) => {
+    setSidebarFilters(filters);
+    applyFilters(filters);
+  };
+
+  const convertGuidedToSidebarFilters = (selections: FilterSelections): FilterState => {
+    const sidebarFilters: FilterState = {
+      headshot: [],
+      columns: [],
+      style: [],
+      occupation: selections.occupation
+    };
+
+    // Convert photo preference
     if (selections.hasPhoto !== null) {
-      const photoFilter = selections.hasPhoto ? "With photo" : "Without photo";
-      filtered = filtered.filter(template => template.headshot === photoFilter);
+      sidebarFilters.headshot = selections.hasPhoto ? ["With photo"] : ["Without photo"];
     }
-    
-    // Filter by layout
+
+    // Convert layout
     if (selections.layout) {
-      const layoutFilter = selections.layout === "two-column" ? "2 columns" : "1 column";
-      filtered = filtered.filter(template => template.columns === layoutFilter);
+      sidebarFilters.columns = selections.layout === "two-column" ? ["2 columns"] : ["1 column"];
     }
-    
-    // Filter by style
+
+    // Convert style
     if (selections.style) {
       let styleFilter = "Traditional";
       if (selections.style === "modern-subtle") styleFilter = "Contemporary";
       if (selections.style === "bold-striking") styleFilter = "Creative";
-      filtered = filtered.filter(template => template.style === styleFilter);
+      sidebarFilters.style = [styleFilter];
     }
+
+    return sidebarFilters;
+  };
+
+  const handleGuidedFilterComplete = (selections: FilterSelections) => {
+    setFilterSelections(selections);
+    setShowGuidedFilter(false);
     
-    // Filter by occupation
-    if (selections.occupation.length > 0) {
-      filtered = filtered.filter(template => 
-        template.occupation.some(occ => selections.occupation.includes(occ))
-      );
-    }
-    
-    setFilteredTemplates(filtered);
+    // Convert guided selections to sidebar filter format
+    const convertedFilters = convertGuidedToSidebarFilters(selections);
+    setSidebarFilters(convertedFilters);
+    applyFilters(convertedFilters);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex">
         {/* Left Sidebar - Filters */}
-        <TemplateFilters onFiltersChange={handleFiltersChange} />
+        <TemplateFilters 
+          onFiltersChange={handleFiltersChange}
+          initialFilters={sidebarFilters}
+        />
         
         {/* Main Content */}
         <div className="flex-1 py-8 px-6">

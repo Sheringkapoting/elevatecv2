@@ -1,11 +1,12 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface TemplateFiltersProps {
   onFiltersChange: (filters: FilterState) => void;
+  initialFilters?: FilterState;
 }
 
 export interface FilterState {
@@ -15,7 +16,7 @@ export interface FilterState {
   occupation: string[];
 }
 
-const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
+const TemplateFilters = ({ onFiltersChange, initialFilters }: TemplateFiltersProps) => {
   const [filters, setFilters] = useState<FilterState>({
     headshot: [],
     columns: [],
@@ -24,6 +25,13 @@ const TemplateFilters = ({ onFiltersChange }: TemplateFiltersProps) => {
   });
   
   const [showMoreOccupations, setShowMoreOccupations] = useState(false);
+
+  // Update filters when initialFilters change
+  useEffect(() => {
+    if (initialFilters) {
+      setFilters(initialFilters);
+    }
+  }, [initialFilters]);
 
   const allOccupations = [
     'Management & Executive',
