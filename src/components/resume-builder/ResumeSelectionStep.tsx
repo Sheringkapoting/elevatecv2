@@ -142,7 +142,7 @@ const ResumeSelectionStep = ({ onExistingResumeSelected, onNewResumeUploaded }: 
               </Button>
             </label>
           </CardContent>
-        </div>
+        </Card>
       </div>
 
       {/* Privacy notice */}
