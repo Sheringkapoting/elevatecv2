@@ -8,7 +8,8 @@ import TemplateFilters, { FilterState } from "./TemplateFilters";
 import { getTemplatePreview } from "./TemplatePreviewComponents";
 import ColorPaletteSelector from "./ColorPaletteSelector";
 import { ColorPalette, TemplateProvider, useTemplate } from "@/contexts/TemplateContext";
-import GuidedFilterModal, { FilterSelections } from "./GuidedFilterModal";
+import GuidedFilterModal from "./GuidedFilterModal";
+import { FilterSelections } from "./guided-filter/types";
 
 interface Template {
   id: string;
