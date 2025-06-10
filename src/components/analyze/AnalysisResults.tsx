@@ -93,7 +93,7 @@ const AnalysisResults = ({ analysisResult: propResult }: AnalysisResultsProps) =
                   </div>
                 </div>
               </div>
-              <div>
+              <div className="text-left">
                 <h3 className="text-xl font-bold mb-1">ATS Compatibility Score</h3>
                 <p className="text-gray-500">
                   {analysisResult.ats_score >= 80 ? "Excellent! Your resume is highly compatible with ATS systems." : 
@@ -215,7 +215,7 @@ const AnalysisResults = ({ analysisResult: propResult }: AnalysisResultsProps) =
       {/* Detailed Recommendations */}
       <Card>
         <CardHeader>
-          <CardTitle>Detailed Recommendations</CardTitle>
+          <CardTitle className="text-left">Detailed Recommendations</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
@@ -225,15 +225,15 @@ const AnalysisResults = ({ analysisResult: propResult }: AnalysisResultsProps) =
                   {index > 0 && <Separator className="my-4" />}
                   <div className="flex items-start">
                     <AlertCircle className="h-5 w-5 text-amber-500 mr-3 mt-0.5 flex-shrink-0" />
-                    <div className="flex-grow">
-                      <p className="font-medium mb-1 text-left">Improvement Suggestion</p>
+                    <div className="flex-grow text-left">
+                      <p className="font-medium mb-1">Improvement Suggestion</p>
                       <p className="text-gray-600">{suggestion}</p>
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-gray-500">
+              <p className="text-gray-500 text-left">
                 No specific improvement suggestions. Your resume is well-optimized for ATS systems!
               </p>
             )}
