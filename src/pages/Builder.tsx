@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
@@ -727,7 +728,6 @@ const Builder = () => {
         isOpen={showPersonalizationModal}
         onClose={() => setShowPersonalizationModal(false)}
         onComplete={handlePersonalizationComplete}
-        initialExperience={selectedExperience}
       />
     </div>
   );
