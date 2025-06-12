@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import NavbarContainer from "@/components/layout/NavbarContainer";
 import Footer from "@/components/layout/Footer";
@@ -351,13 +352,16 @@ const initialResumeData = {
   ],
 };
 
-type BuilderStep = 'selection' | 'template' | 'builder';
+type BuilderStep = 'selection' | 'experience' | 'template' | 'builder';
 
 const Builder = () => {
   const [currentStep, setCurrentStep] = useState<BuilderStep>('selection');
   const [resumeData, setResumeData] = useState(initialResumeData);
   const [selectedTemplate, setSelectedTemplate] = useState("double-column");
+  const [selectedExperience, setSelectedExperience] = useState("");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showPersonalizationModal, setShowPersonalizationModal] = useState(false);
   const { toast } = useToast();
   
   // Check if we need to auto-fill from uploaded resume
@@ -432,11 +436,29 @@ const Builder = () => {
   }, [toast]);
   
   const handleExistingResumeSelected = () => {
-    setCurrentStep('template');
+    setCurrentStep('experience');
   };
 
   const handleNewResumeUploaded = (file: File) => {
     setUploadedFile(file);
+    setCurrentStep('experience');
+  };
+
+  const handleExperienceSelected = (experience: string) => {
+    setSelectedExperience(experience);
+  };
+
+  const handleExperienceContinue = () => {
+    setShowHelpModal(true);
+  };
+
+  const handleHelpModalContinue = () => {
+    setShowHelpModal(false);
+    setShowPersonalizationModal(true);
+  };
+
+  const handlePersonalizationComplete = () => {
+    setShowPersonalizationModal(false);
     setCurrentStep('template');
   };
 
@@ -574,6 +596,15 @@ const Builder = () => {
           />
         );
       
+      case 'experience':
+        return (
+          <ExperienceSelectionPage
+            selectedExperience={selectedExperience}
+            onExperienceSelect={handleExperienceSelected}
+            onContinue={handleExperienceContinue}
+          />
+        );
+      
       case 'template':
         return (
           <TemplateSelectionStep
@@ -684,6 +715,20 @@ const Builder = () => {
         </div>
       </main>
       <Footer />
+
+      {/* Help Modal */}
+      <TemplateHelpModal
+        isOpen={showHelpModal}
+        onClose={() => setShowHelpModal(false)}
+        onStartPersonalization={handleHelpModalContinue}
+      />
+
+      {/* Personalization Modal */}
+      <TemplatePersonalizationModal
+        isOpen={showPersonalizationModal}
+        onClose={() => setShowPersonalizationModal(false)}
+        onComplete={handlePersonalizationComplete}
+      />
     </div>
   );
 };
