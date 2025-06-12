@@ -12,8 +12,12 @@ import SkillsForm from "@/components/resume-builder/SkillsForm";
 import ResumePreview from "@/components/resume-builder/ResumePreview";
 import ResumeSelectionStep from "@/components/resume-builder/ResumeSelectionStep";
 import TemplateSelectionStep from "@/components/resume-builder/TemplateSelectionStep";
+import ExperienceSelectionPage from "@/components/resume-builder/ExperienceSelectionPage";
+import TemplateHelpModal from "@/components/resume-builder/TemplateHelpModal";
+import TemplatePersonalizationModal from "@/components/resume-builder/TemplatePersonalizationModal";
 import { supabase } from "@/integrations/supabase/client";
 import { parseResumeText, ParsedResumeData } from "@/utils/resumeParser";
+import { FilterSelections } from "@/components/resume-builder/guided-filter/types";
 
 // Updated template definitions with complete filter properties
 const templates = [
