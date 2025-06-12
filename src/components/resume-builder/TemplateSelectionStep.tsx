@@ -320,7 +320,7 @@ const TemplateSelectionContent = ({
     style: [],
     occupation: [],
   });
-  const { setSelectedTemplate, selectedColorPalette } = useTemplate();
+  const { setSelectedTemplate } = useTemplate();
 
   // Auto-show guided filter on component mount
   useEffect(() => {
@@ -335,11 +335,6 @@ const TemplateSelectionContent = ({
   const handleTemplateSelect = (templateId: string) => {
     onTemplateSelect(templateId);
     setSelectedTemplate(templateId);
-  };
-
-  const handleColorChange = (palette: ColorPalette) => {
-    // Force re-render of the template preview with new colors
-    console.log('Color changed for template:', selectedTemplate, 'to:', palette.name);
   };
 
   const applyFilters = (filters: FilterState) => {
@@ -470,7 +465,7 @@ const TemplateSelectionContent = ({
                   <CardContent className="p-0 relative">
                     {/* Template Preview */}
                     <div className="relative h-[400px] bg-white rounded-t-lg overflow-hidden">
-                      {getTemplatePreview(template.id, selectedColorPalette)}
+                      {getTemplatePreview(template.id)}
                       
                       {/* Selection Overlay */}
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300"></div>
@@ -527,15 +522,15 @@ const TemplateSelectionContent = ({
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">{template.name}</h3>
                       <p className="text-xs text-gray-600 mb-3">{template.description}</p>
                       
-                      {/* Color palette selectors - only for selected template */}
-                      <ColorPaletteSelector 
-                        templateId={template.id}
-                        palettes={templateColorPalettes[template.id] || defaultPalettes}
-                        isSelected={selectedTemplate === template.id}
-                        onColorChange={handleColorChange}
-                      />
+                      {/* Enhanced Color palette selectors */}
+                      <div className="mb-3">
+                        <ColorPaletteSelector 
+                          templateId={template.id}
+                          palettes={templateColorPalettes[template.id] || defaultPalettes}
+                        />
+                      </div>
                       
-                      <div className="flex items-center gap-2 mt-3">
+                      <div className="flex items-center gap-2">
                         <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded font-medium">
                           {template.category}
                         </span>
